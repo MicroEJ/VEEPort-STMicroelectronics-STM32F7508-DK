@@ -1,0 +1,162 @@
+/*
+ * C
+ *
+ * Copyright 2020 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ */
+
+/*-Specials-*/
+define symbol __ICFEDIT_intvec_start__ = 0x08000000;
+
+/*-Memory Regions-*/
+define symbol ITCM_start         = 0x00000000;
+define symbol ITCM_end           = 0x00003FFF;
+
+define symbol FLASH_start        = 0x08000000;
+define symbol FLASH_end          = 0x0800FFFF;
+
+define symbol QSPI_start         = 0x90000000;
+define symbol QSPI_end           = 0x90FFFFFF;
+
+define symbol DTCM_start         = 0x20000000;
+define symbol DTCM_end           = 0x2000FFFF;
+
+define symbol SRAM_start         = 0x20010000;
+define symbol SRAM_end           = 0x2004FFFF;
+
+define symbol SDRAM_start        = 0xC0000000;
+define symbol SDRAM_end          = 0xC07FFFFF;
+
+/*-Sizes-*/
+define symbol __ICFEDIT_size_cstack__    = 0x800;
+
+/* Define the size of the network heap used by LwIP */
+define symbol __ICFEDIT_size_network_heap__ = 0x40000;
+
+/* Define the memory addresable size as 4GB */
+define memory mem with size = 4G;
+
+/* Define all memory regions */
+define region ITCM_region          = mem:[from ITCM_start to ITCM_end];
+define region FLASH_region         = mem:[from FLASH_start to FLASH_end];
+define region QSPI_region          = mem:[from QSPI_start to QSPI_end];
+define region DTCM_region          = mem:[from DTCM_start to DTCM_end];
+define region SRAM_region          = mem:[from SRAM_start to SRAM_end];
+define region SDRAM_region         = mem:[from SDRAM_start to SDRAM_end];
+
+/* Define reserved empty blocks */
+define block HEAP                      with alignment = 4, size = __ICFEDIT_size_network_heap__ { };
+define block CSTACK                    with alignment = 4, size = __ICFEDIT_size_cstack__ { };
+
+/* Define the ITCM region content */
+define block RO_ITCM_CODE         with alignment = 4
+{
+	/* FreeRTOS code */
+	section .text object cmsis_os.o,
+	section .text object heap_4.o,
+	section .text object list.o,
+	section .text object port.o,
+	section CODE object portasm.o,
+	section .text object queue.o,
+	section .text object tasks.o,
+	section .text object timers.o,
+
+	/* SysTick interrupt handler and calees */
+	section .text object stm32f7xx_it.o,
+	section .text object stm32f7xx_custom.o
+};
+
+/* Define the ITCM region initializers */
+define block RO_ITCM_CODE_INIT    with alignment = 4
+{
+	/* FreeRTOS code */
+	section .text_init object cmsis_os.o,
+	section .text_init object heap_4.o,
+	section .text_init object list.o,
+	section .text_init object port.o,
+	section CODE_init object portasm.o,
+	section .text_init object queue.o,
+	section .text_init object tasks.o,
+	section .text_init object timers.o,
+
+	/* SysTick interrupt handler and calees */
+	section .text_init object stm32f7xx_it.o,
+	section .text_init object stm32f7xx_custom.o
+};
+
+/* Initialize manually the ITCM region */
+initialize manually
+{
+	/* FreeRTOS code */
+	section .text object cmsis_os.o,
+	section .text object heap_4.o,
+	section .text object list.o,
+	section .text object port.o,
+	section CODE object portasm.o,
+	section .text object queue.o,
+	section .text object tasks.o,
+	section .text object timers.o,
+
+	/* SysTick interrupt handler and calees */
+	section .text object stm32f7xx_it.o,
+	section .text object stm32f7xx_custom.o
+};
+
+/* Initialize by copy the readwrite section */
+initialize by copy { readwrite };
+
+/* Do not initialize sections marked with .noinit */
+do not initialize  { section .noinit };
+
+/* The vector table goes first into FLASH */
+place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
+
+/* Map in FLASH the startup code (mandatory) */
+place in FLASH_region        { readonly section .iar.init_table };
+place in FLASH_region        { readonly object main.o };
+place in FLASH_region        { readonly object memory_msp.o };
+place in FLASH_region        { readonly object qspi.o };
+place in FLASH_region        { readonly object startup_stm32f750xx.o } except { section .intvec };
+place in FLASH_region        { readonly object system_stm32f7xx.o };
+
+/* Map in FLASH the HAL driver code used for startup (mandatory) */
+place in FLASH_region        { readonly object stm32f7xx_hal.o };
+place in FLASH_region        { readonly object stm32f7xx_hal_cortex.o };
+place in FLASH_region        { readonly object stm32f7xx_hal_gpio.o };
+place in FLASH_region        { readonly object stm32f7xx_hal_pwr_ex.o };
+place in FLASH_region        { readonly object stm32f7xx_hal_qspi.o };
+place in FLASH_region        { readonly object stm32f7xx_hal_rcc.o };
+
+/* Toolchain libraries used for startup (mandatory) */
+place in FLASH_region        { readonly object cmain.o };
+place in FLASH_region        { readonly object cstartup_M.o };
+place in FLASH_region        { readonly object data_init.o };
+place in FLASH_region        { readonly object fpinit_M.o };
+place in FLASH_region        { readonly object I64DivMod.o };
+place in FLASH_region        { readonly object lz77_init_single.o };
+place in FLASH_region        { readonly object zero_init3.o };
+
+/* Toolchain libraries (optional, performance increases compared with default QSPI mapping) */
+place in FLASH_region        { readonly object m7M_tls.a } except { object fpinit_M.o, object *64*.o, object *complex*.o, object *cos*.o, object *sin*.o, object *tan*.o };
+
+/* Place in FLASH the readwrite region initializers (mandatory) */
+place in FLASH_region        { section .data_init };
+
+/* Place in ITCM code sections that improves the system performance */
+place in ITCM_region         { block RO_ITCM_CODE };
+
+/* Place in QSPI the ITCM region initializers */
+place in QSPI_region         { block RO_ITCM_CODE_INIT };
+
+/* Place in DTCM the Ethernet buffers */
+place in DTCM_region         { zeroinit section .RxDescripSection, section .TxDescripSection, section .RxBUF, section .TxBUF object ethernetif.o };
+
+/* Initialized and uninitialized data sections goes into RAM, load LMA copy after code */
+place in SRAM_region         { readwrite, zeroinit, last block CSTACK };
+
+/* SDRAM used for: Network heap */
+place in SDRAM_region        { block HEAP };
+
+/* The program code and constant data goes into QSPI */
+place in QSPI_region         { readonly };

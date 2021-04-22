@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ANT Buildfile
+ 
+  Copyright 2015-2016 IS2T. All rights reserved.
+  IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+    	
+-->
+<project name="wadapps-init">
+
+	<import file="${scripts.dir}/extension-init.xml" />
+		
+	<!--
+		Add the wadapps generic event generator. 
+		Note: update application classpath and resources only when MicroUI is included
+	-->
+	<target name="init/wadapps/microui" extensionOf="init/execution" if="usesMICROUI">
+		<augment id="init.application.classpath">
+			<fileset dir="${platform.dir}/javaLibs" includes="microui-*.jar" />
+			<fileset dir="${platform.dir}/javaLibs" includes="wadapps-*.jar" />
+		</augment>
+		
+		<augment id="init.requires">
+			<string value="ej.wadapps.platform.EventGenerator"/>
+		</augment>
+	</target>
+	
+</project>

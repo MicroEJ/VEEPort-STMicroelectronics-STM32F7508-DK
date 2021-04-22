@@ -1,0 +1,7 @@
+/include/
+/lib/
+/link/
+/mocks/
+/scripts/*
+!/scripts/init-wadapps/
+!/scripts/init-watchdog/

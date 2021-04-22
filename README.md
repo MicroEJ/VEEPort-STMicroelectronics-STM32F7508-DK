@@ -1,1 +1,0 @@
-STM32F7508-DK platform with the latest pack and architecture

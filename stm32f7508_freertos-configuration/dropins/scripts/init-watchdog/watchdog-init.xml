@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ANT Buildfile
+
+  Copyright 2020-2021 MicroEJ Corp. All rights reserved.
+  This library is provided in source code for use, modification and test, subject to license terms.
+  Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+-->
+<project name="watchdog-init">
+
+	<!-- check the watchdog state -->
+	<condition property="watchdog-is-enabled-default">
+		<and>
+			<isset property="watchdog.enabled"/>
+			<istrue value="${watchdog.enabled}"/>
+			<not>
+				<isset property="watchdog.period"/>
+			</not>
+		</and>
+	</condition>
+	<condition property="watchdog-is-enabled-custom">
+		<and>
+			<isset property="watchdog.enabled"/>
+			<istrue value="${watchdog.enabled}"/>
+			<isset property="watchdog.period"/>
+		</and>
+	</condition>
+	<condition property="watchdog-is-disabled">
+		<and>
+			<isset property="watchdog.enabled"/>
+			<isfalse value="${watchdog.enabled}"/>
+		</and>
+	</condition>
+	<condition property="watchdog-not-set">
+		<not>
+			<isset property="watchdog.enabled"/>
+		</not>
+	</condition>
+
+	<!-- set the watchdog state value -->
+	<condition property="watchdog.config.value" value="1" else="2">
+		<and>
+			<isset property="watchdog.enabled"/>
+			<isfalse value="${watchdog.enabled}"/>
+		</and>
+	</condition>
+
+	<!-- set the watchdog period value -->
+	<condition property="watchdog.period.value" value="${watchdog.period}" else="0">
+		<isset property="watchdog.period"/>
+	</condition>
+
+	<!-- print a message depends on the watchdog state -->
+	<target name="watchdog-active-default" if="watchdog-is-enabled-default">
+		<echo message="The watchdog is enabled by the application with the default period. This behavior will reset the MCU after ~32 seconds of not executing the RTOS idle task" />
+	</target>
+	<target name="watchdog-active-custom" if="watchdog-is-enabled-custom">
+		<echo message="The watchdog is enabled by the application with a custom period. This behavior will reset the MCU after ${watchdog.period.value} ms of not executing the RTOS idle task" />
+	</target>
+	<target name="watchdog-inactive" if="watchdog-is-disabled">
+		<echo message="The watchdog is disabled by the application" />
+	</target>
+	<target name="watchdog-unset" if="watchdog-not-set" unless="onS3">
+		<echo message="The watchdog is not configured by the application, so it is enabled. This default behavior will reset the MCU after ~32 seconds of not executing the RTOS idle task" />
+	</target>
+
+	<target name="init/execution/watchdog" depends="watchdog-active-default, watchdog-active-custom, watchdog-inactive, watchdog-unset"
+		extensionOf="init/execution" if="onBoard">
+
+		<!-- create tmp dir -->
+		<local name="link.files.dir"/>
+		<microejtempfile deleteonexit="true" prefix="linkWatchdog" property="link.files.dir"/>
+		<mkdir dir="${link.files.dir}"/>
+
+		<!-- get tmp link file name -->
+		<local name="link.watchdog"/>
+		<property name="link.watchdog" value="${link.files.dir}/watchdog.lscf" />
+
+		<echoxml file="${link.watchdog}" append="false">
+			<lscFragment>
+				<defSymbol name="_watchdog_config" value="${watchdog.config.value}" rootSymbol="true"/>
+				<defSymbol name="_watchdog_period" value="${watchdog.period.value}" rootSymbol="true"/>
+			</lscFragment>
+		</echoxml>
+
+		<!-- add link file in linker's link files path -->
+		<augment id="partialLink.lscf.path">
+			<path location="${link.files.dir}"/>
+			<path location="${jpf.dir}/link"/>
+		</augment>
+	</target>
+</project>

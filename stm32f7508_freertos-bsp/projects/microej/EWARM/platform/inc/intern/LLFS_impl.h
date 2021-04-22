@@ -1,0 +1,35 @@
+/*
+ * C
+ *
+ * Copyright 2016-2019-2019 MicroEJ Corp. All rights reserved.
+ * MicroEJ Corp. PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
+/**
+ * @file
+ * @brief MicroEJ FS low level API
+ * @author MicroEJ Developer Team
+ * @version 2.1.0
+ * @date 27 May 2020
+ */
+
+#define LLFS_IMPL_initialize Java_com_is2t_java_io_FileSystem_initializeNative
+#define LLFS_IMPL_get_max_path_length Java_com_is2t_java_io_FileSystem_getMaxPathLength
+#define LLFS_IMPL_get_last_modified Java_com_is2t_java_io_FileSystem_lastModifiedNative
+#define LLFS_IMPL_set_read_only Java_com_is2t_java_io_FileSystem_setReadOnlyNative
+#define LLFS_IMPL_create Java_com_is2t_java_io_FileSystem_createNative
+#define LLFS_IMPL_open_directory Java_com_is2t_java_io_FileSystem_opendirNative
+#define LLFS_IMPL_read_directory Java_com_is2t_java_io_FileSystem_readdirNative
+#define LLFS_IMPL_close_directory Java_com_is2t_java_io_FileSystem_closedirNative
+#define LLFS_IMPL_rename_to Java_com_is2t_java_io_FileSystem_renameToNative
+#define LLFS_IMPL_get_length Java_com_is2t_java_io_FileSystem_lengthNative
+#define LLFS_IMPL_exist Java_com_is2t_java_io_FileSystem_existNative
+#define LLFS_IMPL_get_space_size Java_com_is2t_java_io_FileSystem_getSpaceSizeNative
+#define LLFS_IMPL_make_directory Java_com_is2t_java_io_FileSystem_mkdirNative
+#define LLFS_IMPL_is_hidden Java_com_is2t_java_io_FileSystem_isHiddenNative
+#define LLFS_IMPL_is_directory Java_com_is2t_java_io_FileSystem_isDirectoryNative
+#define LLFS_IMPL_is_file Java_com_is2t_java_io_FileSystem_isFileNative
+#define LLFS_IMPL_set_last_modified Java_com_is2t_java_io_FileSystem_setLastModifiedNative
+#define LLFS_IMPL_delete Java_com_is2t_java_io_FileSystem_deleteNative
+#define LLFS_IMPL_is_accessible Java_com_is2t_java_io_FileSystem_checkAccessNative
+#define LLFS_IMPL_set_permission Java_com_is2t_java_io_FileSystem_setPermissionNative

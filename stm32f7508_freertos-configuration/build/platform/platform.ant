@@ -1,0 +1,30 @@
+<!--
+	ANT
+
+	Copyright 2020 MicroEJ Corp. All rights reserved.
+	This library is provided in source code for use, modification and test, subject to license terms.
+	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+-->
+<project name="platform-pca">
+
+	<!--
+		Main script called by ../../configuration.xml
+	-->
+
+	<!--
+		Defines some properties used in by platform-xxx.ant scripts. These properties may already
+		exist (set by user's configuration.xml) but there are optional for the user. 
+	-->
+	<dirname file="${ant.file.platform-pca}" property="platform-pca.dir"/>
+	<property name="project.dir" location="${platform-pca.dir}/../.."/>
+	<dirname file="${project.dir}" property="project.parent.dir"/>
+
+	<!--
+		Import all platform-*.ant files
+	-->
+	<import optional="true">
+		<fileset dir="${platform-pca.dir}" includes="platform-*.ant" />
+		<path location="DUMMY" /> <!-- ensure the nested resources set is not empty -->
+	</import>
+	
+</project>

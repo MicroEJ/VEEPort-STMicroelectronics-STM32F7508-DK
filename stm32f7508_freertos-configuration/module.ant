@@ -1,0 +1,18 @@
+<!--
+	ANT
+
+	Copyright 2020-2021 MicroEJ Corp. All rights reserved.
+	This library is provided in source code for use, modification and test, subject to license terms.
+	Any modification of the source code will break MicroEJ Corp. warranties on the whole library..
+-->
+<project name="module">
+
+	<!--
+			Script called by MicroEJ Workbench when building the MMM module.
+		-->
+
+		<!-- Import Platform Configuration Additions build file -->
+		<dirname file="${ant.file.module}" property="module.dir"/>
+		<import file="${module.dir}/build/module/module.ant"/>
+
+</project>
