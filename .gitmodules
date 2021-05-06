@@ -1,6 +1,0 @@
-[submodule "easyant-build-component"]
-	path = easyant-build-component
-	url = https://gitlab.cross/Infra/I0048_EasyAnt-Build-Component.git
-[submodule "platformIntegration"]
-	path = platformIntegration
-	url = https://gitlab.cross/Infra/I0102_PlatformIntegration.git
