@@ -4,7 +4,7 @@
 	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.3.1
+.. |PLATFORM_VER| replace:: 1.3.2
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE

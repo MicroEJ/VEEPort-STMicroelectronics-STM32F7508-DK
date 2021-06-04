@@ -8,6 +8,17 @@
 ===========
 
 ----------------------
+ [1.3.2] - 2021-06-04
+----------------------
+
+Fixed
+=====
+
+- Fix platform type (MonoSandbox by default).
+- Fix documentation of the FS properties.
+- Enable printf for floats in STM32CubeIDE project.
+
+----------------------
  [1.3.1] - 2021-05-06
 ----------------------
 
