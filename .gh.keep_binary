@@ -23,10 +23,15 @@ stm32f7508_freertos-integration/documentation/_themes/microej/static/fonts/Sourc
 stm32f7508_freertos-integration/documentation/common/images/board/ESP32WROVER/model.jpg
 stm32f7508_freertos-configuration/dropins/javaAPIs/wadapps-1.0-api.jar
 stm32f7508_freertos-configuration/dropins/javaLibs/wadapps-1.0.jar
+stm32f7508_freertos-configuration/dropins/S3/javaLibs/profiles-debug-1.1.jar
+stm32f7508_freertos-configuration/dropins/S3/javaLibs/profiles-fs-1.1.jar
+stm32f7508_freertos-configuration/dropins/S3/S3/S3.jar
 stm32f7508_freertos-configuration/dropins/workbenchExtension_launchScriptFramework.jar
 stm32f7508_freertos-configuration/build/module/module-dropins/tools/license-checker.jar
 stm32f7508_freertos-configuration/build/module/module-dropins/workbenchExtension_launchScriptFramework.jar
+stm32f7508_freertos-configuration/build/module/module-dropins/scripts/deployToolBSPRunExtension.jar
 stm32f7508_freertos-bsp/projects/microej/EWARM/platform/lib/microejapp.o
 stm32f7508_freertos-bsp/projects/microej/EWARM/platform/lib/microejruntime.a
 stm32f7508_freertos-bsp/projects/microej/SW4STM32/platform/lib/microejapp.o
 stm32f7508_freertos-bsp/projects/microej/SW4STM32/platform/lib/microejruntime.a
+

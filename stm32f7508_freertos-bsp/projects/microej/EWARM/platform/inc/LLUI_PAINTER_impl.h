@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -45,7 +45,7 @@ extern "C" {
  *
  * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...)
  * {
- * 		// tell to graphical engine if drawing can be performed
+ * 		// tell to the Graphics Engine if drawing can be performed
  * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx))
  * 		{
  * 			DRAWING_Status status;
@@ -68,7 +68,7 @@ extern "C" {
  *
  * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...)
  * {
- * 		// tell to graphical engine if drawing can be performed
+ * 		// tell to the Graphics Engine if drawing can be performed
  * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx))
  * 		{
  * 			DRAWING_Status status;
@@ -247,7 +247,7 @@ typedef enum
 typedef struct
 {
 	/*
-	 * @brief Graphical engine reserved field.
+	 * @brief Graphics Engine reserved field.
 	 */
 	jint reserved0;
 
@@ -262,17 +262,19 @@ typedef struct
 	jchar height;
 
 	/*
-	 * @brief Graphical engine reserved field.
+	 * @brief Graphics Engine reserved field.
 	 */
 	jchar reserved1;
 
 	/*
 	 * @brief MicroUI Image pixel representation.
+	 *
+	 * The format is one value from the MICROUI_ImageFormat enumeration.
 	 */
-	MICROUI_ImageFormat format;
+	jbyte format;
 
 	/*
-	 * @brief Graphical engine reserved field.
+	 * @brief Graphics Engine reserved field.
 	 */
 	jbyte reserved2;
 
@@ -304,26 +306,26 @@ typedef struct
 	jint foreground_color;
 
 	/*
-	 * @brief Graphical engine reserved field.
+	 * @brief Graphics Engine reserved field.
 	 */
 	jint reserved0;
 
-	/**
+	/*
 	 * @brief Top-left X coordinate of current clip.
 	 */
 	jshort clip_x1;
 
-	/**
+	/*
 	 * @brief Top-left Y coordinate of current clip.
 	 */
 	jshort clip_y1;
 
-	/**
+	/*
 	 * @brief Bottom-right X coordinate of current clip.
 	 */
 	jshort clip_x2;
 
-	/**
+	/*
 	 * @brief Bottom-right Y coordinate of current clip.
 	 */
 	jshort clip_y2;

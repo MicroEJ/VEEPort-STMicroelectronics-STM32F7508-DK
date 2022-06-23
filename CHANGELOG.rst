@@ -1,11 +1,41 @@
 ..
-    Copyright 2020-2021 MicroEJ Corp. All rights reserved.
-    This library is provided in source code for use, modification and test, subject to license terms.
-    Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+    Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+    Use of this source code is governed by a BSD-style license that can be found with this software.
 
 ===========
  Changelog
 ===========
+
+----------------------
+ [1.4.0] - 2022-06-17
+----------------------
+
+Added
+=====
+
+- LLMJVM FreeRTOS 1.1.0
+
+Changed
+=======
+
+- Increase FreeRTOS heap size
+- Trace the DHCP requests
+- Change license terms to MicroEJ Corp. BSD-style license.
+
+Fixed
+=====
+
+- Added non-inclusion COREMARK and IPERF guarding blocks for OS specific HAL_Delay implementation.
+- Overriden putchar function is not thread safe.
+- OS specific HAL_Delay implementation.
+- Add ITCM write protection.
+- Enabled MPU instruction access in SDRAM.
+- Dropped specific MPU region for display implementation and used SDRAM cacheable.
+- Linker file correction to be able to build with various optimization levels.
+- Linker file move some sections to allow the build of the firmware.
+- Clear cache in the sd card driver.
+- Some paths are not valid in case-sensitive environment
+- Corrected initialization for external SDRAM for the display buffer - eliminated LTDC fifo underrun errors.
 
 ----------------------
  [1.3.2] - 2021-06-04

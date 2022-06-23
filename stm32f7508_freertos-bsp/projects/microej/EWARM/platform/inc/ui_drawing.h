@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -14,12 +14,12 @@ extern "C" {
  * @brief Provides drawing functions called by MicroUI native drawing functions.
  *
  * Default MicroUI native drawing functions implementations manage the synchronization
- * with the graphical engine and allow a third party drawer perform the drawings.
+ * with the Graphics Engine and allow a third party drawer perform the drawings.
  *
  * This header file lists all drawing functions to implement. This cut between MicroUI
  * native functions default implementation and this file allows to simplify the
  * writing of drawing functions: a drawing function has just to consider the drawing
- * itself and not the synchronization with the graphical engine.
+ * itself and not the synchronization with the Graphics Engine.
  *
  * The drawer has the responsibility to check the graphics context (when not disabled
  * by caller) and to update the new flush dirty area.
@@ -28,7 +28,7 @@ extern "C" {
  *
  * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...)
  * {
- * 		// tell to graphical engine if drawing can be performed
+ * 		// tell to the Graphics Engine if drawing can be performed
  * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx))
  * 		{
  * 			// perform the drawings and set drawing status
@@ -41,7 +41,7 @@ extern "C" {
  *
  * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...)
  * {
- * 		// tell to graphical engine if drawing can be performed
+ * 		// tell to the Graphics Engine if drawing can be performed
  * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx))
  * 		{
  * 			DRAWING_Status status;
@@ -64,17 +64,17 @@ extern "C" {
  * }
  *
  * This cut allows to use a third party drawer like a dedicated CPU (hardware accelerator).
- * However, all drawing functions are already implemented in graphical engine as
+ * However, all drawing functions are already implemented in the Graphics Engine as
  * weak implementation. This allows to override one or several functions without
  * the need to override all functions.
  *
- * Default graphical engine implementation is using software algorithms. However
+ * Default Graphics Engine implementation is using software algorithms. However
  * some software algorithms may call some others drawing functions. For instance
  * to draw a vertical line, a call to "fill rectangle" is performed. If the drawing
  * implementation file implements only "fill rectangle" function over a GPU, this
  * function will be used to draw vertical lines too.
  *
- * The default graphical engine software algorithms are listed in ui_drawing_soft.h.
+ * The default Graphics Engine software algorithms are listed in ui_drawing_soft.h.
  * This allows to the ui_drawing.h to test if it is able to perform a drawing and
  * if not, to call the software algorithm instead. For instance a GPU may be able
  * to draw an image applying a rotation but it can apply this rotation and a mirror
@@ -105,7 +105,7 @@ extern "C" {
  * A function has to return DRAWING_DONE when the drawing has been fully done during
  * the function call (synchronous drawing). When the drawing is performed by an
  * asynchronous third party process (software or hardware), the function has to
- * return DRAWING_RUNNING to notify to the graphical engine the drawing is not fully
+ * return DRAWING_RUNNING to notify to the Graphics Engine the drawing is not fully
  * done yet.
  */
 typedef enum

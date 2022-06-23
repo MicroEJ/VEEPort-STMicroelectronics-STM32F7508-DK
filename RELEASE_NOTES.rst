@@ -1,10 +1,9 @@
-..
-    Copyright 2020-2021 MicroEJ Corp. All rights reserved.
-	This library is provided in source code for use, modification and test, subject to license terms.
-	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+﻿..
+    Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+    Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.3.2
+.. |PLATFORM_VER| replace:: 1.4.0
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
@@ -41,18 +40,18 @@ This |PLATFORM| contains the following dependencies:
 .. list-table::
 
   * - flopi7G26 (Architecture)
-    - 7.14.0
+    - 7.16.1
   * - flopi7G26UI (User Interface)
-    - 13.0.6
+    - 13.2.0
 
 - MicroEJ IAR specific packs:
 
 .. list-table::
 
   * - flopi7I36 (Architecture)
-    - 7.14.0
+    - 7.16.0
   * - flopi7I36UI (User Interface)
-    - 13.0.6
+    - 13.2.0
 
 - MicroEJ generic packs:
 

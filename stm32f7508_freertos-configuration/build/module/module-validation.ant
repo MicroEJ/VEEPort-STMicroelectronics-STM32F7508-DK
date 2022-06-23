@@ -1,9 +1,8 @@
 <!--
 	ANT
 
-	Copyright 2020 MicroEJ Corp. All rights reserved.
-	This library is provided in source code for use, modification and test, subject to license terms.
-	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+	Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
 	
 -->
 <project name="module-validation" xmlns:ea="antlib:org.apache.easyant" xmlns:mam="antlib:com.is2t.mam.ant" xmlns:ivy="antlib:org.apache.ivy.ant">
@@ -61,7 +60,11 @@
 			</condition>
 		</fail>
 		<echo message="Execution of script '${bsp.microejscript.path}' started..."/>
-		<exec dir="${project.dir}" executable="${bsp.microejscript.path}" failonerror="true" />
+		<exec dir="${project.dir}" executable="${bsp.microejscript.path}" failonerror="true" osfamily="windows" />
+        <!-- OS family `unix` matches on both Linux and MacOS. -->
+        <exec dir="${project.dir}" executable="/bin/bash" failonerror="true" osfamily="unix">
+          <arg value="${bsp.microejscript.path}" />
+        </exec>
 		<echo message="Execution of script '${bsp.microejscript.path}' done."/>
 	</target>
 	

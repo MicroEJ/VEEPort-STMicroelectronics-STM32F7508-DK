@@ -1,10 +1,9 @@
 .. 
-	Copyright 2021 MicroEJ Corp. All rights reserved.
-	This library is provided in source code for use, modification and test, subject to license terms.
-	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+	Copyright 2021-2022 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.3.2
+.. |PLATFORM_VER| replace:: 1.4.0
 .. |RCP| replace:: MICROEJ SDK
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |PLATFORMS| replace:: MicroEJ Platforms
@@ -48,7 +47,7 @@ The following environment variables are customizable:
 
 **GCC toolchain**
 
-- ``ECLIPSE_CDT_INSTALLATION_DIR``: The path to Eclipse CDT installation directory  (already set to the STM32CubeIDE 1.3.0 default installation directory).
+- ``ECLIPSE_CDT_INSTALLATION_DIR``: The path to Eclipse CDT installation directory  (already set to the STM32CubeIDE 1.9.0 default installation directory).
 - ``CUBE_PROGRAMMER_DIR=``: The path to Cube Programmer installation directory (already set to the Cube Programmer default installation directory).
 - ``ECLIPSE_CDT_WORKSPACE_DIR``: The path to the workspace directory in which the project will be imported. (already set to the ``xxx/stm32f7508_freertos-bsp/projects/microej/cdt_workspace`` directory).
 - ``ECLIPSE_CDT_PROJECT_CONFIGURATION``: The project configuration (``Debug`` or ``Release``).
@@ -105,7 +104,7 @@ GCC Debugging
 - Open the CDT project in STM32CubeIDE:
 
   - Go to ``File > Import... > General > Existing Projects into Workspace``
-  - Check ``Select root directory`` and browse for the ``-bsp/projects/microej/SW4STM32`` directorr
+  - Check ``Select root directory`` and browse for the ``-bsp/projects/microej/SW4STM32`` directory
   - Select ``application`` project 
   - Ensure that ``Copy projects into workspace`` is not checked and click on Finish.
   - Ensure that the ``Debug`` Build configuration is selected

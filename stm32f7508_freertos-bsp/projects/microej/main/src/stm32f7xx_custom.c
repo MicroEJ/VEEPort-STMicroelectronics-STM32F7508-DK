@@ -37,6 +37,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
 
+/* @brief If COREMARK or IPERF tests are active, we don't use this implementation */
+#if !defined(COREMARK) && !defined(IPERF)
+#include "FreeRTOS.h"
+#include "task.h"
+#endif
+
 /** @addtogroup STM32F7xx_HAL_Driver
   * @{
   */
@@ -48,6 +54,12 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+
+/**< @brief This is the minimum delay in RTOS ticks for which a non-blocking
+ * delay is preferred.
+ */
+#define MIN_RTOS_TICKS_DELAY 10
+
 /* Private macro -------------------------------------------------------------*/
 /* Exported variables ---------------------------------------------------------*/
 /** @addtogroup HAL_Exported_Variables
@@ -55,6 +67,8 @@
   */
 extern __IO uint32_t uwTick;
 extern HAL_TickFreqTypeDef uwTickFreq;
+
+
 /**
   * @}
   */
@@ -89,6 +103,74 @@ void HAL_IncTick(void)
 {
   uwTick += uwTickFreq;
 }
+
+
+/* @brief If COREMARK or IPERF tests are active, we don't use this implementation */
+#if !defined(COREMARK) && !defined(IPERF)
+
+/*============================================================================*/
+/**
+ * @brief This function provides a blocking delay (in milliseconds).
+ * @details It uses the system tick timer.
+ * @param Delay specifies the delay time length, in milliseconds.
+ * @retval None
+ * @author
+ * @date
+ * @version 1: DDP (2021-07-9): adopted a previous implementation.
+ */
+__STATIC_INLINE void HAL_Delay_Blocking(__IO uint32_t Delay) {
+
+	uint32_t tickstart = HAL_GetTick();
+	while ((HAL_GetTick() - tickstart) < Delay){
+	}
+}
+/*============================================================================*/
+
+/*============================================================================*/
+/**
+ * @brief This function provides a delay (in milliseconds).
+ * @details It uses default implementation if the RTOS is not started or the
+ * delay is to small (in respect to the RTOS ticks).
+ * @param Delay specifies the delay time length, in milliseconds.
+ * @retval None
+ * @author
+ * @date
+ * @version 1: DDP (2021-07-9): adapted a previous implementation.
+ */
+void HAL_Delay(__IO uint32_t Delay)
+{
+
+#if (1 == INCLUDE_xTaskGetSchedulerState)
+	/* if the RTOS scheduler is started we can use the RTOS delay task */
+	if (taskSCHEDULER_NOT_STARTED != xTaskGetSchedulerState()){
+#else
+#error Definition 'INCLUDE_xTaskGetSchedulerState' required but not set.
+#endif  /* INCLUDE_xTaskGetSchedulerState */
+
+/* we also check if the vTaskDelay is included */
+#if (1 == INCLUDE_vTaskDelay)
+		TickType_t ticks = Delay / portTICK_PERIOD_MS;
+		if (ticks > ((TickType_t) MIN_RTOS_TICKS_DELAY)){
+			vTaskDelay(ticks);
+		} else{
+			HAL_Delay_Blocking(Delay); /* implement the default blocking delay */
+		} /* minimum threshold ticks not reached */
+
+#else /* the RTOS specific non-blocking delay is not included */
+		HAL_Delay_Blocking(Delay); /* so we implement blocking delay */
+#endif /* INCLUDE_vTaskDelay */
+		return;
+#if (1 == INCLUDE_xTaskGetSchedulerState)
+	}
+#endif  /* INCLUDE_xTaskGetSchedulerState */
+
+/* we use the blocking delay implementation (RTOS not started) */
+	HAL_Delay_Blocking(Delay);
+}
+/*============================================================================*/
+
+#endif
+
 
 /**
   * @}

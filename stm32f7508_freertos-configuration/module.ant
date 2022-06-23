@@ -1,18 +1,41 @@
 <!--
 	ANT
 
-	Copyright 2020-2021 MicroEJ Corp. All rights reserved.
-	This library is provided in source code for use, modification and test, subject to license terms.
-	Any modification of the source code will break MicroEJ Corp. warranties on the whole library..
+	Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <project name="module">
 
 	<!--
-			Script called by MicroEJ Workbench when building the MMM module.
-		-->
+		Script called by MicroEJ Workbench when building the MMM module.
+	-->
+	<dirname file="${ant.file.module}" property="module.dir"/>
 
-		<!-- Import Platform Configuration Additions build file -->
-		<dirname file="${ant.file.module}" property="module.dir"/>
-		<import file="${module.dir}/build/module/module.ant"/>
+	<!--
+	Provide the right `bsp.properties` file depending of the used toolchain
+	-->
+	<fail unless="xpf.toolchain.name" message="Set the property `xpf.toolchain.name`"/>
 
+	<condition property="bsp.properties.filename" value="bsp_gcc.properties">
+		<contains string="${xpf.toolchain.name}" substring="GCC" />
+	</condition>
+
+	<condition property="bsp.properties.filename" value="bsp_iar.properties">
+		<contains string="${xpf.toolchain.name}" substring="IAR" />
+	</condition>
+
+	<property name="bsp.properties.file" value="${module.dir}/bsp/${bsp.properties.filename}"/>
+
+	<fail message="Cannot find `${bsp.properties.file}`, you're using a toolchain that does not match a supported BSP project">
+		<condition>
+			<not>
+				<available file="${bsp.properties.file}" type="file" />
+			</not>
+		</condition>
+	</fail>
+
+	<copy tofile="${module.dir}/bsp/bsp.properties" file="${bsp.properties.file}" overwrite="true" />
+
+	<!-- Import Platform Configuration Additions build file -->
+	<import file="${module.dir}/build/module/module.ant"/>
 </project>

@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2022 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
 /*
- * @brief Provides some functions to use the graphical engine from the adaptation
+ * @brief Provides some functions to use the graphics engine from the adaptation
  * layer (for the implementation of LLUI_DISPLAY_impl.h, LLUI_PAINTER_impl.h,
  * and LLDW_PAINTER_impl.h).
  */
@@ -56,7 +56,7 @@ typedef enum
 } LLUI_DISPLAY_Status;
 
 // --------------------------------------------------------------------------------
-// Functions provided by the graphical engine
+// Functions provided by the graphics engine
 // --------------------------------------------------------------------------------
 
 /*
@@ -362,11 +362,20 @@ bool LLUI_DISPLAY_isTransparent(MICROUI_Image* image);
  * @brief Updates the flush dirty area. This dirty area will be merged with the
  * current dirty area and given as parameter in LLUI_DISPLAY_IMPL_flush() function.
  *
- * This function is useless when the given graphics context is not the display (in
- * this case this call has no effect). Caller can check that calling LLUI_DISPLAY_isLCD()
- * before.
+ * This function is useless when the graphics context where the drawing has been performed
+ * is not the display (in this case this call has no effect). Caller can check that calling
+ * LLUI_DISPLAY_isLCD() before.
  *
- * @param[in] gc the MicroUI GraphicsContext.
+ * This function can be called by the drawing native implementation or by the GPU callback
+ * function. The graphics engine automatically checks if the current drawing concerns
+ * the display or not.
+ *
+ * When this function is called by the drawing native implementation, this function must
+ * be called before LLUI_DISPLAY_setDrawingStatus().
+ *
+ * When this function is called by the GPU callback function, this function must be
+ * called before LLUI_DISPLAY_notifyAsynchronousDrawingEnd().
+ *
  * @param[in] xmin the dirty area top-left X coordinate.
  * @param[in] ymin the dirty area top-left Y coordinate.
  * @param[in] xmax the dirty area bottom-right X coordinate.
@@ -374,11 +383,11 @@ bool LLUI_DISPLAY_isTransparent(MICROUI_Image* image);
  *
  * @return true when dirty area has been updated or false when the specified dirty
  * area is out of current clip or when the given graphics context does not target
- * the LCD.
+ * the display.
  */
-bool LLUI_DISPLAY_setDrawingLimits(MICROUI_GraphicsContext* graphicsContext, jint xmin, jint ymin, jint xmax, jint ymax);
+bool LLUI_DISPLAY_setDrawingLimits(jint xmin, jint ymin, jint xmax, jint ymax);
 
-/**
+/*
  * @brief Converts the 32-bit ARGB color format (A-R-G-B) into the display color
  * format.
  *
@@ -392,6 +401,30 @@ bool LLUI_DISPLAY_setDrawingLimits(MICROUI_GraphicsContext* graphicsContext, jin
 uint32_t LLUI_DISPLAY_convertARGBColorToDisplayColor(uint32_t color);
 
 /*
+ * @brief Converts the display color format into a 32-bit ARGB color format (A-R-G-B).
+ *
+ * Note: the alpha level may be ignored if the display pixel representation does
+ * not hold the alpha level information. In this case, the returned alpha level is
+ * 0xff (full opaque).
+ *
+ * @param[in] color the color to convert.
+ *
+ * @return the converted color.
+ */
+uint32_t LLUI_DISPLAY_convertDisplayColorToARGBColor(uint32_t color);
+
+/*
+ * Returns the 32-bit ARGB color format (A-R-G-B) of a pixel of the image.
+ *
+ * @param[in] image the MicroUI Image.
+ * @param[in] x the x coordinate of the pixel.
+ * @param[in] y the y coordinate of the pixel.
+ *
+ * @return an ARGB8888 color or 0 if the pixel is out-of-bounds.
+ */
+uint32_t LLUI_DISPLAY_readPixel(MICROUI_Image* img, int32_t x, int32_t y);
+
+/*
  * @brief Blends two colors applying a global alpha factor.
  *
  * @param[in] foreground the ARGB8888 foreground color.
@@ -403,17 +436,14 @@ uint32_t LLUI_DISPLAY_convertARGBColorToDisplayColor(uint32_t color);
 uint32_t LLUI_DISPLAY_blend(uint32_t foreground, uint32_t background, uint32_t alpha);
 
 /*
- * @brief Allocates a memory area in images heap.
- *
- * Implementation can fix the minimal row alignment the allocator has to respect.
- * This is useful when a third party hardware (GPU) has some constraints about it.
+ * @brief Allocates a memory area in the images heap.
  *
  * On success, caller has to use the functions LLUI_DISPLAY_getBufferAddress() and
  * LLUI_DISPLAY_getStride*() to retrieve image buffer characteristics.
  *
  * @param[in] image the MicroUI Image.
- * @param[in] rowAlignmentInBytes minimal row constraint alignment (in bytes); give
- * 0 when there is no constraint.
+ * @param[in] rowAlignmentInBytes @deprecated and not used: allocator will call
+ * LLUI_DISPLAY_IMPL_getNewImageStrideInBytes() function instead.
  *
  * @return false when buffer cannot be allocated (out of memory)
  */
@@ -437,7 +467,7 @@ void LLUI_DISPLAY_freeImageBuffer(MICROUI_Image* img);
 void LLUI_DISPLAY_flushDone(bool from_isr);
 
 /*
- * @brief Requests the graphical engine to start a drawing. This allows to suspend
+ * @brief Requests the graphics engine to start a drawing. This allows to suspend
  * another Java thread until the drawing is performed. In addition, this call may
  * suspend the current thread until the previous drawing is done. In this case, a
  * second call to the caller will be automatically performed.
@@ -451,7 +481,7 @@ void LLUI_DISPLAY_flushDone(bool from_isr);
  *
  * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...)
  * {
- * 		// tell to graphical engine if drawing can be performed
+ * 		// tell to graphics engine if drawing can be performed
  * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx))
  * 		{
  * 			// perform the drawings (respecting clip if not disabled)
@@ -473,10 +503,12 @@ void LLUI_DISPLAY_flushDone(bool from_isr);
 bool LLUI_DISPLAY_requestDrawing(MICROUI_GraphicsContext* gc, SNI_callback callback);
 
 /*
- * @brief Notifies the graphical engine about the drawing status.
+ * @brief Notifies the graphics engine about the drawing status.
  *
  * This function must be called when the call to LLUI_DISPLAY_requestDrawing() has
  * returned true.
+ *
+ * After this call, the next call to LLUI_DISPLAY_setDrawingLimits() is ignored.
  *
  * @param[in] status drawing status: drawing is done (synchronous drawing): DRAWING_DONE
  * or drawing has been launched / is running (asynchronous drawing): DRAWING_RUNNING.
@@ -486,6 +518,8 @@ void LLUI_DISPLAY_setDrawingStatus(DRAWING_Status status);
 /*
  * @brief Callback to call by LLUI_DISPLAY_IMPL implementation when the asynchronous
  * drawing (launched just after the call to LLUI_DISPLAY_requestDrawing()) is finished.
+ *
+ * After this call, the next call to LLUI_DISPLAY_setDrawingLimits() is ignored.
  *
  * @param[in] from_isr true when this function is called from an interrupt context.
  */

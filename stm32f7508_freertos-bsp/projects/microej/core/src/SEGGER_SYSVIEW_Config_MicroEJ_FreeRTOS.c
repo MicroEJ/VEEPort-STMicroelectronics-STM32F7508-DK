@@ -63,8 +63,8 @@ Purpose : Setup configuration of SystemView with MicroEJ and FreeRTOS.
 */
 #include "FreeRTOS.h"
 #include "SEGGER_SYSVIEW.h"
-#include "LLMJVM_MONITOR_SYSVIEW.h"
-#include "LLTRACE_SYSVIEW_configuration.h"
+#include "LLMJVM_MONITOR_sysview.h"
+#include "LLTRACE_sysview_configuration.h"
 
 extern const SEGGER_SYSVIEW_OS_API SYSVIEW_X_OS_TraceAPI;
 

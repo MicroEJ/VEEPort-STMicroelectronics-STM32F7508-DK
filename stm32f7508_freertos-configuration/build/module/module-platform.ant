@@ -1,9 +1,8 @@
 <!--
 	ANT
 
-	Copyright 2020 MicroEJ Corp. All rights reserved.
-	This library is provided in source code for use, modification and test, subject to license terms.
-	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+	Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
 	
 -->
 <project name="module-platform" xmlns:ea="antlib:org.apache.easyant" xmlns:mam="antlib:com.is2t.mam.ant" xmlns:ivy="antlib:org.apache.ivy.ant">
@@ -111,6 +110,7 @@
 	
 	<!-- Prepare platform configuration file according selected MicroEJ Architecture -->
 	<target name="module-platform:description" extensionOf="abstract-compile:compile-ready" depends="module-platform:architecture:check">
+
 		<!-- Load platform configuration file -->
 		<xmlproperty 
 			file="${project.dir}/${com.microej.platformbuilder.platform.filename}"
@@ -143,9 +143,23 @@
 	
 	<!-- Check the platform output folder -->
 	<target name="module-platform:project:check" extensionOf="abstract-compile:compile-ready" depends="module-platform:description">
-
+		
 		<!-- Use same naming convention than MicroEJ Workbench-->
 		<property name="platform.project.name" value="${configuration.platform(hardwarePartNumber)}-${platform.name}-${microej.architecture.toolchain}-${platform.version}"/>
+
+		<!-- Error when the platform project does not exist  -->
+        <condition property="platform.project.file.expected" value="${project.parent.dir}/${configuration.platform(hardwarePartNumber)}-${platform.project.name.expected}-${microej.architecture.toolchain}-${platform.version}/.project">
+          <isset property="platform.project.name.expected" />
+        </condition>
+		<fail message=".${line.separator}
+			Output platform '${platform.project.file.expected}' does not exist.">
+			<condition>
+			  <and>
+                    <isset property="platform.project.file.expected" />
+				    <not><available file="${platform.project.file.expected}" type="file"/></not>
+				</and>
+			</condition>
+        </fail>
 		
 		<!-- Error when output folder exists and not denote a platform project -->
 		<fail message=".${line.separator}
@@ -158,11 +172,12 @@
 					<or>
 						<not><resourcecontains resource="${project.parent.dir}/${platform.project.name}/.project" substring="jpfNature"/></not>
 						<not><resourcecontains resource="${project.parent.dir}/${platform.project.name}/.project" substring="jpfBuilder"/></not>
+						<not><resourcecontains resource="${project.parent.dir}/${platform.project.name}/.project" substring="${platform.project.name}"/></not>
 					</or>
 				</and>
 			</condition>
 		</fail>
-		
+			
 		<condition property="platform.expected.project.exist" value="true">
 			<available file="${project.parent.dir}/${platform.project.name}" type="dir"/>
 		</condition>

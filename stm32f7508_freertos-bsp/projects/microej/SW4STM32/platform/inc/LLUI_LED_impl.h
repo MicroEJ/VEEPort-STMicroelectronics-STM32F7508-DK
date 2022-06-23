@@ -45,7 +45,9 @@ extern "C" {
 jint LLUI_LED_IMPL_initialize(void);
 
 /**
- * @brief Get the intensity of the LED.
+ * @brief Get the intensity of the LED. The implementation should be able to return
+ * the state of an LED. If it is not able to do so (for example `GPIO` is not accessible
+ * in read mode), the BSP has to save the LED state in a global variable.
  *
  * @param[in] ledID the LED identifier.
  *

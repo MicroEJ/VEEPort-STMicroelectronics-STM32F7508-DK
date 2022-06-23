@@ -17,3 +17,6 @@ stm32f7508_freertos-configuration/dropins/scripts/init-bsp/
 stm32f7508_freertos-configuration/dropins/scripts/init-license-checker/
 stm32f7508_freertos-configuration/dropins/tools/license-checker.jar
 stm32f7508_freertos-configuration/dropins/workbenchExtension_launchScriptFramework.jar
+
+# Ignore STM32CubeIDE generated files
+stm32f7508_freertos-bsp/projects/microej/cdt_workspace/.metadata/

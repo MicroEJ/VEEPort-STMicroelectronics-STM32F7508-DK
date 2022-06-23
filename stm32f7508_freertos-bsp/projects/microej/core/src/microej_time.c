@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2015-2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2015-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -181,7 +181,7 @@ void microej_time_init(void)
 	HAL_NVIC_EnableIRQ(TIM2_IRQn);
 }
 
-int64_t microej_time_getcurrenttime(uint8_t isPlatformTime)
+int64_t microej_time_get_current_time(uint8_t isPlatformTime)
 {
 	/*
 	 * /!\
@@ -198,14 +198,14 @@ int64_t microej_time_getcurrenttime(uint8_t isPlatformTime)
 	}
 }
 
-int64_t microej_time_gettimenanos(void)
+int64_t microej_time_get_time_nanos(void)
 {
 	return time_hardware_timer_getAndCheckTicks() * 1000;
 }
 
-void microej_time_setapplicationtime(int64_t t)
+void microej_time_set_application_time(int64_t t)
 {
-	int64_t currentTime = (int64_t)microej_time_getcurrenttime(MICROEJ_TRUE);
+	int64_t currentTime = (int64_t) microej_time_get_current_time(MICROEJ_TRUE);
 	microej_application_time_offset = t - currentTime;
 }
 
@@ -215,7 +215,7 @@ void microej_time_setapplicationtime(int64_t t)
  * to milliseconds results in a value greater than or equals to given time).
  * Return a saturated number of ticks or 0 if given time is negative.
  */
-int64_t microej_time_timeToTick(int64_t time)
+int64_t microej_time_time_to_tick(int64_t time)
 {
 	if (time < 0) {
 		return 0;

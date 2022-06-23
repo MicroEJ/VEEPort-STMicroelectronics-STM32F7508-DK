@@ -1,10 +1,9 @@
 ..
-    Copyright 2020-2021 MicroEJ Corp. All rights reserved.
-	This library is provided in source code for use, modification and test, subject to license terms.
-	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+    Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+    Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.3.2
+.. |PLATFORM_VER| replace:: 1.4.0
 .. |RCP| replace:: MICROEJ SDK
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |PLATFORMS| replace:: MicroEJ Platforms
@@ -64,9 +63,9 @@ Board Technical Specifications
    * - Internal RAM size
      - 340 KB
    * - External flash size
-     - 128 MB
+     - 128 Mb
    * - External RAM size
-     - 64 MB 
+     - 64 Mb 
    * - Power supply
      - ST-LINK USB  V\ :sub:`BUS`\  or external sources
 
@@ -78,7 +77,7 @@ Here is a list of |BOARD_NAME| useful documentation links:
 Platform Specifications
 =======================
 
-The Architecture version is ``7.14.0``.
+The Architecture version is ``7.16.1`` for GCC compiler and ``7.16.0`` for IAR compiler.
 
 This Platform provides the following Foundation Libraries:
 
@@ -97,6 +96,8 @@ This Platform provides the following Foundation Libraries:
      - 1.1
    * - ECOM-COMM
      - 1.1
+   * - ECOM-SOCKET
+     - 1.0
    * - EDC
      - 1.3
    * - FS
@@ -106,11 +107,17 @@ This Platform provides the following Foundation Libraries:
    * - KF
      - 1.5
    * - MICROUI
-     - 3.0
+     - 3.1
    * - NET
      - 1.1
+   * - NET-EMBEDDED-DNS-NATIVE
+     - 1.2
    * - NLS
      - 2.0
+   * - PUMP
+     - 2.0
+   * - RESOURCEMANAGER
+     - 1.0
    * - SECURITY
      - 1.3
    * - SNI
@@ -122,6 +129,8 @@ This Platform provides the following Foundation Libraries:
    * - TRACE
      - 1.1
    * - WADAPPS
+     - 1.0
+   * - WATCHDOG
      - 1.0
 
 The |PLATFORM| is derived into:
@@ -147,13 +156,14 @@ BSP Setup
 
 Install at least one of the following C IDEs:
 
-- The STM32CubeIDE version 1.3.0 for |BOARD_NAME|, available `here <https://www.st.com/en/development-tools/stm32cubeide.html>`__
+- The STM32CubeIDE version 1.9.0 for |BOARD_NAME|, available `here <https://www.st.com/en/development-tools/stm32cubeide.html>`__ (also requires STM32CubeProgrammer, available `here <https://www.st.com/en/development-tools/stm32cubeprog.html>`__)
 - The IAR EmbeddedWorkbench version 8.50.5 for |BOARD_NAME|, available `here <https://www.iar.com/iar-embedded-workbench/>`__
 
 STM32CubeIDE Setup
 ------------------
 
 1. Install STM32CubeIDE.
+2. Install STM32CubeProgrammer.
 
 IAR Embedded Workbench Setup
 ----------------------------
@@ -161,7 +171,8 @@ IAR Embedded Workbench Setup
 1. Install IAR Embedded Workbench.
 2. Unzip the patch found here ``/stm32f7508_freertos-bsp/sdk/Utilities/PC_Software/patch/EWARM/``.
 3. Execute the self-extracting archive ``EWARM_v7_ValueLine_STM32F7x0x8_Supportv4.0.exe``.
-4. Apply the extracted patch to IAR Embedded Workbench installation directory (e.g. ``C:/Program Files (x86)/IAR Sys-tems/Embedded Workbench 8.4/``).
+4. Apply the extracted patch to IAR Embedded Workbench installation directory (e.g. ``C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.4/``).
+
 
 BSP Compilation
 ---------------
@@ -170,11 +181,19 @@ The Platform provides a pre-compiled Mono-Sandbox Application for each toolchain
 Validate the BSP installation by compiling the BSP to build a MicroEJ
 Firmware.
 
+**Using the provided build scripts**
+
 To build the ``stm32f750-freertos-bsp`` project, open a
 terminal:
 
 - If you are using the GCC toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/SW4STM32``.
 - If you are using the IAR toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/EWARM``.
+
+.. note::
+
+  The build script expects the toolchain to be installed at a known
+  path. If you installed it elsewhere or if you are using a different IDE version from the one listed above, see `README MicroEJ BSP`_ for
+  how to customize its path.
 
 Run the following commands:
 
@@ -186,9 +205,30 @@ Run the following commands:
 
 The BSP project build is launched. Please wait for the end of the build.
 
-The build script expects the toolchain to be installed at a known
-path.  If you installed it elsewhere, see `README MicroEJ BSP`_ for
-how to customize its path.
+**Using STM32CubeIDE**
+
+Import the projects in the workspace:
+
+- ``File`` > ``Import`` > ``General`` > ``Existing Projects into Workspace`` >
+  ``Next``
+- Point ``Select root directory`` to ``stm32f750-freertos-bsp/projects/```
+- Click ``Finish``
+
+Build the BSP:
+- Right-click on ``application (in SW4STM32)`` project in your STM32CubeIDE workspace
+- Click on ``Build Project``
+
+**Using IAR Embedded Workbench**
+
+Import the projects in the workspace:
+
+- ``File`` > ``Open workspace`` 
+- Select ``application.eww` from ``stm32f7508_freertos-bsp\projects\microej\EWARM``
+- Click ``Open``
+
+Build the BSP:
+- Select ``Debug`` or ``Release`` from the dropdown in the ``Workspace`` view
+- Right-click on ``application`` and select ``Make``
 
 Board Setup
 ===========
@@ -211,6 +251,8 @@ bootloader. Please Follow the steps below:
 - Open a terminal.
 - If you are using the GCC toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/SW4STM32``.
 - If you are using the IAR toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/EWARM``.
+
+To ensure that your board is detected by your PC, open your Windows device manager and check at your ports, you should see the STMicroelectronics STLink Virtual COM port (COMx where x is the number of the port).
 
 **On Windows:**
 
@@ -269,7 +311,7 @@ Platform Import
 
 Import the projects in |RCP| Workspace:
 
-- ``File`` > ``Import`` > ``Existing Projects into Workspace`` >
+- ``File`` > ``Import`` > ``General`` > ``Existing Projects into Workspace`` >
   ``Next``
 - Point ``Select root directory`` to where the project was cloned.
 - Click ``Finish``
@@ -296,21 +338,23 @@ prefixed by the given name:
   Contains the |RCP| Platform project for the GCC toolchain which is empty by default until
   the Platform is built. This platform project will be the one built by default. To build using
   IAR toolchain instead, please see the note below.
-
+  
 - ``STM32F7508-Platform-CM7hardfp_IAR83-{version}``:
   Contains the |RCP| Platform project for the IAR toolchain which is empty by default until
   the Platform is built. This platform project will not be the one used by default. To build using
   IAR toolchain instead, please see the note below.
 
 By default, the Platform is configured as a Mono-Sandbox Evaluation
-Platform. To build the platform you need a MicroEJ license, if you don't have one, follow the procedure described 
-`here <https://docs.microej.com/en/latest/overview/licenses.html>`__.
+Platform which will allow you to run any application on the Simulator.
+However, to be able to run an application on the Device you need a license, if you don't have one, follow the procedure described
+`here <https://docs.microej.com/en/latest/SDKUserGuide/licenses.html>`__.
+
 
 .. note::
 
-  The default toolchain is GCC.
-  If you want to switch to the IAR toolchain, open ``stm32f7508_freertos-configuration/module.properties``
-  and follow its documentation to set the ``xpf.name`` and ``xpf.toolchain.name`` properties.
+  | The default toolchain is GCC.
+  | If you want to switch to the IAR toolchain:
+- Open ``stm32f7508_freertos-configuration/module.properties`` and follow its documentation to set the ``xpf.name``, ``xpf.toolchain.name`` and ``xpf.version`` properties.
 
 .. note::
 
@@ -347,8 +391,14 @@ The Platform project should be refreshed with no error in the |RCP|
 ``STM32F7508-Platform-CM7hardfp_GCC48-{version}``, or ``STM32F7508-Platform-CM7hardfp_IAR83-{version}``
 if you changed the toolchain for IAR.
 
-Please refer to
-https://docs.microej.com/en/latest/ApplicationDeveloperGuide/standaloneApplication.html
+.. note::
+
+  If the platform still shows an error, proceed to a manual refresh of the MicroEJ SDK package explorer (``right click in the package explorer`` -> ``Refresh``)
+
+Please refer to https://docs.microej.com/en/latest/PlatformDeveloperGuide/platformOverview.html#build-process 
+for more details about the MicroEJ platform build process
+
+Please refer to https://docs.microej.com/en/latest/ApplicationDeveloperGuide/standaloneApplication.html
 for more information on how to build a MicroEJ Standalone Application.
 
 Testsuite Configuration

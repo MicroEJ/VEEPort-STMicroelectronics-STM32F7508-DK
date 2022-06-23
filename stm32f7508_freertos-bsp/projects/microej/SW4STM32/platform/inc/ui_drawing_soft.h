@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -11,12 +11,12 @@ extern "C" {
 #endif
 
 /*
- * @brief Provides the same functions than ui_drawing.h but available in graphical
- * engine. They are implemented in software and can be used by the ui_drawing.h
+ * @brief Provides the same functions than ui_drawing.h but available in the Graphics
+ * Engine. They are implemented in software and can be used by the ui_drawing.h
  * implementation. Please refer to ui_drawing.h to have more information about the
  * aim of these functions.
  *
- * Contrary to functions listed in ui_drawing.h, the graphical engine functions
+ * Contrary to functions listed in ui_drawing.h, the Graphics Engine functions
  * are blocking. If a software algorithm is using a third party function listed in
  * ui_drawing.h (see ui_drawing.h file comment), a "wait end of drawing"
  * is automatically performed.
@@ -32,7 +32,7 @@ extern "C" {
 #include "LLUI_PAINTER_impl.h"
 
 // --------------------------------------------------------------------------------
-// Functions provided by the graphical engine
+// Functions provided by the Graphics Engine
 // --------------------------------------------------------------------------------
 
 /*

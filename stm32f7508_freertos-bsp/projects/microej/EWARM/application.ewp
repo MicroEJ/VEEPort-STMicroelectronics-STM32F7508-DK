@@ -369,12 +369,12 @@
                     <state>$PROJ_DIR$\..\ui\inc</state>
                     <state>$PROJ_DIR$\..\util\inc</state>
                     <state>$PROJ_DIR$\..\watchdog\inc</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\Components\Common</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\STM32F7508-Discovery</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Core\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\STM32F7xx_HAL_Driver\Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\Components\Common</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\STM32F7508-Discovery</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Core\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\STM32F7xx_HAL_Driver\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FatFs\src</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\CMSIS_RTOS</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\include</state>
@@ -1464,12 +1464,12 @@
                     <state>$PROJ_DIR$\..\ui\inc</state>
                     <state>$PROJ_DIR$\..\util\inc</state>
                     <state>$PROJ_DIR$\..\watchdog\inc</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\Components\Common</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\STM32F7508-Discovery</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Core\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\STM32F7xx_HAL_Driver\Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\Components\Common</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\STM32F7508-Discovery</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Core\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\STM32F7xx_HAL_Driver\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FatFs\src</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\CMSIS_RTOS</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\include</state>
@@ -1847,7 +1847,7 @@
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IlinkKeepSymbols</name>
@@ -2851,6 +2851,9 @@
             <name>security</name>
             <group>
                 <name>src</name>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_RANDOM_impl.c</name>
+                </file>
                 <file>
                     <name>$PROJ_DIR$\..\security\src\LLSEC_X509_CERT_mbedtls.c</name>
                 </file>

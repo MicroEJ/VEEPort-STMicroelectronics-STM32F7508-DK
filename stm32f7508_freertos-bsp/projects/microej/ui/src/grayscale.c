@@ -55,7 +55,7 @@
 static uint8_t get_format(MICROUI_Image* gc)
 {
 	// get image format, TODO work item 14458
-	uint8_t format = gc->format;
+	uint8_t format = (MICROUI_ImageFormat)gc->format;
 
 	// grayscale converter does not manage some image formats
 	if (format == RLE1_ID || format > ARGB4444_ID)

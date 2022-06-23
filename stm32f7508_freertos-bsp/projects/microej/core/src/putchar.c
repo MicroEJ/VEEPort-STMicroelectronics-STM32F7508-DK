@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2015-2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2015-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -80,11 +80,9 @@ static void PUTCHAR_init(void)
 
 }
 
-/* Public functions ----------------------------------------------------------*/
-
-int fputc(int ch, FILE *f)
+static int PUTCHAR(int ch)
 {
-	if(!putchar_initialized)
+	if (!putchar_initialized)
 	{
 		PUTCHAR_init();
 		putchar_initialized = 1;
@@ -95,7 +93,9 @@ int fputc(int ch, FILE *f)
 	return ch;
 }
 
-int putchar(int ch)
+/* Public functions ----------------------------------------------------------*/
+
+int fputc(int ch, FILE *f)
 {
 	if (!putchar_initialized)
 	{
@@ -114,7 +114,7 @@ int _write(int file, char *data, int len)
 
     for (bytes_written = 0; bytes_written < len; bytes_written++)
     {
-		putchar(*data);
+		PUTCHAR(*data);
 		data++;
     }
 

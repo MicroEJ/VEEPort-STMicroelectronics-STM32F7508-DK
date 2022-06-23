@@ -23,14 +23,11 @@
 #include "drawing_dma2d.h"
 
 /* Defines -------------------------------------------------------------------*/
-
 // Define size to allocate for Display Buffer
-#define DISPLAY_MEM_SIZE 0x80000 /* Back and Frame buffers: (480 * 272 * (16 / 8)) * 2. Rounded up to fill completely an MPU region */
-
-// Declare Display Buffer
-uint8_t display_mem[DISPLAY_MEM_SIZE] __ALIGNED(DISPLAY_MEM_SIZE) __attribute__((section(".DisplayMem")));
-
 #define BUFFER_SIZE (RK043FN48H_WIDTH * RK043FN48H_HEIGHT * (DRAWING_DMA2D_BPP / 8))
+#define DISPLAY_MEM_SIZE (BUFFER_SIZE*2) /* Because of the double buffering mechanism this is selected like this */
+// Declare Display Buffer
+uint8_t display_mem[DISPLAY_MEM_SIZE] __attribute__((section(".DisplayMem")));
 
 #define BACK_BUFFER ((int32_t)&display_mem[0])
 #define FRAME_BUFFER (BACK_BUFFER + BUFFER_SIZE)
@@ -43,35 +40,6 @@ static SemaphoreHandle_t dma2d_sem;
 extern LTDC_HandleTypeDef hLtdcHandler;
 
 /* Private API ---------------------------------------------------------------*/
-
-static void MPU_Config(void)
-{
-	MPU_Region_InitTypeDef MPU_InitStruct;
-
-	/* Disable the MPU */
-	HAL_MPU_Disable();
-
-	/* Set common MPU attributes */
-	MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-	MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-	MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
-	MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
-	MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-	MPU_InitStruct.SubRegionDisable = 0x00;
-
-	/* Configure the MPU region for SDRAM display buffers (strongly-ordered) */
-	/* See AN4861 LCD-TFT display controller (LTDC) on STM32 MCUs, Chapter 4.6.2 */
-	MPU_InitStruct.BaseAddress = BACK_BUFFER;
-	MPU_InitStruct.Size = MPU_REGION_SIZE_512KB;
-	MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-	MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
-	MPU_InitStruct.Number = MPU_REGION_NUMBER5;
-	HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-	/* Enable the MPU */
-	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-}
-
 static void lcd_enable_interrupt(void)
 {
 	// ask to reload buffer address
@@ -130,8 +98,6 @@ void HAL_LTDC_ReloadEventCallback(LTDC_HandleTypeDef *hltdc)
 
 void LLUI_DISPLAY_IMPL_initialize(LLUI_DISPLAY_SInitData* init_data)
 {
-	MPU_Config();
-
 	BSP_LCD_Init();
 
 	BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER, FRAME_BUFFER);

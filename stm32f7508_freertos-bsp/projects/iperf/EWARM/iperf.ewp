@@ -359,12 +359,12 @@
                     <state>$PROJ_DIR$\..\..\microej\net\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\thirdparty\systemview\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\thirdparty\systemview-freertos\inc</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\Components\Common</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\STM32F7508-Discovery</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Core\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\STM32F7xx_HAL_Driver\Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\Components\Common</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\STM32F7508-Discovery</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Core\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\STM32F7xx_HAL_Driver\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\CMSIS_RTOS</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\include</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\portable\IAR\ARM_CM7\r0p1</state>
@@ -1441,12 +1441,12 @@
                     <state>$PROJ_DIR$\..\..\microej\net\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\thirdparty\systemview\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\thirdparty\systemview-freertos\inc</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\Components\Common</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\STM32F7508-Discovery</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Core\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\STM32F7xx_HAL_Driver\Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\Components\Common</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\STM32F7508-Discovery</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Core\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\STM32F7xx_HAL_Driver\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\CMSIS_RTOS</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\include</state>
                     <state>$PROJ_DIR$\..\..\..\third_party\FreeRTOS\Source\portable\IAR\ARM_CM7\r0p1</state>

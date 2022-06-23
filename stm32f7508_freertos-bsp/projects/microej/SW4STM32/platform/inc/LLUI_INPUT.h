@@ -1,5 +1,5 @@
 /* 
- * Copyright 2012-2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2012-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -445,6 +445,24 @@ LLUI_INPUT_Status LLUI_INPUT_sendStateEvent(jint statesEventGeneratorID, jint st
  * @return the maximum usage of the native events buffer.
  */
 jint LLUI_INPUT_getMaxEventsBufferUsage(void);
+
+
+/**
+ * @brief Dumps the MicroUI FIFO.
+ *
+ * MicroUI FIFO contains some events and some optional events' data. MicroUI FIFO is not able to
+ * interpret these events and data. The interpretation is delegated to LLUI_INPUT_IMPL_log_dump().
+ * The default logger does nothing and by consequence a call to LLUI_INPUT_dump() has no
+ * effect.
+ *
+ * Events (and data) are dumped from older to newer. They are dumped in two categories: the events
+ * (and data) that are already executed (past) and the events (and data) that are not executed yet
+ * (future).
+ *
+ * This function must only be called from the MicroJvm virtual machine thread context and only from a native function or callback.
+ * Calling this function from another context may lead to undefined behavior and should be done only for debug purpose.
+ */
+void LLUI_INPUT_dump(void);
 
 #ifdef __cplusplus
 	}

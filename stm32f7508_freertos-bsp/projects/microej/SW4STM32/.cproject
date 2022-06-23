@@ -19,9 +19,9 @@
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.1813556416" name="MCU ARM GCC" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug">
 							<option id="com.st.stm32cube.ide.mcu.option.internal.toolchain.type.617559255" name="Internal Toolchain Type" superClass="com.st.stm32cube.ide.mcu.option.internal.toolchain.type" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-tools-for-stm32" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.option.internal.toolchain.version.1880085940" name="Internal Toolchain Version" superClass="com.st.stm32cube.ide.mcu.option.internal.toolchain.version" useByScannerDiscovery="false" value="7-2018-q2-update" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1910051957" name="Mcu" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="false" value="STM32F750N8Hx" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid.97401223" name="CpuId" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid" useByScannerDiscovery="false" value="0" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid.597049455" name="CpuCoreId" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1910051957" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="false" value="STM32F750N8Hx" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid.97401223" name="CPU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid" useByScannerDiscovery="false" value="0" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid.597049455" name="Core" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.1169250699" name="Floating-point unit" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.value.fpv5-sp-d16" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.1130988141" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.hard" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.2072998526" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="STM32F7508-DK" valueType="string"/>
@@ -114,16 +114,17 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="comm/|config/|core/|fs/|hal/|main/|net/|platform/|sdk/|security/|ssl/|systemview/|systemview_freertos/|third_party/|trace/|ui/|util/|watchdog/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="kf|comm/|config/|core/|fs/|hal/|main/|net/|platform/|sdk/|security/|ssl/|systemview/|systemview_freertos/|third_party/|trace/|ui/|util/|watchdog/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="comm"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="config"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="fs"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="hal"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="kf"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="main"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="net"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="platform"/>
-						<entry excluding="Drivers/BSP/Components/adv7533/|Drivers/BSP/Components/ampire480272/|Drivers/BSP/Components/ampire640480/|Drivers/BSP/Components/Common/|Drivers/BSP/Components/exc7200/|Drivers/BSP/Components/ft6x06/|Drivers/BSP/Components/mfxstm32l152/|Drivers/BSP/Components/mx25l512/|Drivers/BSP/Components/n25q128a/|Drivers/BSP/Components/n25q512a/|Drivers/BSP/Components/otm8009a/|Drivers/BSP/Components/ov5640/|Drivers/BSP/Components/ov9655/|Drivers/BSP/Components/rk043fn48h/|Drivers/BSP/Components/s5k5cag/|Drivers/BSP/Components/st7735/|Drivers/BSP/Components/st7789h2/|Drivers/BSP/Components/stmpe811/|Drivers/BSP/Components/ts3510/|Drivers/BSP/Components/wm8994/|Utilities/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="sdk"/>
+						<entry excluding="Drivers/BSP/Components/adv7533/|Drivers/BSP/Components/ampire480272/|Drivers/BSP/Components/ampire640480/|Drivers/BSP/Components/Common/|Drivers/BSP/Components/exc7200/|Drivers/BSP/Components/ft6x06/|Drivers/BSP/Components/mfxstm32l152/|Drivers/BSP/Components/mx25l512/|Drivers/BSP/Components/n25q128a/|Drivers/BSP/Components/n25q512a/|Drivers/BSP/Components/otm8009a/|Drivers/BSP/Components/ov5640/|Drivers/BSP/Components/ov9655/|Drivers/BSP/Components/rk043fn48h/|Drivers/BSP/Components/s5k5cag/|Drivers/BSP/Components/st7735/|Drivers/BSP/Components/st7789h2/|Drivers/BSP/Components/stmpe811/|Drivers/BSP/Components/ts3510/|Drivers/BSP/Components/wm8994/|Utilities/|Drivers/BSP/STM32F7508-Discovery/stm32f7508_discovery_qspi.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="sdk"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="security"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ssl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="systemview"/>
@@ -133,7 +134,6 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ui"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="util"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="watchdog"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="kf"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -157,14 +157,14 @@
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.release.1658178307" name="MCU ARM GCC" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.release">
 							<option id="com.st.stm32cube.ide.mcu.option.internal.toolchain.type.1884321585" name="Internal Toolchain Type" superClass="com.st.stm32cube.ide.mcu.option.internal.toolchain.type" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-tools-for-stm32" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.option.internal.toolchain.version.1056215420" name="Internal Toolchain Version" superClass="com.st.stm32cube.ide.mcu.option.internal.toolchain.version" useByScannerDiscovery="false" value="7-2018-q2-update" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1117746592" name="Mcu" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="false" value="STM32F750N8Hx" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid.583301406" name="CpuId" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid" useByScannerDiscovery="false" value="0" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid.1678401078" name="CpuCoreId" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1117746592" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="false" value="STM32F750N8Hx" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid.583301406" name="CPU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid" useByScannerDiscovery="false" value="0" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid.1678401078" name="Core" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.401041157" name="Floating-point unit" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.value.fpv5-sp-d16" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.262967720" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.hard" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.1930400822" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="STM32F7508-DK" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1804474341" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.3 || Release || false || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-tools-for-stm32 || STM32F7508-DK || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../Drivers/CMSIS/Include | ../Drivers/CMSIS/Device/ST/STM32F7xx/Include | ../Core/Inc | ../Drivers/STM32F7xx_HAL_Driver/Inc | ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy ||  ||  || USE_HAL_DRIVER | STM32F750xx ||  || Drivers | Core/Startup | Core ||  ||  || ${workspace_loc:/${ProjName}/STM32F750N8HX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o || " valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat.268140137" name="Use float with printf from newlib-nano (-u _printf_float)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat" useByScannerDiscovery="false" value="false" valueType="boolean"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat.268140137" name="Use float with printf from newlib-nano (-u _printf_float)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.convertbinary.985006948" name="Convert to binary file (-O binary)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.convertbinary" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex.922254401" name="Convert to Intel Hex file (-O ihex)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.1844037620" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
@@ -252,26 +252,26 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="comm/|config/|core/|fs/|hal/|main/|net/|platform/|sdk/|security/|ssl/|systemview/|systemview_freertos/|third_party/|trace/|ui/|util/|watchdog/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="kf|comm/|config/|core/|fs/|hal/|main/|net/|platform/|sdk/|security/|ssl/|systemview/|systemview_freertos/|third_party/|trace/|ui/|util/|watchdog/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="comm"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="config"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="fs"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="hal"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="kf"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="main"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="net"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="platform"/>
-						<entry excluding="Drivers/BSP/Components/adv7533/|Drivers/BSP/Components/ampire480272/|Drivers/BSP/Components/ampire640480/|Drivers/BSP/Components/Common/|Drivers/BSP/Components/exc7200/|Drivers/BSP/Components/ft6x06/|Drivers/BSP/Components/mfxstm32l152/|Drivers/BSP/Components/mx25l512/|Drivers/BSP/Components/n25q128a/|Drivers/BSP/Components/n25q512a/|Drivers/BSP/Components/otm8009a/|Drivers/BSP/Components/ov5640/|Drivers/BSP/Components/ov9655/|Drivers/BSP/Components/rk043fn48h/|Drivers/BSP/Components/s5k5cag/|Drivers/BSP/Components/st7735/|Drivers/BSP/Components/st7789h2/|Drivers/BSP/Components/stmpe811/|Drivers/BSP/Components/ts3510/|Drivers/BSP/Components/wm8994/|Utilities/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="sdk"/>
+						<entry excluding="Drivers/BSP/Components/adv7533/|Drivers/BSP/Components/ampire480272/|Drivers/BSP/Components/ampire640480/|Drivers/BSP/Components/Common/|Drivers/BSP/Components/exc7200/|Drivers/BSP/Components/ft6x06/|Drivers/BSP/Components/mfxstm32l152/|Drivers/BSP/Components/mx25l512/|Drivers/BSP/Components/n25q128a/|Drivers/BSP/Components/n25q512a/|Drivers/BSP/Components/otm8009a/|Drivers/BSP/Components/ov5640/|Drivers/BSP/Components/ov9655/|Drivers/BSP/Components/rk043fn48h/|Drivers/BSP/Components/s5k5cag/|Drivers/BSP/Components/st7735/|Drivers/BSP/Components/st7789h2/|Drivers/BSP/Components/stmpe811/|Drivers/BSP/Components/ts3510/|Drivers/BSP/Components/wm8994/|Utilities/|Drivers/BSP/STM32F7508-Discovery/stm32f7508_discovery_qspi.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="sdk"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="security"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ssl"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="systemview"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="systemview_freertos"/>
 						<entry excluding="FatFs/src/option/ccsbcs.c|FreeRTOS/Source/portable/IAR/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="third_party"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ui"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="trace"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ui"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="util"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="watchdog"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="kf"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

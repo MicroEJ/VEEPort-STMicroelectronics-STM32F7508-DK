@@ -407,11 +407,19 @@ static void MPU_Config (void)
   MPU_InitStruct.BaseAddress = 0xC0000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
-  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
+  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER4;
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
-  /* TCM does not need MPU */
+  /* We configure the ITCM region (starts @0x00000000 and has a length of 16K)  to be  RO for privileged and unprivileged mode.
+   * For this - we will have only instruction access enable. */
+  MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RO_URO;
+  MPU_InitStruct.BaseAddress = 0x00000000;
+  MPU_InitStruct.Size = MPU_REGION_SIZE_16KB;
+  MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
+  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
+  MPU_InitStruct.Number = MPU_REGION_NUMBER5;
+  HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
   /* Enable the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);

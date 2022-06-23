@@ -357,12 +357,12 @@
                     <state>$PROJ_DIR$\..\..\microej\config\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\core\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\main\inc</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\Components\Common</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\STM32F7508-Discovery</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Core\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\STM32F7xx_HAL_Driver\Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\Components\Common</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\STM32F7508-Discovery</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Core\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\STM32F7xx_HAL_Driver\Inc</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1430,12 +1430,12 @@
                     <state>$PROJ_DIR$\..\..\microej\config\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\core\inc</state>
                     <state>$PROJ_DIR$\..\..\microej\main\inc</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\Components\Common</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\BSP\STM32F7508-Discovery</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Core\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\sdk\drivers\STM32F7xx_HAL_Driver\Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\Components\Common</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\BSP\STM32F7508-Discovery</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Core\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Device\ST\STM32F7xx\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\CMSIS\Include</state>
+                    <state>$PROJ_DIR$\..\..\..\sdk\Drivers\STM32F7xx_HAL_Driver\Inc</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>

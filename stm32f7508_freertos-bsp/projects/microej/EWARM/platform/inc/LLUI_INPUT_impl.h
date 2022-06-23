@@ -1,5 +1,5 @@
 /* 
- * Copyright 2012-2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2012-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -22,12 +22,12 @@ extern "C" {
 // --------------------------------------------------------------------------------
 
 /**
- * @brief Called by the input stack at startup to initialize all input devices.
+ * @brief Called by the input engine at startup to initialize all input devices.
  */
 void LLUI_INPUT_IMPL_initialize(void);
 
 /**
- * @brief Called by the input stack at startup to get the initial state of the given state
+ * @brief Called by the input engine at startup to get the initial state of the given state
  * machine. Only called if a <code>states</code> event generator is defined
  * in the static microui initializer xml file.
  *
@@ -64,11 +64,102 @@ jint LLUI_INPUT_IMPL_getInitialStateValue(jint stateMachinesID, jint stateID);
 void LLUI_INPUT_IMPL_enterCriticalSection(void);
 
 /**
- * @brief Called by the input stack when exiting from a critical section.
+ * @brief Called by the input engine when exiting from a critical section.
  *
  * @see LLUI_INPUT_enterCriticalSection.
  */
 void LLUI_INPUT_IMPL_leaveCriticalSection(void);
+
+// --------------------------------------------------------------------------------
+// Optional functions to implement
+// --------------------------------------------------------------------------------
+
+/**
+ * @brief Initializes the MicroUI FIFO elements dumper.
+ *
+ * MicroUI FIFO contains some events and some optional events' data. MicroUI FIFO is not able to
+ * interpret these events and data. The logger must save event (or data)'s metadata to
+ * be able to interpret the event when dumping the FIFO.
+ *
+ * The default logger uses LLTRACE_IMPL_record_event_xxx logger.
+ *
+ * @param[in] length the MicroUI FIFO (queue) size.
+ *
+ * @see LLUI_INPUT_dump().
+ */
+void LLUI_INPUT_IMPL_log_queue_init(uint32_t length);
+
+/**
+ * @brief Called by the input engine when an event (or its data) cannot be added to the MicroUI
+ * FIFO because the queue is full.
+ *
+ * The default logger uses LLTRACE_IMPL_record_event_xxx logger.
+ *
+ * @param[in] data the event or data that cannot be added to the queue.
+ */
+void LLUI_INPUT_IMPL_log_queue_full(uint32_t data);
+
+/**
+ * @brief Called by the input engine when an event (or its data) is added to the MicroUI
+ * FIFO.
+ *
+ * The default logger uses LLTRACE_IMPL_record_event_xxx logger.
+ *
+ * @param[in] data the event or data added to the queue.
+ * @param[in] index the event or data's index in queue.
+ * @param[in] remaining_elements available number of remaining data to add in the queue
+ * to store the full event.
+ * @param[in] queue_length available number of events and data not executed by MicroUI pump.
+ */
+void LLUI_INPUT_IMPL_log_queue_add(uint32_t data, uint32_t index, uint32_t remaining_elements, uint32_t queue_length);
+
+/**
+ * @brief Called by the input engine when an event (or its data) replaces an older event (or data)
+ * in the MicroUI FIFO.
+ *
+ * The default logger uses LLTRACE_IMPL_record_event_xxx logger.
+ *
+ * @param[in] old the replaced event or data.
+ * @param[in] data the new event or data.
+ * @param[in] index the event or data's index in queue.
+ * @param[in] queue_length available number of events and data not executed by MicroUI pump.
+ */
+void LLUI_INPUT_IMPL_log_queue_replace(uint32_t old, uint32_t data, uint32_t index, uint32_t queue_length);
+
+/**
+ * @brief Called by the input engine when an event (or its data) is read by the MicroUI pump.
+ *
+ * The default logger uses LLTRACE_IMPL_record_event_xxx logger.
+ *
+ * @param[in] data the event or data read by pump.
+ * @param[in] index the event or data's index in queue.
+ */
+void LLUI_INPUT_IMPL_log_queue_read(uint32_t data, uint32_t index);
+
+/**
+ * @brief Dumps a MicroUI FIFO element (event or data) or the dump status.
+ *
+ * The default logger does nothing and by consequence a call to LLUI_INPUT_dump() has no
+ * effect.
+ *
+ * The dump status are:
+ * - 0: start the dump: all next logs are the events or events' data already
+		consumed ("past" events) and first log is the latest event or data
+		stored in the queue.
+ * - 1: next logs are the events or data not consumed yet ("future" events).
+ * - 2: the dump will log the Java objects associated with the events that are not
+ * 		consumed yet ("future" events); this feature is only available with the
+ * 		MicroEJ Architecture 7.16 and higher.
+ * - 3: end of dump.
+ *
+ * @param[in] log_type true when the data is an event or a data, false when the
+ * data is a dump status.
+ * @param[in] log the 32-bit event or data, or the dump status.
+ * @param[in] index the event or data's index in queue (ignored when the data is a dump status).
+ *
+ * @see LLUI_INPUT_dump().
+ */
+void LLUI_INPUT_IMPL_log_dump(bool log_type, uint32_t log, uint32_t index);
 
 // --------------------------------------------------------------------------------
 // EOF

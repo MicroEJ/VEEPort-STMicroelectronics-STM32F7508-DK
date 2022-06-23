@@ -1,5 +1,5 @@
 /* 
- * Copyright 2011-2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2011-2021 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -26,42 +26,50 @@ extern "C" {
 // Typedef and Structure
 // --------------------------------------------------------------------------------
 
-/**
- * @brief Defines a binary semaphore used by graphical engine.
+/*
+ * @brief Defines a binary semaphore used by the Graphics Engine.
  */
 typedef void* LLUI_DISPLAY_binary_semaphore;
 
 /*
  * @brief LLUI_DISPLAY_IMPL initialization data.
  *
- * Defines the element the implementation has to initialize when graphical engine
+ * Defines the element the implementation has to initialize when the Graphics Engine
  * is calling the function LLUI_DISPLAY_IMPL_initialize.
  */
 typedef struct
 {
 	/*
-	 * @brief Binary semaphore used by the graphical engine.
+	 * @brief Binary semaphore used by the Graphics Engine.
 	 *
 	 * This semaphore must be configured in a state such that the semaphore must
 	 * first be 'given' before it can be 'taken'.
+	 *
+	 * This semaphore is reserved for the Graphics Engine. The LLUI_DISPLAY_IMPL.h
+	 * implementation is not allowed to use this semaphore to synchronize the function
+	 * LLUI_DISPLAY_IMPL_flush() with the display driver (or for any other synchronization
+	 * actions). The implementation must create its own semaphores in addition with
+	 * this dedicated Graphics Engine's semaphore.
 	 */
 	LLUI_DISPLAY_binary_semaphore* binary_semaphore_0;
 
 	/*
-	 * @brief Binary semaphore used by the graphical engine.
+	 * @brief Binary semaphore used by the Graphics Engine.
 	 *
 	 * This semaphore must be configured in a state such that the semaphore must
 	 * first be 'given' before it can be 'taken'.
+	 *
+	 * For more information on this semaphore, refer to the binary_semaphore_0's documentation.
 	 */
 	LLUI_DISPLAY_binary_semaphore* binary_semaphore_1;
 
 	/*
 	 * @brief Back buffer address on startup.
 	 *
-	 * This buffer will be used by the graphical engine to draw application drawings.
+	 * This buffer will be used by the Graphics Engine to draw application drawings.
 	 * In COPY and DIRECT modes, this buffer address is used during all application
-	 * runtime. In SWITCH mode, this buffer address will be internally updated by
-	 * graphical engine (see LLUI_DISPLAY_IMPL_flush()).
+	 * runtime. In SWITCH mode, this buffer address will be internally updated by the
+	 * Graphics Engine (see LLUI_DISPLAY_IMPL_flush()).
 	 */
 	uint8_t* back_buffer_address;
 
@@ -87,7 +95,7 @@ typedef struct
 	 * 		memory_width * memory_height * bpp / 8.
 	 *
 	 * Keep this value to 0 when memory_width is equals to lcd_width. An error is
-	 * thrown by the graphical engine when memory_width is smaller than lcd_width.
+	 * thrown by the Graphics Engine when memory_width is smaller than lcd_width.
 	 */
 	uint32_t memory_width;
 
@@ -103,7 +111,7 @@ typedef struct
 	 * 		memory_width * memory_height * bpp / 8.
 	 *
 	 * Keep this value to 0 when memory_height is equals to lcd_height. An error is
-	 * thrown by the graphical engine when memory_height is smaller than lcd_height.
+	 * thrown by the Graphics Engine when memory_height is smaller than lcd_height.
 	 */
 	uint32_t memory_height;
 
@@ -113,8 +121,8 @@ typedef struct
 // Functions that must be implemented
 // --------------------------------------------------------------------------------
 
-/**
- * @brief Initializes the display driver. Called by front panel graphical engine when
+/*
+ * @brief Initializes the display driver. Called by the Graphics Engine when
  * MicroEJ application is calling MicroUI.start().
  *
  * Given structure must be initialized with expected data. See LLUI_DISPLAY_SInitData
@@ -124,14 +132,14 @@ typedef struct
  */
 void LLUI_DISPLAY_IMPL_initialize(LLUI_DISPLAY_SInitData* init_data);
 
-/**
+/*
  * @brief Takes the binary semaphore.
  *
  * @param[in] binary_semaphore the binary semaphore to take.
  */
 void LLUI_DISPLAY_IMPL_binarySemaphoreTake(void* binary_semaphore);
 
-/**
+/*
  * @brief Gives the binary semaphore.
  *
  * @param[in] binary_semaphore the binary semaphore to give.
@@ -139,7 +147,7 @@ void LLUI_DISPLAY_IMPL_binarySemaphoreTake(void* binary_semaphore);
  */
 void LLUI_DISPLAY_IMPL_binarySemaphoreGive(void* binary_semaphore, bool from_isr);
 
-/**
+/*
  * @brief Performs a flush.
  *
  * The content of given square in graphics buffer (back buffer) must be displayed
@@ -160,7 +168,7 @@ void LLUI_DISPLAY_IMPL_binarySemaphoreGive(void* binary_semaphore, bool from_isr
  * 		to perform the copy and return. The buffer address to return must be equal
  * 		to the given buffer address. At the end of the asynchronous copy, LLUI_DISPLAY
  * 		implementation has to call the function LLUI_DISPLAY_flushDone() to notify
- * 		to the graphical engine the back buffer is now free and can be reused to
+ * 		to the Graphics Engine the back buffer is now free and can be reused to
  * 		perform the next drawing operations.
  *
  * 		- In SWITCH mode, the implementation has to set the new display buffer address
@@ -172,7 +180,7 @@ void LLUI_DISPLAY_IMPL_binarySemaphoreGive(void* binary_semaphore, bool from_isr
  * 		a DMA or another OS task to perform the copy and return. The buffer address
  * 		to return must be the old frame buffer address. At the end of the asynchronous
  * 		copy, LLUI_DISPLAY implementation has to call the function LLUI_DISPLAY_flushDone()
- * 		to notify to the graphical engine the new back buffer is now free and can
+ * 		to notify to the Graphics Engine the new back buffer is now free and can
  * 		be reused to perform the next drawing operations.
  *
  * The new display buffer given as parameter can be also retrieved calling
@@ -193,7 +201,54 @@ uint8_t* LLUI_DISPLAY_IMPL_flush(MICROUI_GraphicsContext* gc, uint8_t* sourceAdd
 // Optional functions to implement
 // --------------------------------------------------------------------------------
 
-/**
+/*
+ * @brief Initializes the MicroUI images heap. This heap is used to decode at runtime PNG
+ * images, to store the MicroUI BufferedImage, etc.
+ * <p>
+ * The heap size is fixed by the MicroEJ application launcher. It is allocated in the
+ * section <code>.bss.microui.display.imagesHeap</code>.
+ * <p>
+ * This function is not called by the Graphics Engine if the size is too small. By consequence,
+ * all allocations will return an out of memory error.
+ * <p>
+ * The default implementation is using a best fit allocator:
+ * <code>
+ * 		BESTFIT_ALLOCATOR_new(&image_heap);
+		BESTFIT_ALLOCATOR_initialize(&image_heap, (int32_t)heap_start, (int32_t)heap_limit);
+ * </code>
+ *
+ * @param[in] heap_start bss section start address.
+ * @param[in] heap_limit bss section end address + 1.
+ */
+void LLUI_DISPLAY_IMPL_image_heap_initialize(uint8_t* heap_start, uint8_t* heap_limit);
+
+/*
+ * @brief Allocates a block in the images heap.
+ * <p>
+ * The default implementation is using a best fit allocator:
+ * <code>
+ * 		return (uint8_t*)BESTFIT_ALLOCATOR_allocate(&image_heap, (int32_t)size);
+ * </code>
+ *
+ * @param[in] size the block size.
+ *
+ * @return the block address or NULL in case of out of memory.
+ */
+uint8_t* LLUI_DISPLAY_IMPL_image_heap_allocate(uint32_t size);
+
+/*
+ * @brief Frees a block in images heap.
+ * <p>
+ * The default implementation is using a best fit allocator:
+ * <code>
+ * 		BESTFIT_ALLOCATOR_free(&image_heap, (void*)block);
+ * </code>
+ *
+ * @param[in] block the block to free.
+ */
+void LLUI_DISPLAY_IMPL_image_heap_free(uint8_t* block);
+
+/*
  * @brief Sets the new contrast. By default the weak function does nothing (feature
  * not supported).
  *
@@ -201,14 +256,14 @@ uint8_t* LLUI_DISPLAY_IMPL_flush(MICROUI_GraphicsContext* gc, uint8_t* sourceAdd
  */
 void LLUI_DISPLAY_IMPL_setContrast(uint32_t contrast);
 
-/**
+/*
  * @brief Gets the current contrast. By default the weak function returns 0.
  *
  * @return a value between 0 and 100.
  */
 uint32_t LLUI_DISPLAY_IMPL_getContrast(void);
 
-/**
+/*
  * @brief Returns true when the display module can manage the display backlight,
  * false otherwise. By default the weak function returns false (feature not supported).
  *
@@ -216,7 +271,7 @@ uint32_t LLUI_DISPLAY_IMPL_getContrast(void);
  */
 bool LLUI_DISPLAY_IMPL_hasBacklight(void);
 
-/**
+/*
  * @brief Sets the new backlight value. By default the weak function does nothing
  * (feature not supported).
  *
@@ -224,14 +279,14 @@ bool LLUI_DISPLAY_IMPL_hasBacklight(void);
  */
 void LLUI_DISPLAY_IMPL_setBacklight(uint32_t backlight);
 
-/**
+/*
  * @brief Gets the current backlight value. By default the weak function returns
  * 0.
  * @return a value between 0 and 100.
  */
 uint32_t LLUI_DISPLAY_IMPL_getBacklight(void);
 
-/**
+/*
  * @brief Asks if the display is a colored display or not.
  *
  * @return true when the display is not a grayscale display, false otherwise. By
@@ -240,7 +295,7 @@ uint32_t LLUI_DISPLAY_IMPL_getBacklight(void);
  */
 bool LLUI_DISPLAY_IMPL_isColor(void);
 
-/**
+/*
  * @brief Returns the number of colors the display can display.
  *
  * Usually the number of colors is 1 << BPP (BPP without transparency bits). By default
@@ -250,7 +305,7 @@ bool LLUI_DISPLAY_IMPL_isColor(void);
  */
 uint32_t LLUI_DISPLAY_IMPL_getNumberOfColors(void);
 
-/**
+/*
  * @brief Asks if the display uses an underlying double buffer (either hardware
  * or software).
  *
@@ -261,7 +316,7 @@ uint32_t LLUI_DISPLAY_IMPL_getNumberOfColors(void);
  */
 bool LLUI_DISPLAY_IMPL_isDoubleBuffered(void);
 
-/**
+/*
  * @brief Converts the 32-bit ARGB color format (A-R-G-B) into the display color
  * format.
  *
@@ -276,7 +331,7 @@ bool LLUI_DISPLAY_IMPL_isDoubleBuffered(void);
  *
  * The implementation should not directly call this function when performing a drawing.
  * It must call LLUI_DISPLAY_convertARGBColorToDisplayColor() instead in case of this
- * conversion is graphical engine built-in (standard display)
+ * conversion is Graphics Engine built-in (standard display)
  *
  * @param[in] color the color to convert.
  *
@@ -284,7 +339,7 @@ bool LLUI_DISPLAY_IMPL_isDoubleBuffered(void);
  */
 uint32_t LLUI_DISPLAY_IMPL_convertARGBColorToDisplayColor(uint32_t color);
 
-/**
+/*
  * @brief Converts the display color format into a 32-bit ARGB color format (A-R-G-B).
  *
  * This function is called only when the display is not a standard display: when
@@ -294,7 +349,8 @@ uint32_t LLUI_DISPLAY_IMPL_convertARGBColorToDisplayColor(uint32_t color);
  * whereas it is required, the result of pixel drawing is unknown.
  *
  * Note: the alpha level may be ignored if the display pixel representation does
- * not hold the alpha level information.
+ * not hold the alpha level information. In this case, the returned alpha level is
+ * 0xff (full opaque).
  *
  * @param[in] color the color to convert.
  *
@@ -302,7 +358,7 @@ uint32_t LLUI_DISPLAY_IMPL_convertARGBColorToDisplayColor(uint32_t color);
  */
 uint32_t LLUI_DISPLAY_IMPL_convertDisplayColorToARGBColor(uint32_t color);
 
-/**
+/*
  * @brief Prepares the blending of two ARGB colors.
  *
  * This function is called only when the display is not a standard display: when
@@ -334,7 +390,7 @@ uint32_t LLUI_DISPLAY_IMPL_convertDisplayColorToARGBColor(uint32_t color);
  */
 bool LLUI_DISPLAY_IMPL_prepareBlendingOfIndexedColors(uint32_t* foreground, uint32_t* background);
 
-/**
+/*
  * @brief Use an hardware image decoder to create a RAW image.
  *
  * The RAW image format is given by expectedFormat parameter. The decoder can choose
@@ -359,7 +415,7 @@ bool LLUI_DISPLAY_IMPL_prepareBlendingOfIndexedColors(uint32_t* foreground, uint
  * means the implementation can choose the better output format).
  * @param[in/out] image the reserved MicroUI Image; implementation has to fill it
  * with the image characteristics.
- * @param[out] isFullyOpaque a boolean to notify to the graphical engine that the
+ * @param[out] isFullyOpaque a boolean to notify to the  that the
  * decoded image is fully opaque or not; when fully opaque, the software algorithms
  * which use the image as source image are often faster (even if the image format
  * contains alpha levels).
@@ -380,6 +436,9 @@ LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length
  *
  * This value can be retrieved later using the functions LLUI_DISPLAY_getStrideInBytes()
  * and LLUI_DISPLAY_getStrideInPixels().
+ *
+ * This function is only called when the number of bits-per-pixel is higher or equals
+ * to 8. For lower values, default stride is always used.
  *
  * By default the weak function returns default row stride.
  *

@@ -15,13 +15,36 @@ IF %ERRORLEVEL% NEQ 0 (
 
 REM Save application current directory and jump this script's directory
 SET CURRENT_DIRECTORY=%CD%
-CD %~dp0%
+
+IF EXIST "%CURRENT_DIRECTORY%\%ECLIPSE_CDT_PROJECT_CONFIGURATION%\%ECLIPSE_CDT_PROJECT_NAME%.elf" (
+   DEL "%CURRENT_DIRECTORY%\%ECLIPSE_CDT_PROJECT_CONFIGURATION%\%ECLIPSE_CDT_PROJECT_NAME%.elf"
+)
+
+CD /D %~dp0%
 
 @echo on
 
-"%ECLIPSE_CDT_INSTALLATION_DIR%\%ECLIPSE_CDT_EXECUTABLE%" --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data "%ECLIPSE_CDT_WORKSPACE_DIR%" -import "."
+DEL "%ECLIPSE_CDT_PROJECT_DIR%\%ECLIPSE_CDT_PROJECT_CONFIGURATION%\%ECLIPSE_CDT_PROJECT_NAME%.elf"
 
-"%ECLIPSE_CDT_INSTALLATION_DIR%\%ECLIPSE_CDT_EXECUTABLE%" --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data "%ECLIPSE_CDT_WORKSPACE_DIR%" -build "%ECLIPSE_CDT_PROJECT_NAME%/%ECLIPSE_CDT_PROJECT_CONFIGURATION%"
+"%ECLIPSE_CDT_INSTALLATION_DIR%\%ECLIPSE_CDT_EXECUTABLE%" --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data "%ECLIPSE_CDT_WORKSPACE_DIR%" -import "." && (
+	SET ERRORLEVEL=0
+	) || (
+	SET ERRORLEVEL=1
+)
+IF %ERRORLEVEL% NEQ 0 (
+	EXIT /B %ERRORLEVEL%
+)
+
+"%ECLIPSE_CDT_INSTALLATION_DIR%\%ECLIPSE_CDT_EXECUTABLE%" --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data "%ECLIPSE_CDT_WORKSPACE_DIR%" -build "%ECLIPSE_CDT_PROJECT_NAME%/%ECLIPSE_CDT_PROJECT_CONFIGURATION%" && (
+	SET ERRORLEVEL=0
+	) || (
+	SET ERRORLEVEL=1
+)
+IF %ERRORLEVEL% NEQ 0 (
+	EXIT /B %ERRORLEVEL%
+)
 
 REM copy the generated .elf file
-COPY %ECLIPSE_CDT_PROJECT_DIR%\%ECLIPSE_CDT_PROJECT_CONFIGURATION%\%ECLIPSE_CDT_PROJECT_NAME%.elf "%CURRENT_DIRECTORY%/application.out"
+COPY "%ECLIPSE_CDT_PROJECT_DIR%\%ECLIPSE_CDT_PROJECT_CONFIGURATION%\%ECLIPSE_CDT_PROJECT_NAME%.elf" "%CURRENT_DIRECTORY%\application.out"
+
+cd /D "%CURRENT_DIRECTORY%"

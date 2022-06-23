@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  	ANT
+	
+	Copyright 2012-2022 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
+-->
+<project name="checkOS">
+
+	<target name="isWinXP">
+		<condition property="runOnWinXP" value="SET">
+			<istrue value="${isWinXP}"/>
+		</condition>
+	</target>
+
+	<target name="check/OS" depends="check/OS/job, isWinXP" if="noSupportedOS">
+		<!--
+			displays a warning message if the OS is not officially supported (see check/OS/job)
+		-->
+		<echo message="WARNING: This OS version (${os.name}) has not been tested at the time this package as been built... some functionnalities may not work. "/>
+	</target>
+
+	<target name="check/OS/job">
+		<!-- 
+			defines isLinux, isWinXP, isWinVista and isWindows properties
+		-->
+		<condition property="isLinux" value="true" else="false">
+			<equals arg1="${os.name}" arg2="Linux"/>
+		</condition>
+
+		<condition property="isWinXP" value="true" else="false">
+			<equals arg1="${os.name}" arg2="Windows XP"/>
+		</condition>
+
+		<condition property="isWinVista" value="true" else="false">
+			<equals arg1="${os.name}" arg2="Windows Vista"/>
+		</condition>
+
+		<condition property="isWin7" value="true" else="false">
+			<or>
+				<equals arg1="${os.name}" arg2="Windows 7"/>
+				<equals arg1="${os.name}" arg2="Windows Server 2008 R2"/>
+			</or>
+		</condition>
+
+		<condition property="isWin8" value="true" else="false">
+			<or>
+				<equals arg1="${os.name}" arg2="Windows 8"/>
+				<equals arg1="${os.name}" arg2="Windows 8.1"/>
+			</or>
+		</condition>
+
+		<condition property="isWin10" value="true" else="false">
+			<equals arg1="${os.name}" arg2="Windows 10"/>
+		</condition>
+
+		<condition property="isMacOSX" value="true" else="false">
+			<equals arg1="${os.name}" arg2="Mac OS X"/>
+		</condition>
+
+		<condition property="isWindows" value="true" else="false">
+			<or>
+				<istrue value="${isWinXP}"/>
+				<istrue value="${isWinVista}"/>
+				<istrue value="${isWin7}"/>
+				<istrue value="${isWin8}"/>
+				<istrue value="${isWin10}"/>
+			</or>
+		</condition>
+
+		<condition property="isMac" value="true" else="false">
+			<istrue value="${isMacOSX}"/>
+		</condition>
+
+		<condition property="noSupportedOS" value="SET">
+			<and>
+				<isfalse value="${isLinux}"/>
+				<isfalse value="${isWindows}"/>
+				<isfalse value="${isMac}"/>
+			</and>
+		</condition>
+	</target>
+
+</project>

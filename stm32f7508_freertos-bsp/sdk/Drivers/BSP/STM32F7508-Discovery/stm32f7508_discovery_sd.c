@@ -69,7 +69,7 @@ EndDependencies */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7508_discovery_sd.h"
-
+#include <stdio.h>
 /** @addtogroup BSP
   * @{
   */
@@ -116,6 +116,17 @@ SD_HandleTypeDef uSdHandle;
 /** @defgroup STM32F7508_DISCOVERY_SD_Private_FunctionPrototypes STM32F7508_DISCOVERY_SD Private Function Prototypes
   * @{
   */
+
+  /**
+    * @brief  Compute the start address and the size for cache invalidating or cleaning.
+    * @param  pData: Pointer to the buffer used by the DMA
+    * @param  BlockSize: SD card data block size, that should be 512
+    * @param  NumOfBlocks: Number of SD blocks to read
+    * @param  pCacheMemStart: Set with the correctly aligned memory address
+    * @param  pCacheMemSize: Set with the correctly aligned memory size
+  */
+  static void BSP_SD_Cache_Line_Bounds(uint32_t *pData, uint32_t BlockSize, uint32_t NumOfBlocks, uint32_t **pCacheMemStart, int32_t *pCacheMemSize);
+
 /**
   * @}
   */ 
@@ -286,15 +297,26 @@ uint8_t BSP_SD_WriteBlocks(uint32_t *pData, uint32_t WriteAddr, uint32_t NumOfBl
   */
 uint8_t BSP_SD_ReadBlocks_DMA(uint32_t *pData, uint32_t ReadAddr, uint32_t NumOfBlocks)
 {  
+
+  uint8_t sd_state = MSD_OK;
+
   /* Read block(s) in DMA transfer mode */
   if(HAL_SD_ReadBlocks_DMA(&uSdHandle, (uint8_t *)pData, ReadAddr, NumOfBlocks) != HAL_OK)
   {
-    return MSD_ERROR;
+	  sd_state = MSD_ERROR;
   }
   else
   {
-    return MSD_OK;
+	  sd_state = MSD_OK;
   }
+
+	// Invalidate the cache to load the data written by the DMA in the cache.
+	uint32_t * memToInvalidateStart;
+	int32_t memToInvalidateSize;
+	BSP_SD_Cache_Line_Bounds(pData, BLOCKSIZE, NumOfBlocks, &memToInvalidateStart, &memToInvalidateSize);
+	SCB_InvalidateDCache_by_Addr(memToInvalidateStart, memToInvalidateSize);
+
+	return sd_state;
 }
 
 /**
@@ -306,6 +328,13 @@ uint8_t BSP_SD_ReadBlocks_DMA(uint32_t *pData, uint32_t ReadAddr, uint32_t NumOf
   */
 uint8_t BSP_SD_WriteBlocks_DMA(uint32_t *pData, uint32_t WriteAddr, uint32_t NumOfBlocks)
 { 
+
+  // Clean the cache to flush in the memory the data that will be read by the DMA.
+  uint32_t * memToCleanStart;
+  int32_t memToCleanSize;
+  BSP_SD_Cache_Line_Bounds(pData, BLOCKSIZE, NumOfBlocks, &memToCleanStart, &memToCleanSize);
+  SCB_CleanDCache_by_Addr(memToCleanStart, memToCleanSize);
+
   /* Write block(s) in DMA transfer mode */
   if(HAL_SD_WriteBlocks_DMA(&uSdHandle, (uint8_t *)pData, WriteAddr, NumOfBlocks) != HAL_OK)
   {
@@ -570,6 +599,15 @@ __weak void BSP_SD_ReadCpltCallback(void)
 {
 
 }
+
+void BSP_SD_Cache_Line_Bounds(uint32_t *pData, uint32_t BlockSize, uint32_t NumOfBlocks, uint32_t **pCacheMemStart, int32_t *pCacheMemSize){
+	//Get the start address of the memory (must be aligned on 32 bytes)
+	*pCacheMemStart = (uint32_t *) (((uint32_t)pData) & ~0x1F);
+	//Get the end address of the memory
+	uint32_t * pCacheMemEnd = (uint32_t *) (((uint8_t *)pData) + (BlockSize * NumOfBlocks));
+	*pCacheMemSize = ((uint32_t)pCacheMemEnd) - ((uint32_t)*pCacheMemStart);
+}
+
 
 /**
   * @}

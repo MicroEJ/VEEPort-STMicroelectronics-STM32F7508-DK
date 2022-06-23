@@ -1,8 +1,9 @@
 /*
- * C header file
- * Copyright 2008-2019 IS2T. All rights reserved.
- * Modification and distribution is permitted under certain conditions.
- * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * C
+ *
+ * Copyright 2008-2021 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 
 /*
@@ -193,7 +194,7 @@ typedef void (*SNI_getDescriptionFunction)(void* resource, char* buffer, uint32_
  * The virtual machine keeps track of the native resources to prevent any memory leak when the virtual
  * machine or an application is stopped.
  *
- * In a multi-applications environment with KF profile enabled, the given <code>close</code> function is
+ * In a Multi-Sandbox environment with KF profile enabled, the given <code>close</code> function is
  * called when the application that has created the resource is stopped. If the resource has been created
  * by the Kernel or if KF profile is disabled, the <code>close</code> function is called when the virtual
  * machine stops.
@@ -258,7 +259,7 @@ int32_t SNI_unregisterResource(void* resource, SNI_closeFunction close);
  * memory leaks that can occur when a thread is suspended using <code>SNI_suspendCurrentJavaThreadWithCallback()</code>
  * and the virtual machine or the current application is stopped.
  *
- * In a multi-applications environment with KF profile enabled, the given <code>close</code> function is also
+ * In a Multi-Sandbox environment with KF profile enabled, the given <code>close</code> function is also
  * called when the application that has created the scoped native resource is stopped. If the scoped native
  * resource has been created by the Kernel or if KF profile is disabled, the <code>close</code> function is called when
  * the virtual machine stops.
@@ -406,7 +407,7 @@ void* SNI_createVM(void);
  * May be null.
  *
  * @return 0 when the virtual machine ends normally or a negative value when an error
- * occurred.
+ * occurred (see constant values <code>LLMJVM_E_*</code> defined in LLMJVM.h).
  */
 int32_t SNI_startVM(void* vm, int32_t argc, char** argv);
 

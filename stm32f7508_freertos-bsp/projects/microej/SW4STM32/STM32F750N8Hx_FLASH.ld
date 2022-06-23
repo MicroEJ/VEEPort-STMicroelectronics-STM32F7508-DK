@@ -88,9 +88,7 @@ SECTIONS
     *crtbegin.o(.text)
     *libc_nano.a:(.text.__libc_init_array)
 
-    /* Toolchain libraries (optional, performance increases compared with default QSPI mapping) */
-    *libgcc.a:(.text .text.*)
-    *lib_a-nano*.o(.text .text.*)
+
 
     /* Java VM Core (optional, performance increases compared with default QSPI mapping) */
     *VMCOREMicroJvm*.o(.text .text.*)
@@ -198,6 +196,10 @@ SECTIONS
   {
     . = ALIGN(4);
 
+	/* Toolchain libraries (optional, performance increases compared with default QSPI mapping) */
+    *libgcc.a:(.text .text.*)
+    *lib_a-nano*.o(.text .text.*)
+
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
 
@@ -224,17 +226,13 @@ SECTIONS
   {
     . = ALIGN(4);
     _sdbss = .;         /* define a global symbol at bss start */
+    
+    /* SD Card buffers */
+    *(.FileBUF* .DirBUF* .FsBUF*)
+    *sd_diskio_dma_rtos.o(.ScratchBUF)
 
     /* Ethernet buffers */
     *ethernetif.o(.RxDescripSection .TxDescripSection .RxBUF .TxBUF)
-
-    /* SD Card buffers */
-    *(.FileBUF* .DirBUF* .FsBUF*)
-    *LLFS_impl.o(COMMON)
-    *sd_diskio_dma_rtos.o(.ScratchBUF)
-
-    /* ECOM-COMM buffers */
-    *(.bss.ecom.*)
 
     /* VM stacks */
     *(.bss.vm.stacks.java)
@@ -282,6 +280,11 @@ SECTIONS
   {
     . = ALIGN(4);
     _sbss = .;         /* define a global symbol at bss start */
+
+    *LLFS_impl.o(COMMON)
+	
+    /* ECOM-COMM buffers */
+    *(.bss.ecom.*)
 
     *(.bss)
     *(.bss*)

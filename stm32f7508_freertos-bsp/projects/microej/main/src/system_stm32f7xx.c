@@ -25,7 +25,7 @@
   * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.
+  * Copyright 2020-2022 MicroEJ Corp. This file has been modified by MicroEJ Corp.
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -76,11 +76,14 @@
 /************************* Miscellaneous Configuration ************************/
 /*!< Uncomment the following line if you need to use external SRAM or SDRAM mounted
      on STMicroelectronics EVAL/Discovery boards as data memory  */
-/*!< In case of EVAL/Discovery’s LCD use in application code, the DATA_IN_ExtSDRAM define
+/*!< In case of EVAL/Discoveryï¿½s LCD use in application code, the DATA_IN_ExtSDRAM define
      need to be added  in the project preprocessor to avoid SDRAM multiple configuration
      (the LCD uses SDRAM as frame buffer, and its configuration is done by the BSP_SDRAM_Init()) */
 /* #define DATA_IN_ExtSRAM */ 
 /* #define DATA_IN_ExtSDRAM */
+
+#define DATA_IN_ExtSRAM
+#define DATA_IN_ExtSDRAM
 
 /*!< Uncomment the following line if you need to relocate your vector Table in
      Internal SRAM. */

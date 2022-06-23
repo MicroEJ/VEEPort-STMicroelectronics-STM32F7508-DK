@@ -2,7 +2,7 @@
  * FreeRTOS Kernel V10.2.1
  * Copyright (C) 2019 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
- * Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.
+ * Copyright 2020-2021 MicroEJ Corp. This file has been modified by MicroEJ Corp.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -63,7 +63,7 @@
 #define configCPU_CLOCK_HZ                (SystemCoreClock)
 #define configTICK_RATE_HZ                ((TickType_t)1000)
 #define configMINIMAL_STACK_SIZE          ((uint16_t)128)
-#define configTOTAL_HEAP_SIZE             ((size_t)(32 * 1024))
+#define configTOTAL_HEAP_SIZE             ((size_t)(50 * 1024))
 #define configMAX_TASK_NAME_LEN           (16)
 #define configUSE_TRACE_FACILITY          1
 #define configUSE_16_BIT_TICKS            0
@@ -177,4 +177,3 @@ header file. */
 #endif
 
 #endif /* FREERTOS_CONFIG_H */
-
