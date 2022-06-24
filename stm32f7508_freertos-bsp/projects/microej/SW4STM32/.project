@@ -62,6 +62,11 @@
 			<locationURI>kf</locationURI>
 		</link>
 		<link>
+			<name>libwebp</name>
+			<type>2</type>
+			<locationURI>libwebp</locationURI>
+		</link>
+		<link>
 			<name>main</name>
 			<type>2</type>
 			<locationURI>main</locationURI>
@@ -151,6 +156,10 @@
 		<variable>
 			<name>kf</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/kf</value>
+		</variable>
+		<variable>
+			<name>libwebp</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/thirdparty/libwebp</value>
 		</variable>
 		<variable>
 			<name>main</name>

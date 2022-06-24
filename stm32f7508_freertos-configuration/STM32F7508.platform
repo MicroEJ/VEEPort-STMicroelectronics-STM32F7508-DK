@@ -6,7 +6,7 @@
 	This library is provided in source code for use, modification and test, subject to license terms.
 	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
 -->
-<platform hardwarePartNumber="STM32F7508" name="Platform" version="1.4.0" provider="MicroEJ" vendorUrl="http://developer.microej.com/4.0/sdk/license" workbenchMinVersion="1.7.0">
+<platform hardwarePartNumber="STM32F7508" name="Platform" version="1.5.0" provider="MicroEJ" vendorUrl="http://developer.microej.com/4.0/sdk/license" workbenchMinVersion="1.7.0">
     <environment architecture="CM7" baseline="14" hardwarePartNumber="CM7" toolchain="CM7hardfp_GCC48" name="flopi7G26" techVersion="1.6" version="7.16.1" level="prod" provider="MicroEJ" licenseTag="IS2T_J8F5C"/>
     <group name="device"/>
     <group name="frontPanel"/>

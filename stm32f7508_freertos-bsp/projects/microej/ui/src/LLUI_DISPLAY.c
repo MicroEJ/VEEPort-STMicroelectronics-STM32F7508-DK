@@ -21,6 +21,7 @@
 #include "framerate.h"
 #include "interrupts.h"
 #include "drawing_dma2d.h"
+#include "microej_decode.h"
 
 /* Defines -------------------------------------------------------------------*/
 // Define size to allocate for Display Buffer
@@ -162,4 +163,9 @@ uint8_t* LLUI_DISPLAY_IMPL_flush(MICROUI_GraphicsContext* gc, uint8_t* srcAddr, 
 	lcd_enable_interrupt();
 
 	return destAddr;
+}
+
+LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length, MICROUI_ImageFormat expectedFormat, MICROUI_Image* data, bool* isFullyOpaque)
+{
+	return MICROEJ_DECODE_webp(addr, length, expectedFormat, data, isFullyOpaque);
 }

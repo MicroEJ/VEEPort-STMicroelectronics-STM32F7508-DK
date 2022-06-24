@@ -3,7 +3,7 @@
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.4.0
+.. |PLATFORM_VER| replace:: 1.5.0
 .. |RCP| replace:: MICROEJ SDK
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |PLATFORMS| replace:: MicroEJ Platforms

@@ -3,7 +3,7 @@
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.4.0
+.. |PLATFORM_VER| replace:: 1.5.0
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
@@ -104,7 +104,7 @@ Graphical User Interface
 ------------------------
 
 This |PLATFORM| features a graphical user interface. It includes a display,
-a touch panel, a user button, a user LED and a runtime PNG decoder.
+a touch panel, a user button, a user LED and a runtime PNG and WebP decoder.
 
 Display
 ~~~~~~~
