@@ -12,8 +12,8 @@
  *
  * @see LLUI_INPUT_LOG_impl.c file comment
  * @author MicroEJ Developer Team
- * @version 1.1.1
- * @date 27 April 2022
+ * @version 2.0.1
+ * @date 16 December 2022
  * @since MicroEJ UI Pack 13.1.0
  */
 

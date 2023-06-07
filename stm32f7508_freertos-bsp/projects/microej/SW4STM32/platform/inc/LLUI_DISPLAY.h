@@ -306,11 +306,28 @@ bool LLUI_DISPLAY_requestRender(void);
  * be located in runtime memory (RAM, SRAM, SDRAM etc.) or in read-only memory
  * (internal flash, NOR etc.).
  *
+ * If exists, the returned pointer points on the image custom header (see
+ * LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics() for more details).
+ *
+ * If not exists, the returned pointer points on first image pixel.
+ *
  * @param[in] image the MicroUI Image.
  *
  * @return the MicroUI Image pixels buffer address.
  */
 uint8_t* LLUI_DISPLAY_getBufferAddress(MICROUI_Image* image);
+
+/*
+ * @brief Tells if format is a custom format or not.
+ *
+ * @see MICROUI_ImageFormat
+ *
+ * @param[in] format the format to check. The format is one value from the
+ * MICROUI_ImageFormat enumeration.
+ *
+ * @return true if format refers to a custom format
+ */
+bool LLUI_DISPLAY_isCustomFormat(jbyte format);
 
 /*
  * @brief Returns the MicroUI Image row stride in bytes. This value may be higher

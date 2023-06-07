@@ -127,6 +127,11 @@
 			<locationURI>util</locationURI>
 		</link>
 		<link>
+			<name>validation</name>
+			<type>2</type>
+			<locationURI>validation</locationURI>
+		</link>
+		<link>
 			<name>watchdog</name>
 			<type>2</type>
 			<locationURI>watchdog</locationURI>
@@ -175,7 +180,7 @@
 		</variable>
 		<variable>
 			<name>sdk</name>
-			<value>$%7BPARENT-3-PROJECT_LOC%7D/sdk</value>
+			<value>$%7BPARENT-3-PROJECT_LOC%7D/sdk/STM32CubeF7/Drivers</value>
 		</variable>
 		<variable>
 			<name>security</name>
@@ -195,7 +200,7 @@
 		</variable>
 		<variable>
 			<name>third_party</name>
-			<value>$%7BPARENT-3-PROJECT_LOC%7D/third_party</value>
+			<value>$%7BPARENT-3-PROJECT_LOC%7D/sdk/STM32CubeF7/Middlewares</value>
 		</variable>
 		<variable>
 			<name>trace</name>
@@ -208,6 +213,10 @@
 		<variable>
 			<name>util</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/util</value>
+		</variable>
+		<variable>
+			<name>validation</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/validation</value>
 		</variable>
 		<variable>
 			<name>watchdog</name>

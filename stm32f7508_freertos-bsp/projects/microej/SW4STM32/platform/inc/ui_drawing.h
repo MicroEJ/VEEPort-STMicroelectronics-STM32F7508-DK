@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020-2021 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2022 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -429,6 +429,9 @@ DRAWING_Status UI_DRAWING_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y
 /*
  * @brief Draws a region of an image.
  *
+ * The image and the destination (MICROUI_GraphicsContext) never target the same image. See
+ * UI_DRAWING_copyImage() and UI_DRAWING_drawRegion().
+ *
  * The region of the image to draw is given relative to the image (origin at the
  * upper-left corner) as a rectangle.
  *
@@ -458,6 +461,62 @@ DRAWING_Status UI_DRAWING_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y
  * @return the drawing status.
  */
 DRAWING_Status UI_DRAWING_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
+
+/*
+ * @brief Copy a region of an image in another image with the same pixel format.
+ *
+ * Contrary to UI_DRAWING_drawImage(), the opacity is not an option. As the source and destination
+ * have the same pixel representation, this function has just to perform a "memory copy".
+ *
+ * The region of the image to draw is given relative to the image (origin at the
+ * upper-left corner) as a rectangle.
+ *
+ * If the specified source region exceeds the image bounds, the copied region is
+ * limited to the image boundary. If the copied region goes out of the bounds of
+ * the graphics context area, pixels out of the range will not be drawn.
+ *
+ * The image and the destination (MICROUI_GraphicsContext) may target the same image. By consequence,
+ * the implementation has to check the "overlap" use-case: the region to copy overlaps the destination
+ * region.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] img the MicroUI Image to copy.
+ * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] width the width of the region to copy.
+ * @param[in] height the height of the region to copy.
+ * @param[in] x the x coordinate of the top-left point in the destination.
+ * @param[in] y the y coordinate of the top-left point in the destination.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_copyImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y);
+
+/*
+ * @brief Draw a region of an image in the same image.
+ *
+ * Contrary to UI_DRAWING_drawImage(), the implementation has to check the "overlap" use-case:
+ * the region to copy overlaps the destination region.
+ *
+ * The region of the image to draw is given relative to the image (origin at the
+ * upper-left corner) as a rectangle.
+ *
+ * If the specified source region exceeds the image bounds, the copied region is
+ * limited to the image boundary. If the copied region goes out of the bounds of
+ * the graphics context area, pixels out of the range will not be drawn.
+ *
+ * @param[in] gc the MicroUI GraphicsContext source and target.
+ * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] width the width of the region to copy.
+ * @param[in] height the height of the region to copy.
+ * @param[in] x the x coordinate of the top-left point in the destination.
+ * @param[in] y the y coordinate of the top-left point in the destination.
+ * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawRegion(MICROUI_GraphicsContext* gc, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
 
 // --------------------------------------------------------------------------------
 // EOF

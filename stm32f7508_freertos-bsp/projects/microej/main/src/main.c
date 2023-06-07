@@ -9,7 +9,7 @@
   * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.
+  * Copyright 2020-2023 MicroEJ Corp. This file has been modified by MicroEJ Corp.
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -22,20 +22,22 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
 #include <string.h>
-#include "main.h"
 #include "microej_main.h"
 #include "cpuload.h"
 #include "memory.h"
 #include "stm32f7xx_ll_system.h"
-#ifndef COREMARK
-#include "FreeRTOS.h"
-#include "task.h"
-#ifndef IPERF
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 #include "watchdog.h"
 #include "watchdog_config.h"
-#endif
 #include "SEGGER_RTT.h"
 #include "SEGGER_SYSVIEW.h"
+#endif
+
+#ifdef VALIDATION_BUILD
+#include "t_core_main.h"
+#else
+#include "FreeRTOS.h"
+#include "task.h"
 #endif
 
 /** @addtogroup STM32F7xx_HAL_Examples
@@ -48,13 +50,15 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define MICROJVM_STACK_SIZE      (5 * 1024)
-#define JAVA_TASK_PRIORITY       ( 11 ) /** Should be > tskIDLE_PRIORITY & < configTIMER_TASK_PRIORITY */
-#define JAVA_TASK_STACK_SIZE     MICROJVM_STACK_SIZE/4
-
+#ifdef IPERF_BUILD
 #define IPERF_STACK_SIZE         (12 * 1024)
 #define IPERF_TASK_PRIORITY      ( 11 ) /** Should be > tskIDLE_PRIORITY & < configTIMER_TASK_PRIORITY */
 #define IPERF_TASK_STACK_SIZE    IPERF_STACK_SIZE/4
+#elif !defined(VALIDATION_BUILD)
+#define MICROJVM_STACK_SIZE      (5 * 1024)
+#define JAVA_TASK_PRIORITY       ( 11 ) /** Should be > tskIDLE_PRIORITY & < configTIMER_TASK_PRIORITY */
+#define JAVA_TASK_STACK_SIZE     MICROJVM_STACK_SIZE/4
+#endif
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -96,15 +100,11 @@ uint32_t ErrorCounter = 0;
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void CPU_CACHE_Enable(void);
-
-#ifndef COREMARK
 static void MPU_Config (void);
 static void itcm_region_initialize(void);
-#ifndef IPERF
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 static void java_heap_initialize(void);
 #endif
-#endif
-
 static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
@@ -136,7 +136,7 @@ void init()
 	SystemClock_Config();
 }
 
-#if !defined(COREMARK) && !defined(IPERF)
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 __weak void LLCOMM_stack_initialize(void)
 {
 	// does nothing by default, overrided when ECOM-COMM is used
@@ -161,7 +161,7 @@ void xJavaTaskFunction(void * pvParameters)
 }
 #endif
 
-#ifdef IPERF
+#ifdef IPERF_BUILD
 void xIperfTaskFunction(void * pvParameters)
 {
 	/* Start the iperf */
@@ -190,13 +190,8 @@ int main(void)
 	}
 #endif
 
-#ifdef COREMARK
-	/* Launch coremark application */
-	core_main();
-#else
 	/* Launch user application in external QSPI */
 	app_main();
-#endif
 
 	/* We should never get here as execution is now on user application */
 	while(1)
@@ -204,7 +199,6 @@ int main(void)
 	}
 }
 
-#ifndef COREMARK
 /**
   * @brief  Main program
   * @param  None
@@ -232,7 +226,7 @@ int app_main(void)
 	}
 #endif
 
-#ifndef IPERF
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 	/* Check if the system has resumed from IWDG reset */
 	if (is_watchdog_reset()) {
 		printf("reset performed by the watchdog\n");
@@ -252,9 +246,11 @@ int app_main(void)
 #endif
 #endif
 
-#ifdef IPERF
+#ifdef IPERF_BUILD
 	/* Start iperf task */
 	xTaskCreate( xIperfTaskFunction, "Iperf", IPERF_TASK_STACK_SIZE, NULL, IPERF_TASK_PRIORITY, NULL );
+#elif defined(VALIDATION_BUILD)
+	T_CORE_main();
 #else
 	/* Start MicroJvm task */
 	TaskHandle_t pvCreatedTask;
@@ -264,14 +260,16 @@ int app_main(void)
 #endif
 #endif
 
+#ifndef VALIDATION_BUILD
 	vTaskStartScheduler();
+#endif
 
 	/* We should never get here unless the MicroJvm exits */
 	while (1)
 	{
 	}
 }
-#endif
+
 
 /**
   * @brief  System Clock Configuration
@@ -349,7 +347,6 @@ static void CPU_CACHE_Enable(void)
 	SCB_EnableDCache();
 }
 
-#ifndef COREMARK
 /**
   * @brief  Configure MPU for all memory regions.
   * @param  None
@@ -406,6 +403,7 @@ static void MPU_Config (void)
   /* Configure the MPU region for SDRAM used address space (write-through, no write allocate) */
   MPU_InitStruct.BaseAddress = 0xC0000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER4;
@@ -416,6 +414,7 @@ static void MPU_Config (void)
   MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RO_URO;
   MPU_InitStruct.BaseAddress = 0x00000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_16KB;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER5;
@@ -424,7 +423,7 @@ static void MPU_Config (void)
   /* Enable the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
-#endif
+
 
 #ifdef USE_FULL_ASSERT
 
@@ -447,7 +446,6 @@ void assert_failed(uint8_t* file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
-#ifndef COREMARK
 /**
   * @brief  Initialize the ITCM region by loading the code from QSPI.
   * @param  None
@@ -470,7 +468,7 @@ static void itcm_region_initialize(void)
 	memcpy((void *)itcm_execution_region_start, (void *)itcm_load_region, itcm_execution_region_end - itcm_execution_region_start);
 }
 
-#ifndef IPERF
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 /**
   * @brief  Zero initialize for Java heap and Java immortals.
   * @param  None
@@ -501,13 +499,12 @@ static void java_heap_initialize(void)
 	memset((void*)microui_heap_start, 0, microui_heap_end - microui_heap_start);
 }
 #endif
-#endif
 
 static void Error_Handler(void)
 {
 }
 
-#if !defined(COREMARK) && !defined(IPERF)
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 #include "sni.h"
 jfloat Java_com_is2t_microjvm_test_MJVMPortValidation_testFPU__FF (jfloat a, jfloat b) {return a * b;}
 jdouble Java_com_is2t_microjvm_test_MJVMPortValidation_testFPU__DD (jdouble a, jdouble b) {return a * b;}

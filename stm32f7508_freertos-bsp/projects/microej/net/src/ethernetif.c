@@ -6,15 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2018 STMicroelectronics.
+  * All rights reserved.
   *
-  * Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.
-  *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -34,7 +31,6 @@
 #define TIME_WAITING_FOR_INPUT                 ( osWaitForever )
 /* Stack size of the interface thread */
 #define INTERFACE_THREAD_STACK_SIZE            ( 350 )
-#define INTERFACE_THREAD_PRIORITY              ( 14 )
 /* Time waiting to check new interface link status */
 #define INTERFACE_LINK_STATUS_PERIOD	500
 
@@ -178,7 +174,6 @@ static void low_level_init(struct netif *netif)
 
   /* Accept broadcast address and ARP traffic */
   netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
-
 
 #if LWIP_IGMP
   /* Add Multicast support */
@@ -573,4 +568,3 @@ u32_t sys_now(void)
   return HAL_GetTick();
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

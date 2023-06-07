@@ -1,0 +1,27 @@
+<!--
+	ANT
+	
+	Copyright 2021-2023 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
+-->
+<project name="jpf.microej.ui3.validation" xmlns:ea="antlib:org.apache.easyant" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:ac="antlib:net.sf.antcontrib">
+
+	<dirname file="${ant.file.jpf.testsuite.core}" property="project"/>
+	<dirname file="${project}" property="workspace.dir"/>
+	
+	<target name="java-build:include-tests" extensionOf="abstract-compile:compile-ready" depends="resources-std:copy-test-resources" >
+		<augment id="src.java.path">
+			<path location="${basedir}/src/test/java" />
+		</augment>
+	</target>
+				
+	<target name="tracefile:init" extensionOf="abstract-test:test-ready">
+		<!-- Set the launch.test.trace.file when the testsuite.trace.ip properties is not set -->
+		<condition property="microej.testsuite.properties.launch.test.trace.file">
+			<not>
+				<isset property="microej.testsuite.properties.testsuite.trace.ip" />
+			</not>
+		</condition>
+	</target>
+				
+</project>

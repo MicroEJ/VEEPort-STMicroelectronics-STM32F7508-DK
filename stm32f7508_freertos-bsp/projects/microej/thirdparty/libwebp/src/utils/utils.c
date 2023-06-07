@@ -1,6 +1,6 @@
 
-// Copyright 2021-2022 MicroEJ Corp. All rights reserved.
-	// Use of this source code is governed by a BSD-style license that can be found with this software.
+// Copyright 2021-2022 MicroEJ Corp. This file has been modified and/or created by MicroEJ Corp.
+// 1- Rename functions WebPSafe* by _WebPSafe* to override them.
 				
 // Copyright 2012 Google Inc. All Rights Reserved.
 //

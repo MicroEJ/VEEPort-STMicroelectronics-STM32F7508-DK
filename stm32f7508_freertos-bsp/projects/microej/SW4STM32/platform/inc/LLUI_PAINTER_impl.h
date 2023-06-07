@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020-2021 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2022 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -111,17 +111,31 @@ extern "C" {
 // --------------------------------------------------------------------------------
 
 /*
- * @brief Useful macros to concatenate easily some strings, defines and functions.
+ * @brief Useful macros to concatenate easily some strings and defines.
  */
 #define CONCAT_STRINGS(p, s) p ## s
 #define CONCAT_DEFINES(p, s) CONCAT_STRINGS(p,s)
-#define CONCAT_FUNCTION(p, fn, ...) CONCAT_STRINGS(p, fn)(__VA_ARGS__)
 
 /*
- * @brief Useful macros to declare MicroUI native functions
+ * MicroUI's native functions
  */
-#define MICROUI_PAINTER_NATIVE_PREFIX Java_ej_microui_display_PainterNatives_
-#define MICROUI_PAINTER_NATIVE(fn, ...) CONCAT_FUNCTION(MICROUI_PAINTER_NATIVE_PREFIX, fn, __VA_ARGS__)
+#define LLUI_PAINTER_IMPL_writePixel Java_ej_microui_display_PainterNatives_writePixel
+#define LLUI_PAINTER_IMPL_drawLine Java_ej_microui_display_PainterNatives_drawLine
+#define LLUI_PAINTER_IMPL_drawHorizontalLine Java_ej_microui_display_PainterNatives_drawHorizontalLine
+#define LLUI_PAINTER_IMPL_drawVerticalLine Java_ej_microui_display_PainterNatives_drawVerticalLine
+#define LLUI_PAINTER_IMPL_drawRectangle Java_ej_microui_display_PainterNatives_drawRectangle
+#define LLUI_PAINTER_IMPL_fillRectangle Java_ej_microui_display_PainterNatives_fillRectangle
+#define LLUI_PAINTER_IMPL_drawRoundedRectangle Java_ej_microui_display_PainterNatives_drawRoundedRectangle
+#define LLUI_PAINTER_IMPL_fillRoundedRectangle Java_ej_microui_display_PainterNatives_fillRoundedRectangle
+#define LLUI_PAINTER_IMPL_drawCircleArc Java_ej_microui_display_PainterNatives_drawCircleArc
+#define LLUI_PAINTER_IMPL_drawEllipseArc Java_ej_microui_display_PainterNatives_drawEllipseArc
+#define LLUI_PAINTER_IMPL_fillCircleArc Java_ej_microui_display_PainterNatives_fillCircleArc
+#define LLUI_PAINTER_IMPL_fillEllipseArc Java_ej_microui_display_PainterNatives_fillEllipseArc
+#define LLUI_PAINTER_IMPL_drawEllipse Java_ej_microui_display_PainterNatives_drawEllipse
+#define LLUI_PAINTER_IMPL_fillEllipse Java_ej_microui_display_PainterNatives_fillEllipse
+#define LLUI_PAINTER_IMPL_drawCircle Java_ej_microui_display_PainterNatives_drawCircle
+#define LLUI_PAINTER_IMPL_fillCircle Java_ej_microui_display_PainterNatives_fillCircle
+#define LLUI_PAINTER_IMPL_drawImage Java_ej_microui_display_PainterNatives_drawImage
 
 // --------------------------------------------------------------------------------
 // Typedefs and Structures
@@ -220,16 +234,50 @@ typedef enum
 	MICROUI_IMAGE_FORMAT_LARGB8888 = 10,
 
 	/*
-	 * @brief Defines an image whose pixel format is a LUT entry on 8 bits and target
-	 * a RGB888 color.
-	 */
-	MICROUI_IMAGE_FORMAT_LRGB888 = 9,
-
-	/*
 	 * @brief Defines an undefined format. Used by LLUI_DISPLAY_IMPL_decodeImage() to
 	 * not specify a specific format.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM = 255,
+	MICROUI_IMAGE_FORMAT_UNDEFINED = 128,
+
+	/*
+	 * @brief Defines the custom format 7 (0xf8).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_7 = 248,
+
+	/*
+	 * @brief Defines the custom format 6 (0xf9).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_6 = 249,
+
+	/*
+	 * @brief Defines the custom format 5 (0xfa).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_5 = 250,
+
+	/*
+	 * @brief Defines the custom format 4 (0xfb).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_4 = 251,
+
+	/*
+	 * @brief Defines the custom format 3 (0xfc).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_3 = 252,
+
+	/*
+	 * @brief Defines the custom format 2 (0xfd).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_2 = 253,
+
+	/*
+	 * @brief Defines the custom format 1 (0xfe).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_1 = 254,
+
+	/*
+	 * @brief Defines the custom format 0 (0xff).
+	 */
+	MICROUI_IMAGE_FORMAT_CUSTOM_0 = 255,
 
 } MICROUI_ImageFormat;
 
@@ -343,7 +391,7 @@ typedef struct
  * @param[in] x the pixel X coordinate.
  * @param[in] y the pixel Y coordinate.
  */
-void MICROUI_PAINTER_NATIVE(writePixel, MICROUI_GraphicsContext* gc, jint x, jint y);
+void LLUI_PAINTER_IMPL_writePixel(MICROUI_GraphicsContext* gc, jint x, jint y);
 
 /*
  * @brief Draws a line at between points startX,startY (included) and endX,endY (included).
@@ -355,7 +403,7 @@ void MICROUI_PAINTER_NATIVE(writePixel, MICROUI_GraphicsContext* gc, jint x, jin
  * @param[in] endX the last pixel line X coordinate.
  * @param[in] endY the last pixel line Y coordinate.
  */
-void MICROUI_PAINTER_NATIVE(drawLine, MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY);
+void LLUI_PAINTER_IMPL_drawLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY);
 
 /*
  * @brief Draws a horizontal line at between points x,y (included) and x+length-1,y (included).
@@ -365,7 +413,7 @@ void MICROUI_PAINTER_NATIVE(drawLine, MICROUI_GraphicsContext* gc, jint startX, 
  * @param[in] y the first pixel line Y coordinate.
  * @param[in] length the line size.
  */
-void MICROUI_PAINTER_NATIVE(drawHorizontalLine, MICROUI_GraphicsContext* gc, jint x, jint y, jint length);
+void LLUI_PAINTER_IMPL_drawHorizontalLine(MICROUI_GraphicsContext* gc, jint x, jint y, jint length);
 
 /*
  * @brief Draws a vertical line at between points x,y (included) and x,y+length-1 (included).
@@ -375,7 +423,7 @@ void MICROUI_PAINTER_NATIVE(drawHorizontalLine, MICROUI_GraphicsContext* gc, jin
  * @param[in] y the first pixel line Y coordinate.
  * @param[in] length the line size.
  */
-void MICROUI_PAINTER_NATIVE(drawVerticalLine, MICROUI_GraphicsContext* gc, jint x, jint y, jint length);
+void LLUI_PAINTER_IMPL_drawVerticalLine(MICROUI_GraphicsContext* gc, jint x, jint y, jint length);
 
 /*
  * @brief Draws an orthogonal rectangle at from top-left point x,y (included) and bottom-right
@@ -387,7 +435,7 @@ void MICROUI_PAINTER_NATIVE(drawVerticalLine, MICROUI_GraphicsContext* gc, jint 
  * @param[in] width the rectangle width.
  * @param[in] height the rectangle height.
  */
-void MICROUI_PAINTER_NATIVE(drawRectangle, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
+void LLUI_PAINTER_IMPL_drawRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
 
 /*
  * @brief Fills a rectangle at from top-left point x,y (included) and bottom-right
@@ -399,7 +447,7 @@ void MICROUI_PAINTER_NATIVE(drawRectangle, MICROUI_GraphicsContext* gc, jint x, 
  * @param[in] width the rectangle width.
  * @param[in] height the rectangle height.
  */
-void MICROUI_PAINTER_NATIVE(fillRectangle, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
+void LLUI_PAINTER_IMPL_fillRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
 
 /*
  * @brief Draws a rounded rectangle at from top-left point x,y (included) and bottom-right
@@ -413,7 +461,7 @@ void MICROUI_PAINTER_NATIVE(fillRectangle, MICROUI_GraphicsContext* gc, jint x, 
  * @param[in] cornerEllipseWidth  the horizontal diameter of the arc at the corners.
  * @param[in] cornerEllipseHeight the vertical diameter of the arc at the corners.
  */
-void MICROUI_PAINTER_NATIVE(drawRoundedRectangle, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
+void LLUI_PAINTER_IMPL_drawRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
 
 /*
  * @brief Fills a rounded rectangle at from top-left point x,y (included) and bottom-right
@@ -427,7 +475,7 @@ void MICROUI_PAINTER_NATIVE(drawRoundedRectangle, MICROUI_GraphicsContext* gc, j
  * @param[in] cornerEllipseWidth  the horizontal diameter of the arc at the corners.
  * @param[in] cornerEllipseHeight the vertical diameter of the arc at the corners.
  */
-void MICROUI_PAINTER_NATIVE(fillRoundedRectangle, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
+void LLUI_PAINTER_IMPL_fillRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
 
 /*
  * @brief Draws a circular arc covering the square defined by top-left point x,y (included)
@@ -455,7 +503,7 @@ void MICROUI_PAINTER_NATIVE(fillRoundedRectangle, MICROUI_GraphicsContext* gc, j
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
  */
-void MICROUI_PAINTER_NATIVE(drawCircleArc, MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
+void LLUI_PAINTER_IMPL_drawCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Draws an elliptical arc covering the rectangle defined by top-left point x,y (included)
@@ -485,7 +533,7 @@ void MICROUI_PAINTER_NATIVE(drawCircleArc, MICROUI_GraphicsContext* gc, jint x, 
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
  */
-void MICROUI_PAINTER_NATIVE(drawEllipseArc, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
+void LLUI_PAINTER_IMPL_drawEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Fills a circular arc covering the square defined by top-left point x,y (included)
@@ -513,7 +561,7 @@ void MICROUI_PAINTER_NATIVE(drawEllipseArc, MICROUI_GraphicsContext* gc, jint x,
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
  */
-void MICROUI_PAINTER_NATIVE(fillCircleArc, MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
+void LLUI_PAINTER_IMPL_fillCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Fills an elliptical arc covering the rectangle defined by top-left point x,y (included)
@@ -543,7 +591,7 @@ void MICROUI_PAINTER_NATIVE(fillCircleArc, MICROUI_GraphicsContext* gc, jint x, 
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
  */
-void MICROUI_PAINTER_NATIVE(fillEllipseArc, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
+void LLUI_PAINTER_IMPL_fillEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Draws an ellipse covering the rectangle defined by top-left point x,y (included)
@@ -558,7 +606,7 @@ void MICROUI_PAINTER_NATIVE(fillEllipseArc, MICROUI_GraphicsContext* gc, jint x,
  * @param[in] width the ellipse width.
  * @param[in] height the ellipse height.
  */
-void MICROUI_PAINTER_NATIVE(drawEllipse, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
+void LLUI_PAINTER_IMPL_drawEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
 
 /*
  * @brief Fills an ellipse covering the rectangle defined by top-left point x,y (included)
@@ -572,7 +620,7 @@ void MICROUI_PAINTER_NATIVE(drawEllipse, MICROUI_GraphicsContext* gc, jint x, ji
  * @param[in] width the ellipse width.
  * @param[in] height the ellipse height.
  */
-void MICROUI_PAINTER_NATIVE(fillEllipse, MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
+void LLUI_PAINTER_IMPL_fillEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
 
 /*
  * @brief Draws a circle covering the square defined by top-left point x,y (included)
@@ -585,7 +633,7 @@ void MICROUI_PAINTER_NATIVE(fillEllipse, MICROUI_GraphicsContext* gc, jint x, ji
  * @param[in] y the top-left pixel Y coordinate.
  * @param[in] diameter the circle square size.
  */
-void MICROUI_PAINTER_NATIVE(drawCircle, MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
+void LLUI_PAINTER_IMPL_drawCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
 
 /*
  * @brief Fills a circle covering the square defined by top-left point x,y (included)
@@ -598,7 +646,7 @@ void MICROUI_PAINTER_NATIVE(drawCircle, MICROUI_GraphicsContext* gc, jint x, jin
  * @param[in] y the top-left pixel Y coordinate.
  * @param[in] diameter the circle square size.
  */
-void MICROUI_PAINTER_NATIVE(fillCircle, MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
+void LLUI_PAINTER_IMPL_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
 
 /*
  * @brief Draws a region of an image.
@@ -631,7 +679,7 @@ void MICROUI_PAINTER_NATIVE(fillCircle, MICROUI_GraphicsContext* gc, jint x, jin
  * @param[in] y the y coordinate of the top-left point in the destination.
  * @param[in] alpha the opacity level to apply to the region.
  */
-void MICROUI_PAINTER_NATIVE(drawImage, MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
+void LLUI_PAINTER_IMPL_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
 
 // --------------------------------------------------------------------------------
 // EOF

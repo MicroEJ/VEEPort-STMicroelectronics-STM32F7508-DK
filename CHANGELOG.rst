@@ -1,10 +1,39 @@
 ..
-    Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+    Copyright 2020-2023 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 ===========
  Changelog
 ===========
+
+----------------------
+ [1.6.0] - 2023-04-20
+----------------------
+
+Added
+=====
+
+- Validation projects (CORE, FS, NET, SSL, SECURITY, BLUETOOTH, ESP32)
+- CoreMark as a submodule
+- iperf validation project
+
+Changed
+=======
+
+- Update STM32CubeF7 to v1.17.0
+- Use STMicroelectronics STM32CubeF7 GitHub Git repository as a submodule.
+- Enable SO_LINGER option for LwIP
+- Update fs-generic cco to 2.1.0
+- Update fs-fatfs cco to 2.1.0
+- Update fs-pack to 6.0.3
+- Replace pool-fixed cco with microej-pool cco 0.1.0
+- Update ui-pack to 13.4.1
+- Update imageio-webp tool to 1.0.2
+- Update microui cco to 2.0.1
+- Update libwebp cco to 1.0.2
+- Update MicroEJ architecture to 7.18.1
+- Disable list file generation for STM32Cube release build
+- Update drawing-dma2d cco to 3.1.0
 
 ----------------------
  [1.5.0] - 2022-06-24

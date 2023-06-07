@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2021-2022 MicroEJ Corp. All rights reserved.
+ * Copyright 2021-2023 MicroEJ Corp. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
@@ -9,8 +9,8 @@
  * @file
  * @brief This file allows to configure the implementation of microui_event_decoder.c.
  * @author MicroEJ Developer Team
- * @version 1.1.1
- * @date 27 April 2022
+ * @version 2.0.1
+ * @date 16 December 2022
  * @since MicroEJ UI Pack 13.1.0
  */
 

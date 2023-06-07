@@ -402,6 +402,11 @@ The STM32F4x7 allow computing and verifying the IP, UDP, TCP and ICMP checksums 
 #define SO_REUSE                        1
 
 /**
+ * LWIP_SO_LINGER==1: Enable SO_LINGER processing.
+ */
+#define LWIP_SO_LINGER                  1
+
+/**
  * IP_SOF_BROADCAST=1: Use the SOF_BROADCAST field to enable broadcast
  * filter per pcb on udp and raw send operations. To enable broadcast filter
  * on recv operations, you also have to set IP_SOF_BROADCAST_RECV=1.

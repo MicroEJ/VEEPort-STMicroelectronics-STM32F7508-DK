@@ -1,9 +1,8 @@
 /*
  * C
  *
- * Copyright 2020 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  *
  */
 
@@ -11,29 +10,20 @@
  * @file
  * @brief FatFs helper for LLFS.
  * @author MicroEJ Developer Team
- * @version 1.0.0
- * @date 10 June 2020
+ * @version 2.1.0
  */
 
 #include <stdint.h>
 #include <string.h>
 #include "ff.h"
 #include "fs_helper.h"
-#include "ffconf.h"
 #include "microej_async_worker.h"
-#include "pool.h"
-#include "ff_gen_drv.h"
-#include "sd_diskio_dma_rtos.h"
+#include "microej_pool.h"
 #include "LLFS_File_impl.h"
+#include "diskio.h"
 
-#ifdef LLFS_DEBUG
-#include <stdio.h>
-#endif
-
-#ifdef LLFS_DEBUG
-#define LLFS_DEBUG_TRACE printf("[DEBUG] ");printf
-#else
-#define LLFS_DEBUG_TRACE(...) ((void) 0)
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /** @brief define the amount of file in private pool module */
@@ -43,7 +33,7 @@
 #define FS_MAX_NUMBER_OF_DIR_IN_POOL  (_FS_LOCK)
 
 /** @ brief private pool file */
-ALIGN_32BYTES(static FIL gpst_pool_file[FS_MAX_NUMBER_OF_FILE_IN_POOL]) __attribute__((section(".FileBUF")));
+static FIL gpst_pool_file[FS_MAX_NUMBER_OF_FILE_IN_POOL];
 static POOL_item_status_t gpst_pool_file_item_status[FS_MAX_NUMBER_OF_FILE_IN_POOL];
 static POOL_ctx_t gst_pool_file_ctx =
 {
@@ -54,7 +44,7 @@ static POOL_ctx_t gst_pool_file_ctx =
 };
 
 /** @brief private pool directory */
-ALIGN_32BYTES(static DIR gpst_pool_dir[FS_MAX_NUMBER_OF_DIR_IN_POOL]) __attribute__((section(".DirBUF")));
+static DIR gpst_pool_dir[FS_MAX_NUMBER_OF_DIR_IN_POOL];
 static POOL_item_status_t gpst_pool_dir_item_status[FS_MAX_NUMBER_OF_DIR_IN_POOL];
 static POOL_ctx_t gst_pool_dir_ctx =
 {
@@ -63,33 +53,6 @@ static POOL_ctx_t gst_pool_dir_ctx =
 	sizeof(DIR),
 	sizeof(gpst_pool_dir)/sizeof(DIR)
 };
-
-ALIGN_32BYTES(FATFS SDFatFs) __attribute__((section(".FsBUF")));
-char SDPath[4];
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void LLFS_IMPL_mount(void) {
-
-	/* Link the micro SD disk I/O driver */
-	if (FATFS_LinkDriver(&SD_Driver, (TCHAR*)&SDPath) != 0) {
-		while(1);
-	}
-
-	/* Register the file system object to the FatFs module */
-	if (f_mount(&SDFatFs, (TCHAR*)&SDPath, 0) != FR_OK) {
-		while(1);
-	}
-
-	/* Initialize private pool */
-	memset(gpst_pool_file, 0, sizeof(gpst_pool_file));
-	memset(gpst_pool_file_item_status, POOL_FREE, sizeof(gpst_pool_file_item_status));
-
-	memset(gpst_pool_dir, 0, sizeof(gpst_pool_dir));
-	memset(gpst_pool_dir_item_status, POOL_FREE, sizeof(gpst_pool_dir_item_status));
-}
 
 void LLFS_IMPL_get_last_modified_action(MICROEJ_ASYNC_WORKER_job_t* job) {
 
@@ -548,16 +511,25 @@ void LLFS_File_IMPL_open_action(MICROEJ_ASYNC_WORKER_job_t* job) {
 	uint8_t mode = param->mode;
 
 	/* Map input mode to FatFs mode */
-	if (mode == LLFS_FILE_MODE_APPEND) {
+	switch(mode) {
+	case LLFS_FILE_MODE_APPEND:
 		b_internal_mode = FA_WRITE | FA_OPEN_APPEND;
-	} else if (mode == LLFS_FILE_MODE_READ) {
+	break;
+	case LLFS_FILE_MODE_READ:
 		b_internal_mode = FA_READ | FA_OPEN_EXISTING;
-	} else if (mode == LLFS_FILE_MODE_WRITE) {
+		break;
+	case LLFS_FILE_MODE_WRITE:
 		b_internal_mode = FA_WRITE | FA_CREATE_ALWAYS;
-	} else if (mode == (LLFS_FILE_MODE_READ | LLFS_FILE_MODE_WRITE)) {
-		b_internal_mode = FA_READ | FA_WRITE | FA_CREATE_ALWAYS;
-	} else if (mode == (LLFS_FILE_MODE_READ | LLFS_FILE_MODE_APPEND)) {
-		b_internal_mode = FA_READ | FA_WRITE | FA_OPEN_APPEND;
+		break;
+	case LLFS_FILE_MODE_READ_WRITE:
+	case LLFS_FILE_MODE_READ_WRITE_DATA_SYNC:
+	case LLFS_FILE_MODE_READ_WRITE_SYNC:
+		b_internal_mode = FA_READ | FA_WRITE | FA_OPEN_ALWAYS;
+		break;
+	default:
+		param->error_code = mode;
+		param->error_message = "Invalid opening mode";
+		return;
 	}
 
 	pool_res = POOL_reserve_f(&gst_pool_file_ctx, (void**)&fp);
@@ -650,60 +622,108 @@ void LLFS_File_IMPL_close_action(MICROEJ_ASYNC_WORKER_job_t* job) {
 	LLFS_DEBUG_TRACE("[%s:%u] close file %ld (status %ld err %d)\n", __func__, __LINE__, (int32_t)fd, param->result, res);
 }
 
-void LLFS_File_IMPL_skip_action(MICROEJ_ASYNC_WORKER_job_t* job) {
+static FRESULT seek(FIL* fd, QWORD n, FSIZE_t *pos) {
+	// Convert given offset in a type accepted by f_lseek
+	*pos = n;
 
-	FS_skip_t* param = (FS_skip_t*) job->params;
-	FRESULT res = FR_OK;
-
-	FIL* fd = (FIL*)param->file_id;
-	int64_t n = param->n;
-
-	DWORD currentPtr = f_tell(fd);
-	DWORD size = f_size(fd);
-	long long int newPtr = currentPtr + n;
-
-	/* Check for overflow when computing newPtr */
-	if (n > 0) {
-		if (newPtr < currentPtr) {
-			/* an overflow occurs: saturate the newPtr value */
-			newPtr = INT64_MAX;
-		}
-	} else {
-		if (newPtr > currentPtr) {
-			/* an underflow occurs: saturate the newPtr value */
-			newPtr = INT64_MIN;
-		}
+	// Check if the conversion from long long int to FSIZE_t is correct
+	if (*pos != n) {
+		// An overflow occurs, saturate the value
+#if FF_FS_EXFAT
+		*pos = INT64_MAX;
+#else
+		*pos = INT32_MAX;
+#endif
 	}
 
-	if (newPtr < 0) {
-		param->skipped_count = 0;
-		param->result = LLFS_NOK;
-		param->error_code = LLFS_NOK;
-		param->error_message = "skip backwards failed";
-	} else {
-		/* limit newPtr value to the size of the file */
-		if (newPtr > size) {
-			newPtr = size;
-		}
+	return f_lseek(fd, *pos);
+}
 
-		/* info: cast of newPtr is safe here because 0 <= newPtr <= size */
-		res = f_lseek(fd, (DWORD)newPtr);
+void LLFS_File_IMPL_seek_action(MICROEJ_ASYNC_WORKER_job_t* job) {
+
+	FS_seek_t* param = (FS_seek_t*) job->params;
+	FRESULT res = FR_OK;
+	FIL* fd = (FIL*)param->file_id;
+	FSIZE_t pos = 0;
+
+	if (param->n < 0) {
+		param->result = LLFS_NOK;
+		param->error_code = FR_INVALID_PARAMETER;
+		param->error_message = "f_lseek failed";
+	} else {
+		res = seek(fd, param->n, &pos);
 		if (res != FR_OK) {
-			param->skipped_count = 0;
 			param->result = LLFS_NOK;
 			param->error_code = res;
 			param->error_message = "f_lseek failed";
-		} else {
-			param->skipped_count = newPtr - currentPtr;
-			if (newPtr == size) {
-				param->result = LLFS_EOF;
-			} else {
-				param->result = LLFS_OK;
-			}
+		}
+	}
+#if FF_FS_EXFAT
+	LLFS_DEBUG_TRACE("[%s:%u] seek to %lld on %ld (status %ld)\n", __func__, __LINE__, pos, (int32_t)fd, param->result);
+#else
+	LLFS_DEBUG_TRACE("[%s:%u] seek to %ld on %ld (status %ld)\n", __func__, __LINE__, pos, (int32_t)fd, param->result);
+#endif
+}
+
+void LLFS_File_IMPL_get_file_pointer_action(MICROEJ_ASYNC_WORKER_job_t* job) {
+	FS_getfp_t* param = (FS_getfp_t*) job->params;
+	FIL* fd = (FIL*)param->file_id;
+	param->result = f_tell(fd);;
+
+	if (param->result < 0) {
+		// Error occurred
+		param->error_code = param->result;
+		param->result = LLFS_NOK;
+		param->error_message = "f_tell failed";
+	}
+
+#ifdef LLFS_DEBUG
+	printf("[%s:%u] get file pointer file %ld (status %lld)\n",__func__, __LINE__, (int32_t) fd, param->result);
+#endif
+}
+
+void LLFS_File_IMPL_set_length_action(MICROEJ_ASYNC_WORKER_job_t* job) {
+
+	FS_set_length_t* param = (FS_set_length_t*) job->params;
+	FRESULT res = FR_OK;
+	FSIZE_t pos = 0;
+	FIL* fd = (FIL*)param->file_id;
+	FSIZE_t oldSize = f_size(fd);
+	FSIZE_t oldPos = f_tell(fd);
+	DWORD newSize = param->length;
+
+	// First we do a seek
+	res = seek(fd, newSize, &pos);
+	if ((res == FR_OK) && (f_tell(fd) == pos)) {
+		if (oldSize > newSize) {
+			// second if the new size is less than the old size we do a truncate
+			res = f_truncate(fd);
+		}
+		if ((res == FR_OK) && (oldPos < newSize)) {
+			// third reset the file pointer if the old pos is less than the new length
+			res = f_lseek(fd, oldPos);
 		}
 	}
 
-	LLFS_DEBUG_TRACE("[%s:%u] skip %lld bytes on %ld (status %ld skip count %lld)\n", __func__, __LINE__, n, (int32_t)fd, param->result, param->skipped_count);
+	if (res != FR_OK) {
+		param->result = LLFS_NOK;
+		param->error_code = res;
+		param->error_message = "set length failed";
+	}
+
+	LLFS_DEBUG_TRACE("[%s:%u] set length to %ld on %ld size=%ld (status %ld)\n", __func__, __LINE__, newSize, (int32_t)fd, f_size(fd),  param->result);
+}
+
+
+void LLFS_File_IMPL_get_length_with_fd_action(MICROEJ_ASYNC_WORKER_job_t* job) {
+	FS_get_length_with_fd_t* param = (FS_get_length_with_fd_t*) job->params;
+	FIL* fd = (FIL*)param->file_id;
+	param->result = f_size(fd);
+#if FF_FS_EXFAT
+	LLFS_DEBUG_TRACE("[%s:%u] get length with fd on %lld length=%ld \n", __func__, __LINE__, (int32_t)fd, param->result);
+#else
+	LLFS_DEBUG_TRACE("[%s:%u] get length with fd on %ld length=%lld \n", __func__, __LINE__, (int32_t)fd, param->result);
+#endif
 }
 
 void LLFS_File_IMPL_available_action(MICROEJ_ASYNC_WORKER_job_t* job) {

@@ -1,9 +1,6 @@
 /*
- * C
- *
- * Copyright 2020-2021 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
 /*-Specials-*/
@@ -52,7 +49,6 @@ define block RW_MICROEJ_ICETEA_HEAP    with alignment = 4  { section ICETEA_HEAP
 define block RW_MICROEJ_JAVA_HEAP      with alignment = 4  { section _java_heap };
 define block RW_MICROEJ_IMMORTALS      with alignment = 4  { section _java_immortals };
 define block RW_MICROEJ_VM_STACK       with alignment = 4  { section .bss.vm.stacks.java };
-define block RW_MICROEJ_ECOM           with alignment = 4  { section .bss.ecom.* };
 define block RW_MICROEJ_MICROUI_HEAP   with alignment = 4  { section .bss.microui.display.imagesHeap };
 define block RW_MICROEJ_NETWORK_HEAP   with alignment = 4  { section .NetworkHeap object LLNET_NETWORK_MEM.o };
 define block RW_MICROEJ_DISPLAY_MEM    with alignment = 4  { section .DisplayMem object LLUI_DISPLAY.o };
@@ -78,7 +74,10 @@ define block RO_ITCM_CODE         with alignment = 4
 	/* VM core BSP support functions */
 	section .text object LLBSP_generic.o,
 	section .text object LLMJVM_FreeRTOS.o,
-	section .text object time_hardware_timer.o
+	section .text object time_hardware_timer.o,
+
+	/* ui dma2d cco */
+	section .text object drawing_dma2d.o
 };
 
 /* Define the ITCM region initializers */
@@ -101,7 +100,10 @@ define block RO_ITCM_CODE_INIT    with alignment = 4
 	/* VM core BSP support functions */
 	section .text_init object LLBSP_generic.o,
 	section .text_init object LLMJVM_FreeRTOS.o,
-	section .text_init object time_hardware_timer.o
+	section .text_init object time_hardware_timer.o,
+
+	/* ui dma2d cco */
+	section .text_init object drawing_dma2d.o
 };
 
 /* Initialize manually the ITCM region */
@@ -124,7 +126,10 @@ initialize manually
 	/* VM core BSP support functions */
 	section .text object LLBSP_generic.o,
 	section .text object LLMJVM_FreeRTOS.o,
-	section .text object time_hardware_timer.o
+	section .text object time_hardware_timer.o,
+
+	/* ui dma2d cco */
+	section .text object drawing_dma2d.o
 };
 
 /* Initialize by copy the readwrite section */
@@ -183,7 +188,9 @@ place in QSPI_region         { block RO_ITCM_CODE_INIT };
 place in DTCM_region         { zeroinit section .RxDescripSection, section .TxDescripSection, section .RxBUF, section .TxBUF object ethernetif.o };
 
 /* Place in DTCM the SD Card buffers */
-place in DTCM_region         { zeroinit section .FileBUF, section .DirBUF, section .FsBUF object fs_helper_FatFs.o };
+place in DTCM_region         { zeroinit object LLFS_STM32_init_sdcard.o };
+place in DTCM_region         { zeroinit object fs_helper_FatFs.o };
+place in DTCM_region         { zeroinit object LLFS_impl.o };
 place in DTCM_region         { zeroinit section .ScratchBUF object sd_diskio_dma_rtos.o };
 
 /* Place in DTCM the VM stacks */
@@ -194,11 +201,6 @@ place in DTCM_region         { block RW_MICROEJ_ICETEA_HEAP };
 
 /* Initialized and uninitialized data sections goes into RAM, load LMA copy after code */
 place in SRAM_region         { readwrite, zeroinit, block HEAP, last block CSTACK };
-
-/* Place in SRAM the ECOM-COMM buffers */
-place in SRAM_region         { block RW_MICROEJ_ECOM };
-
-place in SRAM_region         { zeroinit object LLFS_impl.o };
 
 /* SDRAM used for: Display memory, Network heap, Java heap, Immortals heap, MicroUI heap and KF heap */
 place in SDRAM_region        { 	block RW_MICROEJ_DISPLAY_MEM, block RW_MICROEJ_NETWORK_HEAP, block RW_MICROEJ_JAVA_HEAP, block RW_MICROEJ_IMMORTALS, block RW_MICROEJ_MICROUI_HEAP, block RW_MICROEJ_KF_HEAP };

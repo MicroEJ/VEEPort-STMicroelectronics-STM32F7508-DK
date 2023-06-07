@@ -1,5 +1,5 @@
 /* 
- * Copyright 2011-2021 MicroEJ Corp. All rights reserved.
+ * Copyright 2011-2022 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -21,6 +21,25 @@ extern "C" {
 // --------------------------------------------------------------------------------
 
 #include "LLUI_DISPLAY.h"
+
+// --------------------------------------------------------------------------------
+// Constants
+// --------------------------------------------------------------------------------
+
+/*
+ * @brief Low-Level API UI major version.
+ */
+#define LLUI_MAJOR_VERSION 13
+
+/*
+ * @brief Low-Level API UI minor version.
+ */
+#define LLUI_MINOR_VERSION 4
+
+/*
+ * @brief Low-Level API UI patch version.
+ */
+#define LLUI_PATCH_VERSION 1
 
 // --------------------------------------------------------------------------------
 // Typedef and Structure
@@ -411,8 +430,9 @@ bool LLUI_DISPLAY_IMPL_prepareBlendingOfIndexedColors(uint32_t* foreground, uint
  *
  * @param[in] addr the source image address.
  * @param[in] length the source image size in bytes.
- * @param[in] expectedFormat the RAW image expected format (MICROUI_IMAGE_FORMAT_CUSTOM
- * means the implementation can choose the better output format).
+ * @param[in] expectedFormat the RAW image expected format. The format is one value
+ * from the MICROUI_ImageFormat enumeration. (MICROUI_IMAGE_FORMAT_CUSTOM means the
+ * implementation can choose the better output format).
  * @param[in/out] image the reserved MicroUI Image; implementation has to fill it
  * with the image characteristics.
  * @param[out] isFullyOpaque a boolean to notify to the  that the
@@ -422,7 +442,7 @@ bool LLUI_DISPLAY_IMPL_prepareBlendingOfIndexedColors(uint32_t* foreground, uint
  *
  * @return LLUI_DISPLAY_OK when decoding is successful.
  */
-LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length, MICROUI_ImageFormat expectedFormat, MICROUI_Image* image, bool* isFullyOpaque);
+LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length, jbyte expectedFormat, MICROUI_Image* image, bool* isFullyOpaque);
 
 /*
  * @brief Returns the new image row stride in bytes.
@@ -442,14 +462,59 @@ LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length
  *
  * By default the weak function returns default row stride.
  *
- * @param[in] image_format the new RAW image format.
+ * @param[in] image_format the new RAW image format. The format is one value from the
+ * MICROUI_ImageFormat enumeration.
  * @param[in] image_width the new image width (in pixels).
  * @param[in] image_height the new image height (in pixels).
  * @param[in] default_stride the minimal row stride (in bytes)
  *
  * @return expected row stride (in bytes)
  */
-uint32_t LLUI_DISPLAY_IMPL_getNewImageStrideInBytes(MICROUI_ImageFormat image_format, uint32_t image_width, uint32_t image_height, uint32_t default_stride);
+uint32_t LLUI_DISPLAY_IMPL_getNewImageStrideInBytes(jbyte image_format, uint32_t image_width, uint32_t image_height, uint32_t default_stride);
+
+/*
+ * @brief Adjusts the new image characteristics: data size and alignment.
+ *
+ * The image format can be platform generic or specific.
+ *
+ * For the generic RAW formats, the data size is already calculated according the image format
+ * (bpp) and the image dimensions. The platform can increase this value to add a custom header
+ * before the first pixel data (top-left pixel: 0,0). This header can be used by some GPU to
+ * store metadata. If the returned size is smaller than the calculated size, the custom header
+ * is considered as useless and ignored.
+ *
+ * For the custom image formats, the given data size is 0. The platform has the responsability
+ * to give a valid size to allocate the custom header. This header must, at least, keeps a
+ * pointer on the custom image data. An error is thrown at runtime if this function does not
+ * set a positive value for data_size.
+ *
+ * The value returned by LLUI_DISPLAY_getBufferAddress() points on this custom header if exists.
+ * Otherwise, it points on first image data (top-left pixel: 0,0).
+ *
+ * The data alignment value is used by the allocator to align the image buffer (with or without
+ * custom header) address. A default alignment is set and the bigger alignment is kept.
+ *
+ * @param[in] image_format the new RAW image format. The format is one value from the
+ * MICROUI_ImageFormat enumeration.
+ * @param[in] width the new image width (in pixels).
+ * @param[in] height the new image height (in pixels).
+ * @param[in/out] data_size the minimal data size (in bytes).
+ * @param[in/out] data_alignment the minimal data alignment to respect (in bytes).
+ */
+void LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics(jbyte image_format, uint32_t width, uint32_t height, uint32_t* data_size, uint32_t* data_alignment);
+
+/*
+ * @brief Initializes the image's custom header when available.
+ *
+ * This function is only called when a custom header has been specified when creating a new
+ * image (see LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics()). This implementation can
+ * retrieve the custom header address by calling LLUI_DISPLAY_getBufferAddress(). The image
+ * format (generic or custom) and the image dimensions can be also useful to initialize the
+ * custom header (see struct MICROUI_Image).
+ *
+ * @param[in] image the MicroUI Image to initialize.
+ */
+void LLUI_DISPLAY_IMPL_initializeNewImage(MICROUI_Image* image);
 
 // --------------------------------------------------------------------------------
 // EOF

@@ -1,9 +1,16 @@
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.6.json
+   :alt: sdk_5.6 badge
+   :align: left
+
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/arch_7.18.json
+   :alt: arch_7.18 badge
+   :align: left
 ..
-    Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+    Copyright 2020-2023 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.5.0
+.. |PLATFORM_VER| replace:: 1.6.0
 .. |RCP| replace:: MICROEJ SDK
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |PLATFORMS| replace:: MicroEJ Platforms
@@ -77,7 +84,7 @@ Here is a list of |BOARD_NAME| useful documentation links:
 Platform Specifications
 =======================
 
-The Architecture version is ``7.16.1`` for GCC compiler and ``7.16.0`` for IAR compiler.
+The Architecture version is ``7.18.1`` for GCC compiler and ``7.18.1`` for IAR compiler.
 
 This Platform provides the following Foundation Libraries:
 
@@ -101,11 +108,11 @@ This Platform provides the following Foundation Libraries:
    * - EDC
      - 1.3
    * - FS
-     - 2.0
+     - 2.1
    * - HAL
      - 1.0
    * - KF
-     - 1.5
+     - 1.6
    * - MICROUI
      - 3.1
    * - NET
@@ -169,13 +176,18 @@ IAR Embedded Workbench Setup
 ----------------------------
 
 1. Install IAR Embedded Workbench.
-2. Unzip the patch found here ``/stm32f7508_freertos-bsp/sdk/Utilities/PC_Software/patch/EWARM/``.
+2. Unzip the patch found here ``/stm32f7508_freertos-bsp/sdk/STM32CubeF7/Utilities/PC_Software/patch/EWARM/``.
 3. Execute the self-extracting archive ``EWARM_v7_ValueLine_STM32F7x0x8_Supportv4.0.exe``.
 4. Apply the extracted patch to IAR Embedded Workbench installation directory (e.g. ``C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.4/``).
 
 
 BSP Compilation
 ---------------
+
+Before the first build of the BSP, ensure you have cloned the repository and all its submodules
+and also the patch for STM32CubeF7 implementation is applied. To update git submodules, run the 
+following command in "git submodule update --init --recursive" in the root project "P0234_STM32F7508-DK".
+to apply the patch you can run the script **RunAtFirstBSPCompile** located in  ``xxx/stm32f7508_freertos-bsp/projects/microej/scripts``.
 
 The Platform provides a pre-compiled Mono-Sandbox Application for each toolchain.
 Validate the BSP installation by compiling the BSP to build a MicroEJ

@@ -25,10 +25,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
-#ifdef COREMARK
-#include "coremark.h"
-#endif
-#ifdef IPERF
+#ifdef IPERF_BUILD
 #include "iperf.h"
 #endif
 /* Macros --------------------------------------------------------------------*/
@@ -57,9 +54,6 @@ extern uint32_t    ErrorCounter;
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 int app_main(void);
-#ifdef COREMARK
-extern MAIN_RETURN_TYPE core_main(void);
-#endif
 #ifdef USE_FULL_ASSERT
 void assert_failed(uint8_t* file, uint32_t line);
 #endif

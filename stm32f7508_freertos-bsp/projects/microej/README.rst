@@ -1,9 +1,9 @@
 .. 
-	Copyright 2021-2022 MicroEJ Corp. All rights reserved.
+	Copyright 2021-2023 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.5.0
+.. |PLATFORM_VER| replace:: 1.6.0
 .. |RCP| replace:: MICROEJ SDK
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |PLATFORMS| replace:: MicroEJ Platforms
@@ -26,6 +26,34 @@ This project contains the BSP sources of the |PLATFORM| for the
 
 This document does not describe how to setup the |PLATFORM|.  Please
 refer to the `README`_ for that.
+
+Board Configuration
+-------------------
+
+STM32F7508-DK provides several connectors, each connector is used by the MicroEJ Core Engine itself or by a foundation library.
+
+Mandatory Connectors
+~~~~~~~~~~~~~~~~~~~~
+
+STM32F7508-DK provides a multi function USB port used as:
+
+- Power supply connector
+- Probe connector
+- Virtual COM port
+
+Ensure the Power Supply jumper JP1 is fit to the second opetion: 5V link (default setting).
+Then just plug a mini USB Type-B cable from a computer to power on the board, to be able to program an application on it and see the traces.
+
+For a detailed Power Supply setup check the user manual on ST website under `Resources <https://www.st.com/resource/en/user_manual/dm00537062-discovery-kit-for-stm32f7-series-with-stm32f750n8-mcu-stmicroelectronics.pdf>`__ tab.
+
+.. image:: ./../../../images/stm32f7508-dk_ports.png
+
+CPU clock
+---------
+
+- Although the MCU supports a maximum SYSCLK of 216MHz, the BSP configured the SYSCLK to 200MHz
+- Configuring the SYSCLK to 216MHz is only possible with an FMC_SDCLK configured to 72MHz `datasheet <https://www.st.com/resource/en/datasheet/stm32f750n8.pdf>`__
+- We gain performance for CPU, but decrease greatly for SDRAM so overall, 200MHZ for SYSCLK and 100MHz for FMC is the optimal config.
 
 Build & Flash Scripts
 ---------------------
@@ -67,27 +95,6 @@ the ``set_local_env.bat`` scripts.  When the ``.bat`` scripts
 are executed, the ``set_local_env.bat`` script is executed if it exists.
 Configure these files to customize the environment locally.
 
-Board Configuration
--------------------
-
-STM32F7508-DK provides several connectors, each connector is used by the MicroEJ Core Engine itself or by a foundation library.
-
-Mandatory Connectors
-~~~~~~~~~~~~~~~~~~~~
-
-STM32F7508-DK provides a multi function USB port used as:
-
-- Power supply connector
-- Probe connector
-- Virtual COM port
-
-Ensure the Power Supply jumper JP1 is fit to the second opetion: 5V link (default setting).
-Then just plug a mini USB Type-B cable from a computer to power on the board, to be able to program an application on it and see the traces.
-
-For a detailed Power Supply setup check the user manual on ST website under `Resources <https://www.st.com/resource/en/user_manual/dm00537062-discovery-kit-for-stm32f7-series-with-stm32f750n8-mcu-stmicroelectronics.pdf>`__ tab.
-
-.. image:: ./../../../images/stm32f7508-dk_ports.png
-
 Debugging with the |BOARD_NAME|
 -------------------------------
 
@@ -115,6 +122,8 @@ GCC Debugging
 
   - Click on ``Run`` > ``Run configurations``
   - Select ``application_debug`` configuration and click on ``Run``.
+
+- To reduce build time, the `Generate list file` option is disabled in the Release launcher. To enable list file generation, Right-click on the ``application`` C/C++ Build > Settings > and check Generate list file
 
 IAR Debugging 
 ~~~~~~~~~~~~~

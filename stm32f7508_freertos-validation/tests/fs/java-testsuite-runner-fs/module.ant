@@ -1,0 +1,20 @@
+<!--
+	ANT
+	
+	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
+-->
+<project name="jpf.testsuite.fs" xmlns:ea="antlib:org.apache.easyant" xmlns:ivy="antlib:org.apache.ivy.ant"  xmlns:ac="antlib:net.sf.antcontrib">
+	
+	<dirname file="${ant.file.jpf.testsuite.fs}" property="project"/>
+	<dirname file="${project}" property="workspace.dir"/>
+	
+	<target name="tracefile:init" extensionOf="abstract-test:test-ready">
+		<!-- Set the launch.test.trace.file when the testsuite.trace.ip properties is not set -->
+		<condition property="microej.testsuite.properties.launch.test.trace.file">
+			<not>
+				<isset property="microej.testsuite.properties.testsuite.trace.ip" />
+			</not>
+		</condition>
+	</target>
+</project>

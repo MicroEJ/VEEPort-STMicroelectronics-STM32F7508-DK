@@ -22,15 +22,14 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2018 STMicroelectronics.
+  * All rights reserved.
   *
-  * Copyright 2020-2022 MicroEJ Corp. This file has been modified by MicroEJ Corp.
+  * Copyright 2020-2023 MicroEJ Corp. This file has been modified by MicroEJ Corp.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -76,7 +75,7 @@
 /************************* Miscellaneous Configuration ************************/
 /*!< Uncomment the following line if you need to use external SRAM or SDRAM mounted
      on STMicroelectronics EVAL/Discovery boards as data memory  */
-/*!< In case of EVAL/Discovery�s LCD use in application code, the DATA_IN_ExtSDRAM define
+/*!< In case of EVAL/Discovery’s LCD use in application code, the DATA_IN_ExtSDRAM define
      need to be added  in the project preprocessor to avoid SDRAM multiple configuration
      (the LCD uses SDRAM as frame buffer, and its configuration is done by the BSP_SDRAM_Init()) */
 /* #define DATA_IN_ExtSRAM */ 
@@ -657,4 +656,3 @@ void SystemInit_ExtMemCtl(void)
 /**
   * @}
   */    
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

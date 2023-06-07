@@ -1,9 +1,9 @@
 ﻿..
-    Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+    Copyright 2020-2023 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.5.0
+.. |PLATFORM_VER| replace:: 1.6.0
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |PLATFORM| replace:: MicroEJ Platform
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
@@ -40,18 +40,18 @@ This |PLATFORM| contains the following dependencies:
 .. list-table::
 
   * - flopi7G26 (Architecture)
-    - 7.16.1
+    - 7.18.1
   * - flopi7G26UI (User Interface)
-    - 13.2.0
+    - 13.4.1
 
 - MicroEJ IAR specific packs:
 
 .. list-table::
 
   * - flopi7I36 (Architecture)
-    - 7.16.0
+    - 7.18.1
   * - flopi7I36UI (User Interface)
-    - 13.2.0
+    - 13.4.1
 
 - MicroEJ generic packs:
 
@@ -62,17 +62,21 @@ This |PLATFORM| contains the following dependencies:
   * - HAL (Hardware Abstraction Layer)
     - 2.0.1
   * - FS (File System)
-    - 5.1.2
+    - 6.0.3
 
 Board Support Package
 ---------------------
 
 - BSP provider: |MANUFACTURER|
-- BSP version: v1.16.0
+- BSP version: v1.17.0
+- The `StmCubeIDE v1.9.0` contains mbedTLS v2.16.2 and this version is not fully functional with
+   `IAR Embedded Workbench IDE v8.50.5`, therefore the `CubeF7-MicroEJ.patch` file contains
+   `mbedTLS v2.16.7` which fixes the issues, LWIP handle MicroEJ specific errno for integration,
+   FreeRTOS extend IAR port as CM7 patch and add support for xPortIsInsideInterrupt()
 
 Please refer to the |MANUFACTURER| GitHub git repository
 available `here
-<https://github.com/STMicroelectronics/STM32CubeF7/tree/v1.16.0>`__.
+<https://github.com/STMicroelectronics/STM32CubeF7/tree/v1.17.0>`__.
 
 Third Party Software
 --------------------
@@ -95,7 +99,7 @@ is a list of the most important ones:
      - 2.16.7
    * - File System stack 
      - FatFS
-     - 2.1.4
+     - R0.12c
 
 Features
 ========
@@ -398,6 +402,10 @@ The following setup is needed to have System View functional:
 
 - Enable `ENABLE_SYSTEM_VIEW` compile switch at project level, either in |STM_IDE.PRINTABLENAME| or |IAR_IDE.PRINTABLENAME|, depending on the user's choice
 
+  - with `STM32CubeIDE` ``open the workspace .cproject -> go to the application  -> right click -> Properties -> C/C++Build -> Settings -> MCU GCC Compiler -> Preprocessor -> add the define``
+
+  - with `IAR Embedded Workbench IDE` ``open the workspace .eww -> go to the application -> right click -> option -> C/C++Compiler -> Preprocessor ->Defined symbols -> add the define``
+
 - Re-build the BSP project
 
 - Download System View |SYSTEMVIEW_VERSION| PC application `<https://www.segger.com/downloads/systemview/>`_
@@ -405,7 +413,7 @@ The following setup is needed to have System View functional:
 - Build and flash an application binary on the board
 
 - Follow the instructions provided by |SYSTEMVIEW_PROVIDER| `<https://www.segger.com/products/debug-probes/j-link/models/other-j-links/st-link-on-board/>`_
-  to re-flash the ST-LINK on board with a J-Link firmware
+  to re-flash the ST-LINK on board with a J-Link firmware, making it J-Link compatible
 
 - Open System View PC application
 
@@ -433,9 +441,9 @@ The following setup is needed to have System View functional:
 
 .. note::
 
-  To re-flash a new binary on the board, the user needs to re-flash the ST-LINK on board with a ST-LINK firmware. For this, use the same tool as described
-  `<https://www.segger.com/products/debug-probes/j-link/models/other-j-links/st-link-on-board/>`_, as it allows restoring the ST-LINK firmware previously
-  replaced with the J-Link firmware.
+  To re-flash a new binary on the board, the user needs to re-flash the `ST-LINK` on board with a `ST-LINK firmware`. For this, download the latest version of `STSW-LINK007`
+  `<https://www.st.com/en/development-tools/stsw-link007.html>`_, unarchive zip and run `ST-LinkUpgrade.exe` ``Device Connect -> Yes`` to Upgrade Firmware
+
 
 .. note::
 
@@ -445,19 +453,45 @@ The following setup is needed to have System View functional:
 
 .. note::
 
+  If the RTT Control Block Address is not detected by System View:
+
+- Run first on UART with `ENABLE_SYSTEM_VIEW` enabled to see at boot `SEGGER_RTT block address`
+
+- Open System View PC application
+
+- Go to ``Target > Recorder Configuration``
+
+- Select ``J-Link`` as SystemView Recorder
+
+- Click ``Ok``
+
+- Select the following Recorder Configuration:
+
+  - ``J-Link Connection = USB``
+
+  - ``Target Connection = STM32F750N8``
+
+  - ``Target Interface = SWD``
+
+  - ``Interface Speed (kHz) = 4000``
+
+  - ``RTT Control Block Detection = Search Range`` add `SEGGER_RTT block address` that you see at boot on UART, i.e. 0x20000000 2048
+
+- Click ``Ok``
+
+- Select ``Target > Start Recording``
+
+.. note::
+
     To have a fully functional System View trace, a FreeRTOS patch needed to be applied. Neither |SYSTEMVIEW_PROVIDER|, nor |MANUFACTURER|
     provide such patch for |BOARD_NAME|, therefore a custom patch was applied, see
-    ``/stm32f7508_freertos-bsp/third_party/FreeRTOS/Source/microej_readme.txt`` for more details. Also, the custom patch removes the tracing of the SysTick interrupt, as
+    ``/stm32f7508_freertos-bsp/sdk/STM32CubeF7/Middlewares/Third_Party/FreeRTOS/Source/microej_readme.txt`` for more details. Also, the custom patch removes the tracing of the SysTick interrupt, as
     with an interrupt period of 1ms, tracing this interrupt was triggering OVERFLOW events without bringing much benefit for the user to see a periodic interrupt
     in the trace logs.
 
 Known issues/limitations
 ========================
 
-- FS does not support multiple stream/thread on the same file,
-- FS does not support file write/read with offset from/to immortal arrays,
-- M0074FS-151: Provided Filesystem pack does not support file backward
-  skip.
 
 Platform Memory Layout
 ======================

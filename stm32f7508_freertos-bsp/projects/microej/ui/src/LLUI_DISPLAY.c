@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2014-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -165,7 +165,7 @@ uint8_t* LLUI_DISPLAY_IMPL_flush(MICROUI_GraphicsContext* gc, uint8_t* srcAddr, 
 	return destAddr;
 }
 
-LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length, MICROUI_ImageFormat expectedFormat, MICROUI_Image* data, bool* isFullyOpaque)
+LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length, jbyte expectedFormat, MICROUI_Image* image, bool* isFullyOpaque)
 {
-	return MICROEJ_DECODE_webp(addr, length, expectedFormat, data, isFullyOpaque);
+	return MICROEJ_DECODE_webp(addr, length, expectedFormat, image, isFullyOpaque);
 }

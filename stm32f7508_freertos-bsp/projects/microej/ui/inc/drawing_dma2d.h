@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2019-2022 MicroEJ Corp. All rights reserved.
+ * Copyright 2019-2023 MicroEJ Corp. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
@@ -26,8 +26,8 @@
  * 		 - Call "DRAWING_DMA2D_start_memcpy()" in LCD interrupt (optional).
  *
  * @author MicroEJ Developer Team
- * @version 2.0.1
- * @date 16 June 2022
+ * @version 3.1.0
+ * @date 13 April 2023
  */
 
 #ifdef __cplusplus
@@ -38,6 +38,8 @@
 
 #include <stdint.h>
 #include "LLUI_DISPLAY_IMPL.h"
+#include "drawing_dma2d_configuration.h"
+
 
 #ifdef STM32F4XX
 #include "stm32f4xx_hal.h"
@@ -45,6 +47,10 @@
 
 #ifdef STM32F7XX
 #include "stm32f7xx_hal.h"
+#endif
+
+#ifdef STM32H7XX
+#include "stm32h7xx_hal.h"
 #endif
 
 #include "sni.h"

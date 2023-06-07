@@ -1,34 +1,7 @@
 /*
-*****************************************************************************
-**
-
-**  File        : LinkerScript.ld
-**
-**  Abstract    : Linker script for STM32F750N8Hx Device
-**
-**                Set heap size, stack size and stack location according
-**                to application requirements.
-**
-**                Set memory bank area and size if external memory is used.
-**
-**  Target      : STMicroelectronics STM32
-**
-**
-**  Distribution: The file is distributed as is, without any warranty
-**                of any kind.
-**
-**  (c)Copyright Ac6.
-**  You may use this file as-is or modify it according to the needs of your
-**  project. Distribution of this file (unmodified or modified) is not
-**  permitted. Ac6 permit registered System Workbench for MCU users the
-**  rights to distribute the assembled, compiled & linked contents of this
-**  file as part of an application binary file, provided that it is built
-**  using the System Workbench for MCU toolchain.
-**
-**  Copyright 2020-2021 MicroEJ Corp. This file has been modified by MicroEJ Corp.
-**
-*****************************************************************************
-*/
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
+ */
 
 /* Entry Point */
 ENTRY(Reset_Handler)
@@ -68,9 +41,9 @@ SECTIONS
     . = ALIGN(4);
 
     /* Map in FLASH the startup code (mandatory) */
-    *main.o(.text.startup.main .text.init)
+    *main.o(.text.startup.main .text.main .text.init .text.CPU_CACHE_Enable .text.SystemClock_Config)
     *memory_msp.o(.text.QSPI_MspInit)
-    *qspi.o(.text.QSPI_Startup)
+    *qspi.o(.text .text.*)
     *startup_stm32f750xx.o(.text .text.*)
     *system_stm32f7xx.o(.text .text.*)
 
@@ -87,8 +60,6 @@ SECTIONS
     *_udivmoddi4.o(.text)
     *crtbegin.o(.text)
     *libc_nano.a:(.text.__libc_init_array)
-
-
 
     /* Java VM Core (optional, performance increases compared with default QSPI mapping) */
     *VMCOREMicroJvm*.o(.text .text.*)
@@ -187,6 +158,9 @@ SECTIONS
     *LLMJVM_FreeRTOS.o(.text .text.*)
     *time_hardware_timer.o(.text .text.*)
 
+    /* ui dma2d cco */
+    *ui_drawing_dma2d.o(.text .text.*)
+
     . = ALIGN(4);
     _eitcm = .;        /* define a global symbol at ITCM end */
   } >ITCM AT> QSPI
@@ -195,10 +169,6 @@ SECTIONS
   .text_qspi :
   {
     . = ALIGN(4);
-
-	/* Toolchain libraries (optional, performance increases compared with default QSPI mapping) */
-    *libgcc.a:(.text .text.*)
-    *lib_a-nano*.o(.text .text.*)
 
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
@@ -226,13 +196,15 @@ SECTIONS
   {
     . = ALIGN(4);
     _sdbss = .;         /* define a global symbol at bss start */
-    
-    /* SD Card buffers */
-    *(.FileBUF* .DirBUF* .FsBUF*)
-    *sd_diskio_dma_rtos.o(.ScratchBUF)
 
     /* Ethernet buffers */
     *ethernetif.o(.RxDescripSection .TxDescripSection .RxBUF .TxBUF)
+
+    /* SD Card buffers */
+    *sd_diskio_dma_rtos.o(.ScratchBUF)
+    *LLFS_impl.o(.bss .bss*)
+    *LLFS_STM32_init_sdcard.o(.bss .bss*)
+    *fs_helper_FatFs.o(.bss .bss*)
 
     /* VM stacks */
     *(.bss.vm.stacks.java)
@@ -280,11 +252,6 @@ SECTIONS
   {
     . = ALIGN(4);
     _sbss = .;         /* define a global symbol at bss start */
-
-    *LLFS_impl.o(COMMON)
-	
-    /* ECOM-COMM buffers */
-    *(.bss.ecom.*)
 
     *(.bss)
     *(.bss*)

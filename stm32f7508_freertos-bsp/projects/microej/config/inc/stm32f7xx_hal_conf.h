@@ -6,18 +6,17 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2018 STMicroelectronics.
+  * All rights reserved.
   *
-  * Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.
+  * Copyright 2020-2023 MicroEJ Corp. This file has been modified by MicroEJ Corp.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F7xx_HAL_CONF_H
@@ -44,7 +43,8 @@
 #define HAL_DCMI_MODULE_ENABLED 
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_DMA2D_MODULE_ENABLED 
-#define HAL_ETH_MODULE_ENABLED
+/* #define  HAL_ETH_MODULE_ENABLED */
+#define HAL_ETH_LEGACY_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED 
 /* #define HAL_NAND_MODULE_ENABLED   */
 /* #define HAL_NOR_MODULE_ENABLED   */
@@ -84,11 +84,11 @@
   *        (when HSE is used as system clock source, directly or through the PLL).  
   */
 #if !defined  (HSE_VALUE) 
-  #define HSE_VALUE    ((uint32_t)25000000U) /*!< Value of the External oscillator in Hz */
+  #define HSE_VALUE    25000000U /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
 
 #if !defined  (HSE_STARTUP_TIMEOUT)
-  #define HSE_STARTUP_TIMEOUT    ((uint32_t)100U)   /*!< Time out for HSE start up, in ms */
+  #define HSE_STARTUP_TIMEOUT    100U   /*!< Time out for HSE start up, in ms */
 #endif /* HSE_STARTUP_TIMEOUT */
 
 /**
@@ -97,14 +97,14 @@
   *        (when HSI is used as system clock source, directly or through the PLL). 
   */
 #if !defined  (HSI_VALUE)
-  #define HSI_VALUE    ((uint32_t)16000000U) /*!< Value of the Internal oscillator in Hz*/
+  #define HSI_VALUE    16000000U /*!< Value of the Internal oscillator in Hz*/
 #endif /* HSI_VALUE */
 
 /**
   * @brief Internal Low Speed oscillator (LSI) value.
   */
 #if !defined  (LSI_VALUE) 
- #define LSI_VALUE  ((uint32_t)32000U)       /*!< LSI Typical Value in Hz*/    
+ #define LSI_VALUE  32000U       /*!< LSI Typical Value in Hz*/    
 #endif /* LSI_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
                                              The real value may vary depending on the variations
                                              in voltage and temperature.  */
@@ -112,11 +112,11 @@
   * @brief External Low Speed oscillator (LSE) value.
   */
 #if !defined  (LSE_VALUE)
- #define LSE_VALUE  ((uint32_t)32768U)    /*!< Value of the External Low Speed oscillator in Hz */
+ #define LSE_VALUE  32768U    /*!< Value of the External Low Speed oscillator in Hz */
 #endif /* LSE_VALUE */
 
 #if !defined  (LSE_STARTUP_TIMEOUT)
-  #define LSE_STARTUP_TIMEOUT    ((uint32_t)5000U)   /*!< Time out for LSE start up, in ms */
+  #define LSE_STARTUP_TIMEOUT    5000U   /*!< Time out for LSE start up, in ms */
 #endif /* LSE_STARTUP_TIMEOUT */
 
 /**
@@ -125,7 +125,7 @@
   *        frequency, this source is inserted directly through I2S_CKIN pad. 
   */
 #if !defined  (EXTERNAL_CLOCK_VALUE)
-  #define EXTERNAL_CLOCK_VALUE    ((uint32_t)12288000U) /*!< Value of the Internal oscillator in Hz*/
+  #define EXTERNAL_CLOCK_VALUE    12288000U /*!< Value of the Internal oscillator in Hz*/
 #endif /* EXTERNAL_CLOCK_VALUE */
 
 /* Tip: To avoid modifying this file each time you need to use different HSE,
@@ -135,11 +135,11 @@
 /**
   * @brief This is the HAL system configuration section
   */     
-#define  VDD_VALUE                    ((uint32_t)3300U) /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY            ((uint32_t)0x0FU) /*!< tick interrupt priority */
+#define  VDD_VALUE                    3300U /*!< Value of VDD in mv */
+#define  TICK_INT_PRIORITY            0x0FU /*!< tick interrupt priority */
 #define  USE_RTOS                     0U
 #define  PREFETCH_ENABLE              1U
-#define  ART_ACCLERATOR_ENABLE        1U /* To enable instruction cache and prefetch */
+#define  ART_ACCELERATOR_ENABLE       1U /* To enable instruction cache and prefetch */
 
 #define  USE_HAL_ADC_REGISTER_CALLBACKS         0U /* ADC register callback disabled       */
 #define  USE_HAL_CAN_REGISTER_CALLBACKS         0U /* CAN register callback disabled       */
@@ -185,7 +185,7 @@
   * @brief Uncomment the line below to expanse the "assert_param" macro in the 
   *        HAL drivers code
   */
-/* #define USE_FULL_ASSERT    1 */
+/* #define USE_FULL_ASSERT    1U */
 
 /* ################## Ethernet peripheral configuration ##################### */
 
@@ -200,26 +200,26 @@
 #define MAC_ADDR5   0U
 
 /* Definition of the Ethernet driver buffers size and count */   
-#define ETH_RX_BUF_SIZE                ETH_MAX_PACKET_SIZE /* buffer size for receive               */
-#define ETH_TX_BUF_SIZE                ETH_MAX_PACKET_SIZE /* buffer size for transmit              */
-#define ETH_RXBUFNB                    ((uint32_t)5U)       /* 5 Rx buffers of size ETH_RX_BUF_SIZE  */
-#define ETH_TXBUFNB                    ((uint32_t)5U)       /* 5 Tx buffers of size ETH_TX_BUF_SIZE  */
+#define ETH_RX_BUF_SIZE                1528U    /* ETH Max buffer size for receive               */
+#define ETH_TX_BUF_SIZE                1528U    /* ETH Max buffer size for transmit              */
+#define ETH_RXBUFNB                    5U       /* 5 Rx buffers of size ETH_RX_BUF_SIZE  */
+#define ETH_TXBUFNB                    5U       /* 5 Tx buffers of size ETH_TX_BUF_SIZE  */
 
 /* Section 2: PHY configuration section */
 /* LAN8742A PHY Address*/
 #define LAN8742A_PHY_ADDRESS            0x00U
 /* PHY Reset delay these values are based on a 1 ms Systick interrupt*/ 
-#define PHY_RESET_DELAY                 ((uint32_t)0x00000FFFU)
+#define PHY_RESET_DELAY                 0x00000FFFU
 /* PHY Configuration delay */
-#define PHY_CONFIG_DELAY                ((uint32_t)0x00000FFFU)
+#define PHY_CONFIG_DELAY                0x00000FFFU
 
-#define PHY_READ_TO                     ((uint32_t)0x0000FFFFU)
-#define PHY_WRITE_TO                    ((uint32_t)0x0000FFFFU)
+#define PHY_READ_TO                     0x0000FFFFU
+#define PHY_WRITE_TO                    0x0000FFFFU
 
 /* Section 3: Common PHY Registers */
 
-#define PHY_BCR                         ((uint16_t)0x00U)    /*!< Transceiver Basic Control Register   */
-#define PHY_BSR                         ((uint16_t)0x01U)    /*!< Transceiver Basic Status Register    */
+#define PHY_BCR                         ((uint16_t)0x0000U)    /*!< Transceiver Basic Control Register   */
+#define PHY_BSR                         ((uint16_t)0x0001U)    /*!< Transceiver Basic Status Register    */
  
 #define PHY_RESET                       ((uint16_t)0x8000U)  /*!< PHY Reset */
 #define PHY_LOOPBACK                    ((uint16_t)0x4000U)  /*!< Select loop-back mode */
@@ -238,7 +238,7 @@
   
 /* Section 4: Extended PHY Registers */
 
-#define PHY_SR                          ((uint16_t)0x1FU)    /*!< PHY special control/ status register Offset     */
+#define PHY_SR                          ((uint16_t)0x001FU)    /*!< PHY special control/ status register Offset     */
 
 #define PHY_SPEED_STATUS                ((uint16_t)0x0004U)  /*!< PHY Speed mask                                  */
 #define PHY_DUPLEX_STATUS               ((uint16_t)0x0010U)  /*!< PHY Duplex mask                                 */
@@ -316,6 +316,10 @@
 #ifdef HAL_ETH_MODULE_ENABLED
   #include "stm32f7xx_hal_eth.h"
 #endif /* HAL_ETH_MODULE_ENABLED */
+
+#ifdef HAL_ETH_LEGACY_MODULE_ENABLED
+  #include "stm32f7xx_hal_eth_legacy.h"
+#endif /* HAL_ETH_LEGACY_MODULE_ENABLED */
 
 #ifdef HAL_FLASH_MODULE_ENABLED
   #include "stm32f7xx_hal_flash.h"
@@ -446,7 +450,7 @@
 
 /*!< Uncomment the following line if you need to use external SDRAM mounted
      on STMicroelectronics EVAL/Discovery boards as data memory  */
-/*!< In case of EVAL/Discovery’s LCD use in application code, the DATA_IN_ExtSDRAM define
+/*!< In case of EVAL/Discoveryï¿½s LCD use in application code, the DATA_IN_ExtSDRAM define
      need to be added  in the project preprocessor to avoid SDRAM multiple configuration
      (the LCD uses SDRAM as frame buffer, and its configuration is done by the BSP_SDRAM_Init()) */
 #define DATA_IN_ExtSDRAM
@@ -458,4 +462,3 @@
 #endif /* __STM32F7xx_HAL_CONF_H */
  
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,8 +1,9 @@
 /*
  * C
  *
- * Copyright 2016-2019 MicroEJ Corp. All rights reserved.
- * MicroEJ Corp. PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2016-2022 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 #ifndef LLFS_IMPL
 #define LLFS_IMPL
@@ -11,8 +12,8 @@
  * @file
  * @brief MicroEJ FS low level API
  * @author MicroEJ Developer Team
- * @version 2.1.0
- * @date 27 May 2020
+ * @version 3.1.0
+ * @date 28 March 2022
  */
 
 #include <stdint.h>
@@ -113,6 +114,7 @@ typedef struct {
 	int32_t hour;//see Java Calendar.HOUR_OF_DAY field
 	int32_t minute;//see Java Calendar.MINUTE field
 	int32_t second;//see Java Calendar.SECOND field
+	int32_t millisecond;//see Java Calendar.MILLISECOND field
 } LLFS_date_t;
 
 /*
@@ -173,13 +175,14 @@ int32_t LLFS_IMPL_create(uint8_t* path);
 /*
  * Opens a directory in order to read from it later. Framework ensures only
  * one directory is opened at the same time closing current directory
- * without opening a new one. The returned value is an positive integer used
+ * without opening a new one. The returned value is an integer used
  * as ID to identify the opened directory. This ID will be used later by
  * read and close methods.
  *
  * @param path
  *            absolute path of directory
- * @return an positive ID or {@link #LLFS_NOK}
+ * @return an ID out of the range <code>[{@link #LLFS_NOT_CREATED}-{@link #LLFS_OK}]</code> 
+ *         or {@link #LLFS_NOK} if the directory could not be open.
  *
  * @warning path must not be used outside of the VM task or saved.
  */
@@ -234,17 +237,18 @@ int32_t LLFS_IMPL_rename_to(uint8_t* path, uint8_t* new_path);
  */
 int64_t LLFS_IMPL_get_length(uint8_t* path);
 
-
-/*
- * Returns the number of unallocated bytes on the partition or 0L if the
- * path does not name a partition.
+/**
+ * Returns {@link #LLFS_OK} if and only if the file or directory denoted by
+ * this abstract pathname exists, {@link #LLFS_NOK} otherwise.
  *
  * @param path
- *            absolute path of file in the require partition
- * @return The number of unallocated bytes or {@link #LLFS_NOK} on error.
+ *            absolute path of file to test
+ * @return {@link #LLFS_OK} when file exists, {@link #LLFS_NOK} otherwise.
  *
  * @warning path must not be used outside of the VM task or saved.
+
  */
+int32_t LLFS_IMPL_exist(uint8_t* path);
 
 /**
  * Depending on <code>spaceType</code> returns the following values:

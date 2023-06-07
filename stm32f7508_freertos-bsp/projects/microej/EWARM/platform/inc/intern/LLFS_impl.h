@@ -1,16 +1,17 @@
 /*
  * C
  *
- * Copyright 2016-2019-2019 MicroEJ Corp. All rights reserved.
- * MicroEJ Corp. PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2016-2021 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 
 /**
  * @file
  * @brief MicroEJ FS low level API
  * @author MicroEJ Developer Team
- * @version 2.1.0
- * @date 27 May 2020
+ * @version 3.1.0
+ * @date 28 March 2022
  */
 
 #define LLFS_IMPL_initialize Java_com_is2t_java_io_FileSystem_initializeNative

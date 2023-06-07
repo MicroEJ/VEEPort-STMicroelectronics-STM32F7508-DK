@@ -24,7 +24,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f7xx_it.h"
-#ifndef COREMARK
+#ifndef VALIDATION_BUILD
 #include "cmsis_os.h"
 #endif
 #include "interrupts.h"
@@ -154,7 +154,7 @@ __weak void PendSV_Handler(void)
 
 void SysTick_Handler(void)
 {
-#ifndef COREMARK
+#ifndef VALIDATION_BUILD
   osSystickHandler();
 #endif
   HAL_IncTick();
@@ -167,7 +167,7 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f7xx.s).                                               */
 /******************************************************************************/
 
-#ifndef COREMARK
+#ifndef VALIDATION_BUILD
 /**
   * @brief  This function handles Ethernet interrupt request.
   * @param  None
@@ -209,7 +209,7 @@ void DMA2_Stream3_IRQHandler(void)
   HAL_DMA_IRQHandler(uSdHandle.hdmarx);
 }
 
-#if !defined(COREMARK) && !defined(IPERF)
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 /**
   * @brief  This function handles USB-On-The-Go FS/HS global interrupt request.
   * @param  None

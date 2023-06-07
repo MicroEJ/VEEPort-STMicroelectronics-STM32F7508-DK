@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include "FreeRTOS.h"
 #include "task.h"
-#ifndef IPERF
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 #include "watchdog.h"
 #include "cpuload.h"
 #endif
@@ -51,7 +51,7 @@ void vApplicationMallocFailedHook(void)
 
 void vApplicationIdleHook(void)
 {
-#ifndef IPERF
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 	refresh_watchdog();
 	cpuload_idle();
 #endif

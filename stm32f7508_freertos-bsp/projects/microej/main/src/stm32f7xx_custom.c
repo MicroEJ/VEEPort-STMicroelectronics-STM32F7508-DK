@@ -38,7 +38,7 @@
 #include "stm32f7xx_hal.h"
 
 /* @brief If COREMARK or IPERF tests are active, we don't use this implementation */
-#if !defined(COREMARK) && !defined(IPERF)
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 #include "FreeRTOS.h"
 #include "task.h"
 #endif
@@ -106,7 +106,7 @@ void HAL_IncTick(void)
 
 
 /* @brief If COREMARK or IPERF tests are active, we don't use this implementation */
-#if !defined(COREMARK) && !defined(IPERF)
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 
 /*============================================================================*/
 /**
