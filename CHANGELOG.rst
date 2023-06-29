@@ -7,6 +7,17 @@
 ===========
 
 ----------------------
+ [1.6.1] - 2023-06-29
+----------------------
+
+Fixed
+=====
+
+- Invalid HIL client message when simulation used
+- Packaged VEE Port zip file size too big when ``skip.publish=false``
+- ECOM-COMM Asbtraction Layer initialization issue
+
+----------------------
  [1.6.0] - 2023-04-20
 ----------------------
 

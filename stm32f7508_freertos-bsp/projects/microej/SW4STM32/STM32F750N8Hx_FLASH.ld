@@ -41,7 +41,7 @@ SECTIONS
     . = ALIGN(4);
 
     /* Map in FLASH the startup code (mandatory) */
-    *main.o(.text.startup.main .text.main .text.init .text.CPU_CACHE_Enable .text.SystemClock_Config)
+    *main.o(.text.startup.main .text.main .text.init .text.CPU_CACHE_Enable .text.SCB_EnableDCache .text.SCB_EnableICache .text.SystemClock_Config)
     *memory_msp.o(.text.QSPI_MspInit)
     *qspi.o(.text .text.*)
     *startup_stm32f750xx.o(.text .text.*)

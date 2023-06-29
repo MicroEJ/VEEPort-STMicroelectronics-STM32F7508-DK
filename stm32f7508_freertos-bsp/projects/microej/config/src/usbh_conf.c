@@ -23,6 +23,8 @@
 #include "usbh_core.h"
 #include "main.h"
 
+#define USE_USB_HS
+
 HCD_HandleTypeDef hhcd;
 
 /*******************************************************************************

@@ -4,7 +4,7 @@
 // Define ant_properties
 
 def ant_properties = ""
-ant_properties +=  " -Declipse.home=c:/jenkinsTools/common/microej/eclipse/microej-sdk-21.11/win64"
+ant_properties +=  " -Declipse.home=c:/jenkinsTools/common/microej/eclipse/microej-sdk-21.11-5.7.0/win64"
 ant_properties +=  " -Dcom.microej.platformbuilder.architecture.usage=prod"
 ant_properties +=  " -Dcom.microej.platformbuilder.bsp.build.enabled=true"
 ant_properties +=  " -Dcom.microej.platformbuilder.module.multi.enabled=true"
@@ -20,7 +20,7 @@ buildWithMMM{
 	LABEL = "stm32cubeide && iar8.50.6 && public"			// The label where build must be run. Default value is : public. Set it if yours is different.
 	DOCKER_IMAGE = ''
 
-	//MMM_VERSION = ''									// The version of MMM to use. Default value is 5.5.0.
+	//MMM_VERSION = ''									// The version of MMM to use. Default value is 5.7.0.
 	ANT_PROPERTIES = "${ant_properties}"				// The properties run with ant. Default value is already set. Add specific properties if necessary. As ('-DnameOfProperties=valueofProperty').
 	//ANT_VERBOSE = ''									// Default value is : false. Set true if you want the verbose mode.
 	//ARTIFACTS_DOMAIN = ''								// The artifacts domain to use. The default value is cross5.

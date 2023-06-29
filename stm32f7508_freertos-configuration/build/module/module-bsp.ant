@@ -39,9 +39,15 @@
 	<!-- Copy BSP into the platform -->
     <target name="module-bsp:preparePublication" extensionOf="abstract-compile:compile" depends="module-platform:preparePublication" if="bsp.root.dir" unless="${skip.publish}">
     	
+    	<property name="bsp.copy.includes.pattern" value="**/*"/>
+    	<property name="bsp.copy.excludes.pattern" value=""/>
+    	
+    	<echo message="Included paths from BSP copy : ${bsp.copy.includes.pattern}"/>
+    	<echo message="Excluded paths from BSP copy : ${bsp.copy.excludes.pattern}"/>
+    	
         <!-- Copy BSP unless it exists already (to prevent a recompilation) -->
     	<copy todir="${platform.publish.dir}/${platform.project.name}/source/bsp" overwrite="false" >
-			<fileset dir="${bsp.root.dir}" includes="**/*"/>
+			<fileset dir="${bsp.root.dir}" includes="${bsp.copy.includes.pattern}" excludes="${bsp.copy.excludes.pattern}"/>
 		</copy>
     	
     	<!-- BSP root dir option becomes useless (and disturbing) -->
