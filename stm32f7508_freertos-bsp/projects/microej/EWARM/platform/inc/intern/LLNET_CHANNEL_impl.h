@@ -10,8 +10,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #define LLNET_CHANNEL_IMPL_close 		Java_com_is2t_support_net_natives_ChannelNatives_closeNative

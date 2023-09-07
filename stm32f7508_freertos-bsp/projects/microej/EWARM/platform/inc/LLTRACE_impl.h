@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Copyright 2017-2022 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -76,7 +76,7 @@ int32_t LLTRACE_IMPL_declare_event_group(const char* group_name, int32_t nb_even
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -95,7 +95,7 @@ void LLTRACE_IMPL_record_event_void(int32_t group_id, int32_t event_id);
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -117,7 +117,7 @@ void LLTRACE_IMPL_record_event_u32(int32_t group_id, int32_t event_id, uint32_t 
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -142,7 +142,7 @@ void LLTRACE_IMPL_record_event_u32x2(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -170,7 +170,7 @@ void LLTRACE_IMPL_record_event_u32x3(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -201,7 +201,7 @@ void LLTRACE_IMPL_record_event_u32x4(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -235,7 +235,7 @@ void LLTRACE_IMPL_record_event_u32x5(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -272,7 +272,7 @@ void LLTRACE_IMPL_record_event_u32x6(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -312,7 +312,7 @@ void LLTRACE_IMPL_record_event_u32x7(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -355,7 +355,7 @@ void LLTRACE_IMPL_record_event_u32x8(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -401,7 +401,7 @@ void LLTRACE_IMPL_record_event_u32x9(int32_t group_id, int32_t event_id, uint32_
 
 /**
  * Record an event for the given group. The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -457,7 +457,7 @@ void LLTRACE_IMPL_record_event_u32x10(int32_t group_id, int32_t event_id, uint32
  * at the beginning of the function and <code>LLTRACE_IMPL_record_event_end*()</code> at the end of the function.
  * <p>
  * The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started
@@ -483,7 +483,7 @@ void LLTRACE_IMPL_record_event_end(int32_t group_id, int32_t event_id);
  * at the beginning of the function and <code>LLTRACE_IMPL_record_event_end*()</code> at the end of the function.
  * <p>
  * The given event ID must be valid for the specified
- * group (i.e. between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
+ * group (i.e., between 0 and <code>nb_event_types</code>-1 included where <code>nb_event_types</code>
  * is the value given to <code>LLTRACE_IMPL_declare_event_group()</code>).
  * <p>
  * The record is done only if the trace system is started

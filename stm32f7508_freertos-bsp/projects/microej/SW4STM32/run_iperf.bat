@@ -28,19 +28,19 @@ REM Save application current directory
 SET CURRENT_DIRECTORY=%CD%
 
 REM Get arm-none-eabi-objcopy.exe path
-CD "%ECLIPSE_CDT_INSTALLATION_DIR%\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\bin"
+CD /D "%ECLIPSE_CDT_INSTALLATION_DIR%\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.win32_1.0.0.202111181127\tools\bin"
 SET GNU_TOOLS_FOR_STM32_DIR=%CD%
 
 REM Get STM32_Programmer_CLI.exe path
-CD "%ECLIPSE_CDT_INSTALLATION_DIR%\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.0.200.202202231230\tools\bin"
+CD /D "%ECLIPSE_CDT_INSTALLATION_DIR%\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.0.200.202202231230\tools\bin"
 SET CUBEPROGRAMMER_DIR=%CD%
 
 REM Jump this script's directory
-CD %~dp0%
+CD /D %~dp0%
 
 @echo on 
 
 "%GNU_TOOLS_FOR_STM32_DIR%/arm-none-eabi-objcopy.exe" -O ihex "%APPLICATION_FILE%" "%APPLICATION_FILE%.hex"
 "%CUBEPROGRAMMER_DIR%\STM32_Programmer_CLI.exe" -c port=SWD mode=UR -w "%APPLICATION_FILE%.hex" -el "%CUBEPROGRAMMER_DIR%\ExternalLoader\N25Q128A_STM32F7508-DISCO.stldr" -rst
 
-CD "%CURRENT_DIRECTORY%"
+CD /D "%CURRENT_DIRECTORY%"

@@ -1,6 +1,4 @@
 [submodule "stm32f7508_freertos-bsp/sdk/STM32CubeF7"]
 	path = stm32f7508_freertos-bsp/sdk/STM32CubeF7
 	url = https://github.com/STMicroelectronics/STM32CubeF7.git
-[submodule "stm32f7508_freertos-bsp/projects/microej/validation/framework/c/CoreMark"]
-	path = stm32f7508_freertos-bsp/projects/microej/validation/framework/c/CoreMark
-	url = https://github.com/eembc/coremark.git
+	branch = master

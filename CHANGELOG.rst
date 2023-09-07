@@ -7,8 +7,43 @@
 ===========
 
 ----------------------
- [1.6.1] - 2023-06-29
+[2.0.0] - Unreleased
 ----------------------
+
+Added
+=====
+
+- STM32Cube IDE ``build.sh`` and ``run.sh`` Linux scripts
+- IAR BXARM ``build.sh`` Linux script
+
+Changed
+=======
+
+- Update MicroEJ architecture to 8.0.0
+- Rename ICETEA_HEAP region to .bss.microej.runtime
+- Rename _java_heap region to .bss.microej.heap
+- Rename _java_immortals region to .bss.microej.immortals
+- Rename .bss.vm.stacks.java region to .bss.microej.stacks
+- Added new region .bss.ecom
+- Remove SD card buffers from DTCM region
+- Added DMA2D object to ITCM region
+- Update mjvm-freertos cco to 1.4.0
+- Call STM32CubeF7 patch apply from build script
+- Align display stack to 512kB
+- Configure MPU for SDRAM as not-bufferable, not-shareable and cacheable
+- Configure MPU section in SDRAM for display stack, if present, as not-bufferable, shareable and cacheable
+
+Fixed
+=====
+
+- Fix issue launching ``run.bat`` script when previous launch failed.
+- Fix issue launching ``run.bat`` script when project directory is located on a drive different from the system drive (``C:\``).
+- Fix the place where the application.out file is copied (IAR) in the ``build.bat`` file.
+- Fix too big projects list when import of VEE Port repository.
+
+---------------------
+[1.6.1] - 2023-06-29
+---------------------
 
 Fixed
 =====

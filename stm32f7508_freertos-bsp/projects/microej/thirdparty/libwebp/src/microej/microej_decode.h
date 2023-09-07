@@ -1,10 +1,10 @@
-// Copyright 2021-2022 MicroEJ Corp. All rights reserved.
+// Copyright 2021-2023 MicroEJ Corp. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found with this software.
 
 #ifndef WEBP_MICROEJ_MICROEJ_DECODE_H_
 #define WEBP_MICROEJ_MICROEJ_DECODE_H_
 
-#include "LLUI_DISPLAY_IMPL.h"
+#include "LLUI_DISPLAY_impl.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,7 +1,7 @@
 <!--
 	ANT
 
-	Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 	
 -->
@@ -46,13 +46,15 @@
 			</copy>
 			<local name="platform.filename.tmp"/>
 			<tempfile property="platform.filename.tmp" destdir="${java.io.tmpdir}"/>
-			<copy file="@{platform.filename}" tofile="${platform.filename.tmp}"/>
 			<xslt 
 				style="${operation.file.tmp}"
-			    in="${platform.filename.tmp}"
-				out="@{platform.filename}"
+			    in="@{platform.filename}"
+				out="${platform.filename.tmp}"
 				force="true"
 			/>
+			<!-- XLST generates a useless empty line that makes a useless change in the VCS => remove it -->
+			<replace file="${platform.filename.tmp}" token="${line.separator}${line.separator}" value="${line.separator}"/>
+			<copy file="${platform.filename.tmp}" tofile="@{platform.filename}"/>
 			<echo message="module-group-update[@{name}]"/>
 			<concat>
 				<fileset file="@{platform.filename}"/>

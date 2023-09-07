@@ -1,0 +1,43 @@
+<!--
+	ANT
+
+	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
+-->
+<project name="patch-xpfp" default="patch-xpfp/run">
+
+	<target name="patch-xpfp/prepare">
+		<fail unless="patch-xpfp.name"/>
+		<fail unless="patch-xpfp.new.version"/>
+		<fail unless="patch-xpfp.dir"/>
+		<pathconvert property="patch-xpfp.file.convert">
+			<first>
+				<fileset dir="${patch-xpfp.dir}" includes="*${patch-xpfp.name}*.xpfp"/>
+			</first>
+		</pathconvert>
+		<condition property="patch-xpfp.file" value="${patch-xpfp.file.convert}">
+			<not>
+				<equals arg1="${patch-xpfp.file.convert}" arg2=""/>
+			</not>
+		</condition>
+	</target>
+		
+	<target name="patch-xpfp/run" depends="patch-xpfp/prepare" if="patch-xpfp.file">
+		<fail unless="patch-xpfp.file"/>
+		<local name="patch-xpfp.version" />
+		<unzip dest="patch-xpfp~/${patch-xpfp.name}" src="${patch-xpfp.file}">
+			<patternset>
+				<include name="release_pack.properties" />
+			</patternset>
+		</unzip>
+		<loadproperties srcfile="patch-xpfp~/${patch-xpfp.name}/release_pack.properties" prefix="patch-xpfp" />
+		<echo message="Replacing Pack ${patch-xpfp.packName} Architecture version ${patch-xpfp.version} to ${patch-xpfp.new.version}"/>
+		<propertyfile file="patch-xpfp~/${patch-xpfp.name}/release_pack.properties">
+			<entry key="version" value="${patch-xpfp.new.version}"/>
+		</propertyfile>
+		<zip update="true" destfile="${patch-xpfp.file}">
+			<fileset dir="patch-xpfp~/${patch-xpfp.name}"/>
+		</zip>
+	</target>
+
+</project>

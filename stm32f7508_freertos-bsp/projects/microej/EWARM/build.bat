@@ -19,10 +19,13 @@ IF %ERRORLEVEL% NEQ 0 (
 	exit /B %ERRORLEVEL%
 )
 
-IF DEFINED APPLY_FIRST_BSP_COMPILE_HOOKS (
-	CD /D "%~dp0\..\scripts"
-	CALL RunAtFirstBSPCompile.bat
-	CD /D "%~dp0"
+REM Apply the git patch
+CMD /C %~dp0\..\scripts\patchSTM32CubeF7.bat
+
+REM exit early if there are errors in applying the patch
+IF %ERRORLEVEL% NEQ 0 (
+	ECHO "Failed to patch STM32CubeF7 SDK"
+	EXIT /B %ERRORLEVEL%
 )
 
 @echo on
@@ -38,7 +41,7 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 REM copy the generated .elf file
-copy /Y %IAREW_PROJECT_EXECUTABLE_FILE% application.out && (
+copy /Y %IAREW_PROJECT_EXECUTABLE_FILE% "%CURRENT_DIRECTORY%\application.out" && (
 	SET ERRORLEVEL=0
 	) || (
 	SET ERRORLEVEL=1

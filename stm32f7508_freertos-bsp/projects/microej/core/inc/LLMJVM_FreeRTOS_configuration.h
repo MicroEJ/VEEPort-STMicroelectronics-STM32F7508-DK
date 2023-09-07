@@ -1,13 +1,12 @@
 /*
  * C
  *
- * Copyright 2021 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2021-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
-#ifndef _LLMJVM_FREERTOS_CONFIGURATION_H
-#define _LLMJVM_FREERTOS_CONFIGURATION_H
+#ifndef LLMJVM_FREERTOS_CONFIGURATION_H
+#define LLMJVM_FREERTOS_CONFIGURATION_H
 
 /* Defines used to include FreeRTOS API header files. Update it if header file location is different. */
 
@@ -18,4 +17,4 @@
 #define YIELD_FROM_ISR(x)			portYIELD_FROM_ISR(x)
 #define IS_INSIDE_INTERRUPT			xPortIsInsideInterrupt
 
-#endif /* _LLMJVM_FREERTOS_CONFIGURATION_H */
+#endif /* LLMJVM_FREERTOS_CONFIGURATION_H */

@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2017 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -59,11 +59,13 @@ int32_t LLNET_MULTICASTSOCKETCHANNEL_IMPL_setTimeToLive(int32_t nativeFD, int32_
  * @param mcastAddr is the multicast address to join
  * @param mcastAddrLength the multicast address size
  * @param netIfAddr is the address of the interface that must join
- * @param netIfAddrLength the interface address size
+ * @param netIfAddrLength the interface address size (may be 0 if no interface is specified)
  * @param retry true when the previous call returned {@link NetErrors#J_NET_NATIVE_CODE_BLOCKED_WITHOUT_RESULT}
  * and the calling process repeats the call to this operation for its completion
  * @return zero or negative error code
  * @see {@link NetErrors} for error codes
+ * @warning mcastAddr must not be used outside of the VM task or saved.
+ * @warning netIfAddr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_MULTICASTSOCKETCHANNEL_IMPL_joinOrLeave(int32_t fd, uint8_t join, int8_t* mcastAddr, int32_t mcastAddrLength, int8_t* netIfAddr, int32_t netIfAddrLength, uint8_t retry);
 

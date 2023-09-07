@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2017 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -36,6 +36,7 @@
  * and the calling process repeats the call to this operation for its completion
  * @return the number of bytes read; -1 if there is no more data because the end of the stream has been reached or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning dst must not be used outside of the VM task or saved.
  */
 int32_t LLNET_STREAMSOCKETCHANNEL_IMPL_readByteBufferNative(int32_t fd, int32_t kind, int8_t* dst, int32_t offset, int32_t length, uint8_t retry);
 
@@ -51,6 +52,7 @@ int32_t LLNET_STREAMSOCKETCHANNEL_IMPL_readByteBufferNative(int32_t fd, int32_t 
  * and the calling process repeats the call to this operation for its completion
  * @return the number of bytes written or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning dst src not be used outside of the VM task or saved.
  */
 int32_t LLNET_STREAMSOCKETCHANNEL_IMPL_writeByteBufferNative(int32_t fd, int32_t kind, int8_t* src, int32_t offset, int32_t length, uint8_t retry);
 

@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2015-2019 MicroEJ Corp. All rights reserved.
+ * Copyright 2015-2020 MicroEJ Corp. All rights reserved.
  * For demonstration purpose only.
  * MicroEJ Corp. PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ Security low level API
  * @author MicroEJ Developer Team
- * @version 1.4.0
- * @date 30 January 2020
+ * @version 1.5.0
+ * @date 20 December 2020
  */
 
 #include <intern/LLSEC_X509_CERT_impl.h>
@@ -39,6 +39,15 @@
  */
 int32_t LLSEC_X509_CERT_IMPL_parse(int8_t* cert, int32_t off, int32_t len);
 
+
+/**
+ * @brief Gets the size of the buffer that must be allocated to store the public key.
+ * This buffer will be passed as <code>key</code> argument to
+ * <code>LLSEC_X509_CERT_IMPL_get_key()</code>.
+ *
+ * @return The public key buffer size in bytes.
+ */
+int32_t LLSEC_X509_CERT_IMPL_get_key_size(void);
 
 /**
  * @brief Gets a public key from a X509 certificate.

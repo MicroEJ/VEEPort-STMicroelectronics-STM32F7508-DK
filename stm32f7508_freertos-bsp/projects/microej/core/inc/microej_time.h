@@ -1,9 +1,8 @@
 /*
  * C
  *
- * Copyright 2018-2021 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2018-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
 /**
@@ -15,7 +14,7 @@
  * - The platform time: an arbitrary time that is only relevant to measure elapsed time
  * - The application time: the time elapsed since midnight, January 1, 1970 UTC, this time should be set by the MicroEJ application
  * 
- * An implementation example is available on Espressif WROVER: https://github.com/MicroEJ/Platform-Espressif-ESP-WROVER-KIT-V4.1/blob/master/ESP32-WROVER-Xtensa-FreeRTOS-bsp/Projects/microej/core/src/microej_time.c
+ * An implementation example is available on Espressif WROVER: https://github.com/MicroEJ/Platform-Espressif-ESP-WROVER-KIT-V4.1/blob/master/ESP32-WROVER-Xtensa-FreeRTOS-bsp/projects/microej/core/src/microej_time.c
  * 
  */
 

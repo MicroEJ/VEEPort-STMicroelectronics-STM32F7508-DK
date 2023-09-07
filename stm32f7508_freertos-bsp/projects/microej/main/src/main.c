@@ -97,6 +97,23 @@ uint32_t ErrorCounter = 0;
 	#error "ITCM not initialized for this toolchain !"
 #endif
 
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
+#if defined(__GNUC__)
+	extern int _sdisplay_stack;
+	extern int _edisplay_stack;
+
+	static uint32_t display_stack_start = (uint32_t)(&_sdisplay_stack);
+	static uint32_t display_stack_end = (uint32_t)(&_edisplay_stack);
+#elif defined(__ICCARM__)
+	#pragma section = "RW_MICROEJ_DISPLAY_MEM"
+
+	static uint32_t display_stack_start = (uint32_t)__section_begin("RW_MICROEJ_DISPLAY_MEM");
+	static uint32_t display_stack_end = (uint32_t)__section_end("RW_MICROEJ_DISPLAY_MEM");
+#else
+	#error "Java heap not initialized for this toolchain !"
+#endif
+#endif
+
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void CPU_CACHE_Enable(void);
@@ -363,6 +380,7 @@ static void MPU_Config (void)
   MPU_InitStruct.Enable = MPU_REGION_ENABLE;
   MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
   MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+  MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
   MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
   MPU_InitStruct.SubRegionDisable = 0x00;
@@ -370,7 +388,9 @@ static void MPU_Config (void)
   /* Configure the MPU region for FLASH (write-through, no write allocate) */
   MPU_InitStruct.BaseAddress = 0x08000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_64KB;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER0;
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
@@ -379,7 +399,9 @@ static void MPU_Config (void)
   /* See AN4861 LCD-TFT display controller (LTDC) on STM32 MCUs, Chapter 4.6.2 */
   MPU_InitStruct.BaseAddress = 0x90000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_256MB;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER1;
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
@@ -387,7 +409,9 @@ static void MPU_Config (void)
   /* Configure the MPU region for QSPI used address space (write-through, no write allocate) */
   MPU_InitStruct.BaseAddress = 0x90000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_16MB;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER2;
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
@@ -395,30 +419,51 @@ static void MPU_Config (void)
   /* Configure the MPU region for SRAM (write-through, no write allocate) */
   MPU_InitStruct.BaseAddress = 0x20010000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_256KB;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER3;
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
-  /* Configure the MPU region for SDRAM used address space (write-through, no write allocate) */
-  MPU_InitStruct.BaseAddress = 0xC0000000;
-  MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
-  MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
-  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
-  MPU_InitStruct.Number = MPU_REGION_NUMBER4;
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-
+  
   /* We configure the ITCM region (starts @0x00000000 and has a length of 16K)  to be  RO for privileged and unprivileged mode.
    * For this - we will have only instruction access enable. */
   MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RO_URO;
   MPU_InitStruct.BaseAddress = 0x00000000;
   MPU_InitStruct.Size = MPU_REGION_SIZE_16KB;
-  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
   MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
+  MPU_InitStruct.Number = MPU_REGION_NUMBER4;
+  HAL_MPU_ConfigRegion(&MPU_InitStruct);
+  
+  /* Configure the MPU region for SDRAM used address space (write-through, no write allocate) */
+  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+  MPU_InitStruct.BaseAddress = 0xC0000000;
+  MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+  MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER5;
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
+
+#if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
+  if(display_stack_start < display_stack_end) {
+        /* Configure the MPU region for SDRAM address space used for display buffers (write-through, no write allocate) */
+        /* This region should always be last */
+        MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+        MPU_InitStruct.BaseAddress = display_stack_start;
+        MPU_InitStruct.Size = MPU_REGION_SIZE_512KB;
+        MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+        MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+        MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+        MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
+        MPU_InitStruct.Number = MPU_REGION_NUMBER6;
+        HAL_MPU_ConfigRegion(&MPU_InitStruct);
+  }
+#endif
 
   /* Enable the MPU */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);

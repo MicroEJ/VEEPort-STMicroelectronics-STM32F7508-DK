@@ -1,7 +1,7 @@
 <!--
 	ANT
 
-	Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <project name="module">
@@ -38,4 +38,21 @@
 
 	<!-- Import Platform Configuration Additions build file -->
 	<import file="${module.dir}/build/module/module.ant"/>
+
+    <!-- Launch artifact-checker plugin during packaging step -->
+	<target name="bind-artifact-checker-plugin" depends="artifact-checker:check-current-module" extensionOf="package"/>
+	
+	
+	<!-- Apply BSP patch before copying into the generated VEE Port -->
+    <target name="_stm32f7508-module-bsp:preparePublication" extensionOf="abstract-compile:compile" depends="stm32f7508-module-bsp:preparePublication,module-bsp:preparePublication" if="bsp.root.dir" unless="${skip.publish}"/>
+	<target name="stm32f7508-module-bsp:preparePublication" if="bsp.root.dir" unless="${skip.publish}">
+    	<echo message="Execution of BSP patch script '${bsp.root.dir}/sdk/CubeF7_patch/CubeF7-MicroEJ.patch' on '${bsp.root.dir}/sdk/STM32CubeF7' started..."/>
+		<exec dir="${bsp.root.dir}/projects/microej/scripts" executable="${bsp.root.dir}/projects/microej/scripts/patchSTM32CubeF7.bat" failonerror="true" osfamily="windows" />
+        <!-- OS family `unix` matches on both Linux and MacOS. -->
+        <exec dir="${bsp.root.dir}/projects/microej/scripts" executable="/bin/bash" failonerror="true" osfamily="unix">
+          <arg value="${bsp.root.dir}/projects/microej/scripts/patchSTM32CubeF7.sh" />
+        </exec>
+		<echo message="Execution of BSP patch script done."/>
+	</target>
+	
 </project>

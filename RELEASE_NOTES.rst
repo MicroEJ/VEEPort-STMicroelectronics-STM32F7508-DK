@@ -3,9 +3,9 @@
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.6.1
+.. |VEEPORT_VER| replace:: 2.0.0
 .. |MANUFACTURER| replace:: STMicroelectronics
-.. |PLATFORM| replace:: MicroEJ Platform
+.. |VEEPORT| replace:: VEE Port
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
 .. |IAR_IDE.PRINTABLENAME| replace:: IAR Embedded Workbench
 .. |SYSTEMVIEW_PROVIDER| replace:: SEGGER Microcontroller
@@ -14,33 +14,33 @@
 .. _release-notes:
 
 ========================================================
-|PLATFORM| Release Notes for |MANUFACTURER| |BOARD_NAME|
+|VEEPORT| Release Notes for |MANUFACTURER| |BOARD_NAME|
 ========================================================
 
 Description
 ===========
 
-This is the release notes of the |PLATFORM| for |BOARD_NAME|.
+This is the release notes of the |VEEPORT| for |BOARD_NAME|.
 
 Versions
 ========
 
-Platform
+|VEEPORT|
 --------
 
-|PLATFORM_VER|
+|VEEPORT_VER|
 
 Dependencies
 ------------
 
-This |PLATFORM| contains the following dependencies:
+This |VEEPORT| contains the following dependencies:
 
 - MicroEJ GCC specific packs:
 
 .. list-table::
 
   * - flopi7G26 (Architecture)
-    - 7.18.1
+    - 8.0.0
   * - flopi7G26UI (User Interface)
     - 13.4.1
 
@@ -49,7 +49,7 @@ This |PLATFORM| contains the following dependencies:
 .. list-table::
 
   * - flopi7I36 (Architecture)
-    - 7.18.1
+    - 8.0.0
   * - flopi7I36UI (User Interface)
     - 13.4.1
 
@@ -58,11 +58,13 @@ This |PLATFORM| contains the following dependencies:
 .. list-table::
 
   * - NET (Network & Secure Socket Layer)
-    - 9.2.3
+    - 9.4.2
   * - HAL (Hardware Abstraction Layer)
     - 2.0.1
   * - FS (File System)
     - 6.0.3
+  * - Device-pack
+    - 1.1.1
 
 Board Support Package
 ---------------------
@@ -107,7 +109,7 @@ Features
 Graphical User Interface
 ------------------------
 
-This |PLATFORM| features a graphical user interface. It includes a display,
+This |VEEPORT| features a graphical user interface. It includes a display,
 a touch panel, a user button, a user LED and a runtime PNG and WebP decoder.
 
 Display
@@ -171,7 +173,7 @@ User LED: The board provides access to ``LED1`` (green LED) which is available o
 Network
 -------
 
-This |PLATFORM| features a network interface with Ethernet as an underlying
+This |VEEPORT| features a network interface with Ethernet as an underlying
 hardware media. A limited number of 8 sockets could be used for TCP
 connections, 8 for TCP listening (server) connections and 8 for UDP
 connections. A DHCP client could be activated to retrieve IP address.
@@ -195,7 +197,7 @@ or a native one.
 SSL
 ---
 
-MicroEJ platform features a network secure interface. Available secured
+|VEEPORT| features a network secure interface. Available secured
 protocols are SSL 3.0, TLS 1.0, TLS 1.1, TLS 1.2. Supported keys and
 certificates formats are PKCS#5 and PKCS#12, PEM or DER encoded.
 
@@ -206,14 +208,14 @@ certificates formats are PKCS#5 and PKCS#12, PEM or DER encoded.
 File System
 -----------
 
-|PLATFORM| features a file system interface. An SD card is
+|VEEPORT| features a file system interface. An SD card is
 used for the storage (previously formated to a FAT32 file system). Up
 to 2 files can be opened simultaneously.
 
 UART Connector
 --------------
 
-|PLATFORM| provides one serial connection (ECOM COMM) on UART6 port. UART6 pins are (RTS/CTS mode is not used):
+|VEEPORT| provides one serial connection (ECOM COMM) on UART6 port. UART6 pins are (RTS/CTS mode is not used):
 
 -  TX: PC6; available on connector CN4 D1
 
@@ -229,7 +231,7 @@ UART Connector
 HAL
 ---
   
-|PLATFORM| provides several GPIOs programmable via the HAL foundation library. All GPIOs are available on
+|VEEPORT| provides several GPIOs programmable via the HAL foundation library. All GPIOs are available on
 ARDUINO connectors (CN4 to CN7). Digital pins are implemented by a GPIO access.
 
 Analog input pins (ADC) are driven by ADC channels of ADC 3 and analog output pins (DAC) drive PWM channels of timers 1, 3, 5 and 12.
@@ -359,7 +361,7 @@ The following table lists the hardware analog devices (ADC / DAC channels) used 
 Watchdog
 --------
 
-|PLATFORM| features a watchdog. The independent watchdog peripheral detects and solves malfunctions due
+|VEEPORT| features a watchdog. The independent watchdog peripheral detects and solves malfunctions due
 to software failures and triggers a system reset when the counter reaches a given timeout value. The independent
 watchdog is clocked by its own dedicated low-speed clock (LSI) and thus stays active even if the main clock
 fails.
@@ -396,7 +398,7 @@ on the console when the application starts and the watchdog timer is not started
 System View
 -----------
 
-This |PLATFORM| supports System View. For more information about System View, please visit `<https://www.segger.com/products/development-tools/systemview/>`_
+This |VEEPORT| supports System View. For more information about System View, please visit `<https://www.segger.com/products/development-tools/systemview/>`_
 
 The following setup is needed to have System View functional:
 
@@ -441,15 +443,16 @@ The following setup is needed to have System View functional:
 
 .. note::
 
-  To re-flash a new binary on the board, the user needs to re-flash the `ST-LINK` on board with a `ST-LINK firmware`. For this, download the latest version of `STSW-LINK007`
-  `<https://www.st.com/en/development-tools/stsw-link007.html>`_, unarchive zip and run `ST-LinkUpgrade.exe` ``Device Connect -> Yes`` to Upgrade Firmware
+  To re-flash a new binary on the board, the user needs to:
+    - Follow the instructions provided by |SYSTEMVIEW_PROVIDER| `<https://www.segger.com/products/debug-probes/j-link/models/other-j-links/st-link-on-board/>`_ to restore ST-LINK on a board with J-Link firmware
+    - Re-flash the `ST-LINK` on board with a `ST-LINK firmware`. For this, download the latest version of `STSW-LINK007` `<https://www.st.com/en/development-tools/stsw-link007.html>`_, unarchive zip and run `ST-LinkUpgrade.exe` ``Device Connect -> Yes`` to Upgrade Firmware
 
 
 .. note::
 
   Depending on the application, OVERFLOW events can be seen in System View. To mitigate this problem, the default `SEGGER_SYSVIEW_RTT_BUFFER_SIZE` was increased
   from the default 1kB to a more appropriate size of 4kB. Still, if OVERFLOW events are still visible, the user can further increase this configuration found in
-  ``/stm32f7508_freertos-bsp/projects/microej/thirdparty/systemview/inc/SEGGER_SYSVIEW_configuration.h``.
+  ``/stm32f7508_freertos-bsp/thirdparty/systemview/inc/SEGGER_SYSVIEW_configuration.h``.
 
 .. note::
 
@@ -492,8 +495,9 @@ The following setup is needed to have System View functional:
 Known issues/limitations
 ========================
 
-
-Platform Memory Layout
+- Implementation of ``snprintf`` does not support the ``%llx`` format
+ 
+|VEEPORT| Memory Layout
 ======================
 
 Memory Sections
@@ -566,6 +570,9 @@ Memory Layout
      - ``._kf_heap``
      - SDRAM
 
+Information on MicroEJ memory sections can be found `here
+<https://docs.microej.com/en/latest/ApplicationDeveloperGuide/linker.html#link>`__.
+
 Please also refer to the MicroEJ docs website page available `here
-<https://docs.microej.com/en/latest/PlatformDeveloperGuide/coreEngine.html#link>`__
+<https://docs.microej.com/en/latest/VEEPortingGuide/coreEngine.html#link>`__
 for more details.

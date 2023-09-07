@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	ANT
+ 
+	Copyright 2011-2017 IS2T. All rights reserved.
+	Modification and distribution is permitted under certain conditions.
+	IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+    
+-->
+<project name="ecomCommInit">
+
+	<dirname file="${ant.file.ecomCommInit}" property="ecomCommInit.dir"/>
+	<import file="${ecomCommInit.dir}/../extension-init.xml" />
+	<import file="${ecomCommInit.dir}/../init-ecom/ecominit.xml" />
+	
+	<target name="init/ecomcomm/check" extensionOf="init/ecom/context/hook">
+		<!-- same condition to embbed ECOM-COMM and ECOM -->
+		<condition property="usesECOMCOMM" value="true">
+			<istrue value="${use.comm.connection}"/>
+		</condition>
+		<condition property="usesECOM" value="true">
+			<istrue value="${use.comm.connection}"/>
+		</condition>
+		<condition property="usesECOMCOMM.pump" value="true">
+			<and>
+				<istrue value="${usesECOMCOMM}"/>
+				<istrue value="${com.is2t.ecom.comm.registryPump.enabled}"/>			
+				<not><available file="${ecomCommInit.dir}/stub"/></not>
+			</and>
+		</condition>
+	</target>
+	
+	<target name="init/ecom-comm" extensionOf="init/execution" if="usesECOMCOMM" depends="init/ecom/comm/pump,init/board/ecom-comm,init/s3/ecom-comm, init/ecom-comm/properties">
+		<echo message=" + ECOM COMM init" level="verbose"/>
+
+		<!-- CLASSPATH -->
+		<augment id="init.application.classpath">
+			<fileset dir="${jpf.dir}/javaLibs"  includes="ecom-comm*.jar"/>
+			<fileset dir="${jpf.dir}/javaLibs"  includes="sni*.jar"/>
+		</augment>
+		
+		<!-- REQUIRES -->
+		<augment id="init.requires">
+			<string value="ej.ecom.connection.comm.ConnectionFactory"/>
+		</augment>
+		
+	</target>
+	
+	<target name="init/ecom/comm/pump" if="${usesECOMCOMM.pump}">
+		<augment id="init.properties">
+			<propertyref name="com.is2t.ecom.comm.registryPump.enabled"/>
+		</augment>				
+	</target>
+	
+	<target name="init/board/ecom-comm" if="onBoard">
+		<augment id="partialLink.lscf.path">
+			<path location="${jpf.dir}/link"/>
+		</augment>
+	</target>
+		
+	<target name="init/s3/ecom-comm" depends="init/ecom-comm/properties" if="onS3">
+		<!-- Add always ECOM COMM mock in the classpath (WI 5556) -->
+				
+		<!-- MOCK CLASSPATH -->
+		<augment id="hil.main.classpath">
+			<fileset dir="${jpf.dir}/tools" includes="CONNECTOR_COMM.jar"/>
+			<fileset dir="${jpf.dir}/mocks" includes="mockECOMCOMM*.jar"/>
+		</augment>
+		
+		<!-- set a default value (set by workbench extension otherwise) -->
+		<property name="ecom.comm.nb.comm" value="0"/>	
+
+		<!-- ECOM memory options -->
+		<condition property="mock.ecom.comm.nbPorts" value="${ecom.comm.nb.comm}" else="0">
+			<isset property="usesECOMCOMM"/>
+		</condition>
+		
+		<!-- hil properties -->
+		<property name="s3.mock.uart.nbPort" value="${mock.ecom.comm.nbPorts}"/>
+		<augment id="hil.main.properties" >
+			<propertyref name="s3.mock.uart.nbPort"/>
+		</augment>
+		
+	</target>
+	
+	<target name="init/ecom-comm/properties" if="usesECOMCOMM" depends="init/ecom-comm/properties/checkIDs, init/ecom-comm/properties/mjvm, add.ecom.comm0.properties,add.ecom.comm1.properties,add.ecom.comm2.properties,add.ecom.comm3.properties,add.ecom.comm4.properties,add.ecom.comm0.properties,add.ecom.comm5.properties,add.ecom.comm6.properties,add.ecom.comm7.properties,add.ecom.comm8.properties,add.ecom.comm9.properties"/>
+	
+	<target name="init/ecom-comm/properties/mjvm" if="onBoard" >
+		<!-- fake propertyset to prevent to duplicate next macros/targets -->
+		<propertyset id="hil.main.properties"/>
+	</target>
+		
+	<target name="init/ecom-comm/properties/checkIDs" if="usesECOMCOMM">
+		<com.check.id attr.com.id="0"/>
+		<com.check.id attr.com.id="1"/>
+		<com.check.id attr.com.id="2"/>
+		<com.check.id attr.com.id="3"/>
+		<com.check.id attr.com.id="4"/>
+		<com.check.id attr.com.id="5"/>
+		<com.check.id attr.com.id="6"/>
+		<com.check.id attr.com.id="7"/>
+		<com.check.id attr.com.id="8"/>
+		<com.check.id attr.com.id="9"/>
+	</target>
+	
+	<macrodef name="com.check.id">
+		<attribute name="attr.com.id"/>
+		<sequential>
+			<property name="ej.ecom.com.validIDs" value=""/>	<!-- default value: no valid IDs (set by workbench extension) -->
+			<condition property="com.@{attr.com.id}.valid" value="SET">
+				<contains string="${ej.ecom.com.validIDs}" substring="-@{attr.com.id}-"/>
+			</condition>
+		</sequential>
+	</macrodef>
+	
+	<target name="add.ecom.comm0.properties" if="com.0.valid"><add.ecom.comm.properties attr.com.id="0"/></target>
+	<target name="add.ecom.comm1.properties" if="com.1.valid"><add.ecom.comm.properties attr.com.id="1"/></target>
+	<target name="add.ecom.comm2.properties" if="com.2.valid"><add.ecom.comm.properties attr.com.id="2"/></target>
+	<target name="add.ecom.comm3.properties" if="com.3.valid"><add.ecom.comm.properties attr.com.id="3"/></target>
+	<target name="add.ecom.comm4.properties" if="com.4.valid"><add.ecom.comm.properties attr.com.id="4"/></target>
+	<target name="add.ecom.comm5.properties" if="com.5.valid"><add.ecom.comm.properties attr.com.id="5"/></target>
+	<target name="add.ecom.comm6.properties" if="com.6.valid"><add.ecom.comm.properties attr.com.id="6"/></target>
+	<target name="add.ecom.comm7.properties" if="com.7.valid"><add.ecom.comm.properties attr.com.id="7"/></target>
+	<target name="add.ecom.comm8.properties" if="com.8.valid"><add.ecom.comm.properties attr.com.id="8"/></target>
+	<target name="add.ecom.comm9.properties" if="com.9.valid"><add.ecom.comm.properties attr.com.id="9"/></target>
+	
+	<macrodef name="add.ecom.comm.properties">
+		<attribute name="attr.com.id"/>
+		<sequential>
+			<add.ecom.comm.properties.0
+				attr.com.id="@{attr.com.id}"
+				attr.com.logical.port="${ej.ecom.com.@{attr.com.id}}"
+				attr.com.physical.port="${ej.ecom.com.@{attr.com.id}.port}"
+			/>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="add.ecom.comm.properties.0">
+		<attribute name="attr.com.id" description="array index (0 to 9)"/>
+		<attribute name="attr.com.logical.port" description="user value (see Comm page)"/>
+		<attribute name="attr.com.physical.port" description="platform comm port (see Comm page)"/>
+		<sequential>
+			
+			<!-- application / libs properties -->
+			<property name="com.is2t.ecom.com.@{attr.com.logical.port}" value="com@{attr.com.physical.port}"/>
+			<augment id="init.properties">
+				<propertyref name="com.is2t.ecom.com.@{attr.com.logical.port}"/>
+			</augment>
+			
+			<!-- hil properties -->
+			<property name="s3.mock.uart.com@{attr.com.id}.id" value="@{attr.com.physical.port}"/>
+			<condition property="s3.mock.uart.com@{attr.com.id}.enabled" value="false" else="${s3.mock.uart.com@{attr.com.id}.available}">
+				<equals arg1="${s3.mock.uart.com@{attr.com.id}.mode}" arg2="-1"/>
+			</condition>
+			<augment id="hil.main.properties">
+				<propertyref name="s3.mock.uart.com@{attr.com.id}.enabled"/>
+				<propertyref name="s3.mock.uart.com@{attr.com.id}.mode"/>
+				<propertyref name="s3.mock.uart.com@{attr.com.id}.id"/>
+				<propertyref name="s3.mock.uart.com@{attr.com.id}.mapping"/>
+				<propertyref name="s3.mock.uart.com@{attr.com.id}.file.input"/>
+				<propertyref name="s3.mock.uart.com@{attr.com.id}.file.output"/>
+				<propertyref name="s3.mock.uart.com@{attr.com.id}.socket.port"/>
+			</augment>
+			
+		</sequential>
+	</macrodef>
+	
+</project>

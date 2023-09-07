@@ -8,7 +8,7 @@
 *
 * Copyright (c) 2017 STMicroelectronics. All rights reserved.
 *
-* Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.
+* Copyright 2020-2023 MicroEJ Corp. This file has been modified by MicroEJ Corp.
 *
 * This software component is licensed by ST under BSD 3-Clause license,
 * the "License"; You may not use this file except in compliance with the
@@ -78,7 +78,7 @@ See BSP_SD_ErrorCallback() and BSP_SD_AbortCallback() below
 * Notice: This is applicable only for cortex M7 based platform.
 */
 
-/* #define ENABLE_SD_DMA_CACHE_MAINTENANCE  1 */
+#define ENABLE_SD_DMA_CACHE_MAINTENANCE  1
 
 /*
 * Some DMA requires 4-Byte aligned address buffer to correctly read/wite data,

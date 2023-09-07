@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2017 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -41,6 +41,7 @@
  * @return 1 if the connection succeeded; 0 if the file descriptor is in non-blocking mode and the connection did not immediately succeed
  * or negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning addr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SOCKETCHANNEL_IMPL_connect(int32_t fd, int8_t* addr, int32_t length, int32_t port, int32_t timeout, uint8_t retry);
 
@@ -76,6 +77,7 @@ int32_t LLNET_SOCKETCHANNEL_IMPL_getPeerPort(int32_t fd, uint8_t retry);
  * and the calling process repeats the call to this operation for its completion
  * @return the local address size in bytes, 0 if the socket is not bound or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning addr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SOCKETCHANNEL_IMPL_getLocalAddress(int32_t fd, int8_t* addr, int32_t length, uint8_t retry);
 
@@ -89,6 +91,7 @@ int32_t LLNET_SOCKETCHANNEL_IMPL_getLocalAddress(int32_t fd, int8_t* addr, int32
  * and the calling process repeats the call to this operation for its completion
  * @return the remote host address size in bytes, 0 if the socket is not bound or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning name must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SOCKETCHANNEL_IMPL_getPeerAddress(int32_t fd, int8_t* name, int32_t length, uint8_t retry);
 

@@ -1,7 +1,7 @@
 <!--
 	ANT
 
-	Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 	
 -->
@@ -50,12 +50,12 @@
 		- case 3: Build "wip" in the expected output folder
 		- case 4: Build "wip" in the tmp folder and copy it to the expected folder (nominal use case)
 	-->
-	
+
 	<!-- Sanity checks -->
 	<fail unless="eclipse.home" message="Set the MicroEJ SDK directory path in the `eclipse.home` property (If you are using easyant-build-component framework the full name of the property is `easyant.inject.eclipse.home`)."/>
 	<fail unless="com.microej.platformbuilder.platform.filename" message="Set the name of the `.xml` or `.platform` file in the `com.microej.platformbuilder.platform.filename` property."/>
-	
-	<!-- Global properties -->	
+
+	<!-- Global properties -->
 	<dirname file="${ant.file.module-platform}" property="module-platform.dir"/>
 	<property name="platform.name" value="${module.name}"/>
 	<property name="platform.version" value="${ivy.revision}"/>
@@ -64,14 +64,14 @@
 	<property name="eclipse-antRunner.eclipse.home" location="${eclipse.home}"/>
 	<property name="eclipse-antRunner.build.script" location="${module-platform.dir}/module-platform/eclipseantrunner.ant"/>
 
-	<!-- Check if the MicroEJ Architecture is available --> 
+	<!-- Check if the MicroEJ Architecture is available -->
 	<target name="module-platform:architecture:check" >
 
 		<fail unless="dependencies.output.dir"/>
-		
-		<!-- By default the MicroEJ Architecture is loaded from the ivy dependencies. --> 
+
+		<!-- By default the MicroEJ Architecture is loaded from the ivy dependencies. -->
 		<property name="microej.architecture.dir" location="${dependencies.output.dir}"/>
-		
+
 		<!-- Ensure at least one architecture is available in ivy file -->
 		<fail message=".${line.separator}
 			No MicroEJ Architecture found in ${microej.architecture.dir} directory.${line.separator}
@@ -83,7 +83,7 @@
 				</resourcecount>
 			</condition>
 		</fail>
-		
+
 		<!-- Ensure only one architecture is available in ivy file -->
 		<fail message=".${line.separator}
 			Several MicroEJ Architectures found in ${microej.architecture.dir} directory.${line.separator}
@@ -95,7 +95,7 @@
 				</resourcecount>
 			</condition>
 		</fail>
-		
+
 		<!-- Set architecture file path -->
 		<pathconvert property="microej.architecture.file">
 			<first>
@@ -134,7 +134,7 @@
 			<replacefilter token="&quot;${configuration.platform.environment(version)}&quot;" value="&quot;${microej.architecture.version}&quot;"/>
 			
 			<!-- Replace platform properties -->
-            <replacefilter token="&quot;${configuration.platform(name)}&quot;" value="&quot;${platform.name}&quot;"/>
+			<replacefilter token="&quot;${configuration.platform(name)}&quot;" value="&quot;${platform.name}&quot;"/>
 			<replacefilter token="&quot;${configuration.platform(version)}&quot;" value="&quot;${platform.version}&quot;"/>
 			
 		</replace>
@@ -148,18 +148,18 @@
 		<property name="platform.project.name" value="${configuration.platform(hardwarePartNumber)}-${platform.name}-${microej.architecture.toolchain}-${platform.version}"/>
 
 		<!-- Error when the platform project does not exist  -->
-        <condition property="platform.project.file.expected" value="${project.parent.dir}/${configuration.platform(hardwarePartNumber)}-${platform.project.name.expected}-${microej.architecture.toolchain}-${platform.version}/.project">
-          <isset property="platform.project.name.expected" />
-        </condition>
+		<condition property="platform.project.file.expected" value="${project.parent.dir}/${configuration.platform(hardwarePartNumber)}-${platform.project.name.expected}-${microej.architecture.toolchain}-${platform.version}/.project">
+			<isset property="platform.project.name.expected" />
+		</condition>
 		<fail message=".${line.separator}
 			Output platform '${platform.project.file.expected}' does not exist.">
 			<condition>
 			  <and>
-                    <isset property="platform.project.file.expected" />
-				    <not><available file="${platform.project.file.expected}" type="file"/></not>
+					<isset property="platform.project.file.expected" />
+					<not><available file="${platform.project.file.expected}" type="file"/></not>
 				</and>
 			</condition>
-        </fail>
+		</fail>
 		
 		<!-- Error when output folder exists and not denote a platform project -->
 		<fail message=".${line.separator}

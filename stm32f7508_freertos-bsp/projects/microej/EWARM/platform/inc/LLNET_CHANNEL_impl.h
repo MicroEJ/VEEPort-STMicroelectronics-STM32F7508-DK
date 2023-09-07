@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2017 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -65,6 +65,7 @@ int32_t LLNET_CHANNEL_IMPL_setOption(int32_t fd, int32_t option, int32_t value, 
  * and the calling process repeats the call to this operation for its completion
  * @return the length of the option value for the socket associated with the file descriptor {@code fd} or a negative error code
  * @see {@link NetErrors} for error codes
+ * @warning dst must not be used outside of the VM task or saved.
  */
 int32_t LLNET_CHANNEL_IMPL_getOptionAsByteArray(int32_t fd, int32_t option, int8_t* dst, int32_t dstLength, uint8_t retry);
 
@@ -79,6 +80,7 @@ int32_t LLNET_CHANNEL_IMPL_getOptionAsByteArray(int32_t fd, int32_t option, int8
  * and the calling process repeats the call to this operation for its completion
  * @return 0 on success or a negative error code
  * @see {@link NetErrors} for error codes
+ * @warning value must not be used outside of the VM task or saved.
  */
 int32_t LLNET_CHANNEL_IMPL_setOptionAsByteArray(int32_t fd, int32_t option, int8_t* value, int32_t valueLength, uint8_t retry);
 
@@ -92,6 +94,7 @@ int32_t LLNET_CHANNEL_IMPL_setOptionAsByteArray(int32_t fd, int32_t option, int8
  * and the calling process repeats the call to this operation for its completion
  * @return 0 on success or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning addr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_CHANNEL_IMPL_bind(int32_t fd, int8_t* addr, int32_t length, int32_t port, uint8_t retry);
 

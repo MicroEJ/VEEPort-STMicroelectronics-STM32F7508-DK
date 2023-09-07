@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	ANT
+ 
+	Copyright 2011-2014 IS2T. All rights reserved.
+	Modification and distribution is permitted under certain conditions.
+	IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+    
+-->
+<project name="ecom">
+
+	<import file="${ant.file.ecom}/../../extension-init.xml" />
+	
+	<extension-point name="init/ecom/context/hook" description="Hook to force to use ECOM (see ECOM-Comm)" />
+			
+	<target name="init/ecom/check" extensionOf="init/context" depends="init/ecom/context/hook">
+		<!-- check if application targets ECOM -->
+		<available classpath="${application.classpath}" classname="ej.ecom.io.Connector" property="usesECOM"/>
+	</target>
+	
+	<target name="init/ecom" extensionOf="init/execution" if="usesECOM">
+		<echo message=" + ECOM init" level="verbose"/>
+
+		<!-- CLASSPATH -->
+		<augment id="init.application.classpath">
+			<fileset dir="${jpf.dir}/javaLibs" includes="**/ecom-*.jar" excludes="**/ecom-*-*.jar"/>
+		</augment>
+		
+		<!-- PROPERTIES -->
+		<property name="microej.application.ej.ecom.vendor.url" value="${ej.ecom.vendor.url.value}"/>
+		<property name="microej.application.ej.ecom.vendor" value="${ej.ecom.vendor.value}"/>
+		<property name="microej.application.ej.ecom.version" value="${ej.ecom.version.value}"/>
+		<augment id="init.properties">
+			<propertyref name="microej.application.ej.ecom.vendor.url"/>
+			<propertyref name="microej.application.ej.ecom.vendor"/>
+			<propertyref name="microej.application.ej.ecom.version"/>
+		</augment>
+		
+	</target>
+	
+	<target name="init/ecom/eventpump" extensionOf="init/execution" if="${com.is2t.ecom.eventpump.enabled}">
+		<augment id="init.properties">
+			<propertyref name="com.is2t.ecom.eventpump.enabled"/>
+			<propertyref name="com.is2t.ecom.eventpump.size"/>
+		</augment>				
+	</target>
+</project>
+

@@ -13,8 +13,8 @@
  * @file
  * @brief MicroEJ Security low level API
  * @author MicroEJ Developer Team
- * @version 1.4.0
- * @date 30 January 2020
+ * @version 1.5.0
+ * @date 20 December 2020
  */
 
 #include <stdint.h>

@@ -10,7 +10,7 @@
 
 #include <LLMJVM_MONITOR_impl.h>
 #include <MJVM_MONITOR.h>
-#include <trace.h>
+#include <LLTRACE.h>
 #include <SEGGER_SYSVIEW.h>
 #include <stdio.h>
 #include <string.h>
@@ -92,7 +92,7 @@ void LLMJVM_MONITOR_SYSTEMVIEW_send_task_list(void) {
 
 void LLMJVM_MONITOR_IMPL_initialize(bool auto_start) {
 	if(auto_start == true){
-		TRACE_start();
+		LLTRACE_start();
 	}
 	SEGGER_SYSVIEW_OnTaskCreate(THREAD_GC_UID);
 	LLMJVM_MONITOR_SYSTEMVIEW_send_gc_thread_info();

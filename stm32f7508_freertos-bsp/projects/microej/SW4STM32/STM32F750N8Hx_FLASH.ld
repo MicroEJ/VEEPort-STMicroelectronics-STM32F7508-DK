@@ -61,7 +61,7 @@ SECTIONS
     *crtbegin.o(.text)
     *libc_nano.a:(.text.__libc_init_array)
 
-    /* Java VM Core (optional, performance increases compared with default QSPI mapping) */
+    /* VM Core (optional, performance increases compared with default QSPI mapping) */
     *VMCOREMicroJvm*.o(.text .text.*)
     *iceTea_lang*.o(.text .text.*)
     *iceTea_support_armv7m*.o(.text .text.*)
@@ -159,7 +159,7 @@ SECTIONS
     *time_hardware_timer.o(.text .text.*)
 
     /* ui dma2d cco */
-    *ui_drawing_dma2d.o(.text .text.*)
+    *drawing_dma2d.o(.text .text.*)
 
     . = ALIGN(4);
     _eitcm = .;        /* define a global symbol at ITCM end */
@@ -173,8 +173,7 @@ SECTIONS
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
 
-    *(.text.features.installed)
-    *(.text.soar)
+    *(.rodata.microej.features)
 
     . = ALIGN(4);
   } >QSPI
@@ -186,7 +185,8 @@ SECTIONS
 
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
-    *(.rodata.resources)
+    *(.rodata.microej.soar.*)
+    *(.rodata.microej.resource.*)
 
     . = ALIGN(4);
   } >QSPI
@@ -200,17 +200,11 @@ SECTIONS
     /* Ethernet buffers */
     *ethernetif.o(.RxDescripSection .TxDescripSection .RxBUF .TxBUF)
 
-    /* SD Card buffers */
-    *sd_diskio_dma_rtos.o(.ScratchBUF)
-    *LLFS_impl.o(.bss .bss*)
-    *LLFS_STM32_init_sdcard.o(.bss .bss*)
-    *fs_helper_FatFs.o(.bss .bss*)
-
     /* VM stacks */
-    *(.bss.vm.stacks.java)
+    *(.bss.microej.stacks)
 
-    /* ICETEA heap */
-    *(ICETEA_HEAP)
+    /* VM runtime structures */
+    *(.bss.microej.runtime)
 
     . = ALIGN(4);
     _edbss = .;         /* define a global symbol at bss end */
@@ -218,9 +212,12 @@ SECTIONS
 
   ._display_stack :
   {
-    . = ALIGN(4);
+    . = ALIGN(512K);
+    _sdisplay_stack = .;
+    
     *LLUI_DISPLAY.o(.DisplayMem)
-    . = ALIGN(4);
+    . = ALIGN(512K);
+    _edisplay_stack = .;
   } > SDRAM
 
   ._network_heap :
@@ -230,11 +227,11 @@ SECTIONS
     . = ALIGN(4);
   } > SDRAM
 
-  /* SDRAM used for: Java heap, immortals heap and MicroUI heap */
+  /* SDRAM used for: MicroEJ heap, immortals heap and MicroUI heap */
   .sdram :
   {
-    *(_java_heap)
-    *(_java_immortals)
+    *(.bss.microej.heap)
+    *(.bss.microej.immortals)
     PROVIDE ( _microui_heap_start = . );       /* define a global symbol at MicroUI heap start */
     *(.bss.microui.display.imagesHeap)
     PROVIDE ( _microui_heap_end = . );         /* define a global symbol at MicroUI heap end */

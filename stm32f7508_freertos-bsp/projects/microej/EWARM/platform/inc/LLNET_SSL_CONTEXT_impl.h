@@ -1,9 +1,9 @@
 /*
  * C
  *
- * Copyright 2015-2017 IS2T. All rights reserved.
- * For demonstration purpose only.
+ * Copyright 2015-2021 IS2T. All rights reserved.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * For demonstration purpose only.
  */
 #ifndef __LLNET_SSL_CONTEXT_IMPL__
 #define __LLNET_SSL_CONTEXT_IMPL__
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ SSL low level API
  * @author MicroEJ Developer Team
- * @version 5.1.0
- * @date 29 March 2019
+ * @version 5.1.1
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -58,6 +58,7 @@ int32_t LLNET_SSL_CONTEXT_IMPL_closeContext(int32_t contextID, uint8_t retry);
  * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
  * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
  * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @warning cert must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SSL_CONTEXT_IMPL_addTrustedCert(int32_t contextID, uint8_t *cert, int32_t off, int32_t len, int32_t format, uint8_t retry);
 
@@ -92,7 +93,7 @@ int32_t LLNET_SSL_CONTEXT_IMPL_clearKeyStore(int32_t contextID, uint8_t retry);
  * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
  * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
  * @see {@link LLNET_SSL_ERRORS} header file for error codes.
- *
+ * @warning cert must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SSL_CONTEXT_IMPL_setCertificate(int32_t contextID, uint8_t* cert, int32_t offset, int32_t len, int32_t format, uint8_t retry);
 
@@ -109,6 +110,8 @@ int32_t LLNET_SSL_CONTEXT_IMPL_setCertificate(int32_t contextID, uint8_t* cert, 
  * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
  * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
  * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @warning privateKey must not be used outside of the VM task or saved.
+ * @warning password must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SSL_CONTEXT_IMPL_setPrivateKey(int32_t contextID, uint8_t* privateKey, int32_t offset, int32_t len, uint8_t* password,
 		int32_t passwordOffset, int32_t passwordLen, uint8_t retry);
@@ -137,6 +140,7 @@ int32_t LLNET_SSL_CONTEXT_IMPL_initChainBuffer(int32_t contextID, int32_t nbChai
  * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
  * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
  * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @warning cert must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SSL_CONTEXT_IMPL_addChainCertificate(int32_t contextID, uint8_t* cert, int32_t offset, int32_t len, int32_t format, int32_t chainBufferSize, uint8_t retry);
 

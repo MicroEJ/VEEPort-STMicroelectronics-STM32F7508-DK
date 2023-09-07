@@ -3312,15 +3312,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Unit_test\Exe</state>
+                    <state>$PROJ_DIR$/Unit_test</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Unit_test\Obj</state>
+                    <state>$PROJ_DIR$/Unit_test/obj/</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Unit_test\List</state>
+                    <state>$PROJ_DIR$/Unit_test/list/</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -4646,10 +4646,10 @@
                     <name>$PROJ_DIR$\..\fs\src\LLFS_File_impl.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\fs\src\LLFS_STM32_init_sdcard.c</name>
+                    <name>$PROJ_DIR$\..\fs\src\LLFS_impl.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\fs\src\LLFS_impl.c</name>
+                    <name>$PROJ_DIR$\..\fs\src\LLFS_STM32_init_sdcard.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\fs\src\sd_diskio_dma_rtos.c</name>
@@ -5200,6 +5200,9 @@
                     <configuration>Iperf</configuration>
                 </excluded>
                 <file>
+                    <name>$PROJ_DIR$\platform\lib\ecom-comm.a</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\platform\lib\microejapp.o</name>
                 </file>
                 <file>
@@ -5698,13 +5701,13 @@
                     <name>$PROJ_DIR$\..\util\inc\microej_async_worker.h</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\util\inc\microej_pool.h</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\util\inc\osal.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\util\inc\osal_portmacro.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\util\inc\microej_pool.h</name>
                 </file>
             </group>
             <group>
@@ -5713,10 +5716,10 @@
                     <name>$PROJ_DIR$\..\util\src\microej_async_worker.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\util\src\osal_FreeRTOS.c</name>
+                    <name>$PROJ_DIR$\..\util\src\microej_pool.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\util\src\microej_pool.c</name>
+                    <name>$PROJ_DIR$\..\util\src\osal_FreeRTOS.c</name>
                 </file>
             </group>
         </group>

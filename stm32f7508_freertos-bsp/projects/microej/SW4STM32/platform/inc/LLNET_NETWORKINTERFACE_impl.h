@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2017 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -35,6 +35,8 @@
  * and the calling process repeats the call to this operation for its completion
  * @return the hardware address size in bytes, 0 if no hardware address found or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning ifname must not be used outside of the VM task or saved.
+ * @warning hwAddr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_getHardwareAddress(int8_t* ifname, int32_t ifnameLen,
 		int8_t* hwAddr, int32_t hwAddrMaxLength, uint8_t retry);
@@ -50,6 +52,7 @@ int32_t LLNET_NETWORKINTERFACE_IMPL_getHardwareAddress(int8_t* ifname, int32_t i
  * and the calling process repeats the call to this operation for its completion
  * @return the network interface name length, 0 if no interface found or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning ifname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_getVMInterface(int32_t index, int8_t* ifname, int32_t length, uint8_t retry);
 
@@ -110,6 +113,7 @@ int32_t LLNET_NETWORKINTERFACE_IMPL_getVMInterfaceAddressesCount(int32_t index, 
  * and the calling process repeats the call to this operation for its completion
  * @return the network interface address size in bytes or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning addr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_getVMInterfaceAddress(int32_t idxIf, int32_t idxAddr, int8_t* addr, int32_t length, uint8_t retry);
 
@@ -130,6 +134,7 @@ int32_t LLNET_NETWORKINTERFACE_IMPL_getVMInterfacesCount(uint8_t retry);
  * and the calling process repeats the call to this operation for its completion
  * @return 0 if true, 1 if false or negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning ifname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_isLoopback(int8_t* ifname, int32_t length, uint8_t retry);
 
@@ -141,6 +146,7 @@ int32_t LLNET_NETWORKINTERFACE_IMPL_isLoopback(int8_t* ifname, int32_t length, u
  * and the calling process repeats the call to this operation for its completion
  * @return 0 if true, 1 if false or negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning ifname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_isPointToPoint(int8_t* ifname, int32_t length, uint8_t retry);
 
@@ -152,6 +158,7 @@ int32_t LLNET_NETWORKINTERFACE_IMPL_isPointToPoint(int8_t* ifname, int32_t lengt
  * and the calling process repeats the call to this operation for its completion
  * @return 0 if true, 1 if false or negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning ifname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_isUp(int8_t* ifname, int32_t length, uint8_t retry);
 
@@ -163,6 +170,7 @@ int32_t LLNET_NETWORKINTERFACE_IMPL_isUp(int8_t* ifname, int32_t length, uint8_t
  * and the calling process repeats the call to this operation for its completion
  * @return 0 if true, 1 if false or negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning ifname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_supportsMulticast(int8_t* ifname, int32_t length, uint8_t retry);
 
@@ -173,6 +181,7 @@ int32_t LLNET_NETWORKINTERFACE_IMPL_supportsMulticast(int8_t* ifname, int32_t le
  * and the calling process repeats the call to this operation for its completion
  * @return the MTU as an int, or a negative error code
  * @see {@link NetErrors} for error codes
+ * @warning ifname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKINTERFACE_IMPL_getMTU(int8_t* ifname, int32_t length, uint8_t retry);
 

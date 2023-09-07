@@ -1,20 +1,19 @@
-.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.6.json
-   :alt: sdk_5.6 badge
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.7.json
+   :alt: sdk_5.7 badge
    :align: left
 
-.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/arch_7.18.json
-   :alt: arch_7.18 badge
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/arch_8.0.json
+   :alt: arch_8.0 badge
    :align: left
 ..
     Copyright 2020-2023 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.6.1
+.. |VEEPORT_VER| replace:: 2.0.0
 .. |RCP| replace:: MICROEJ SDK
-.. |PLATFORM| replace:: MicroEJ Platform
-.. |PLATFORMS| replace:: MicroEJ Platforms
-.. |SIM| replace:: MicroEJ Simulator
+.. |VEEPORT| replace:: VEE Port
+.. |SIM| replace:: Simulator
 .. |ARCH| replace:: MicroEJ Architecture
 .. |CIDE| replace:: MICROEJ SDK
 .. |RTOS| replace:: FreeRTOS RTOS
@@ -25,15 +24,15 @@
 .. _CHANGELOG: ./CHANGELOG.rst
 
 ==========================================
-|PLATFORM| for |MANUFACTURER| |BOARD_NAME|
+|VEEPORT| for |MANUFACTURER| |BOARD_NAME|
 ==========================================
 
-This project is used to build a |PLATFORM| for the |BOARD_NAME|
+This project is used to build a |VEEPORT| for the |BOARD_NAME|
 development board.
 
 .. image:: ./images/stm32f7508-dk.png
 
-It is recommended to read this tutorial before using the platform: https://docs.microej.com/en/latest/Tutorials/tutorialUnderstandMicroEJFirmwareBuild.html
+It is recommended to read this tutorial before using the |VEEPORT|: https://docs.microej.com/en/latest/Tutorials/tutorialUnderstandMicroEJFirmwareBuild.html
 
 Related Files
 =============
@@ -41,7 +40,7 @@ Related Files
 This directory also contains:
 
 * `CHANGELOG`_ to track the changes in the MicroEJ
-  |BOARD_NAME| Platform
+  |BOARD_NAME| |VEEPORT|
 * `RELEASE NOTES`_ to list:
 
   - the list of the dependencies and their versions.
@@ -81,12 +80,12 @@ Here is a list of |BOARD_NAME| useful documentation links:
 - Board documentation available `here <https://www.st.com/en/evaluation-tools/stm32f7508-dk.html#documentation>`__
 - MCU documentation available `here <https://www.st.com/en/microcontrollers-microprocessors/stm32f750n8.html#documentation>`__
 
-Platform Specifications
+|VEEPORT| Specifications
 =======================
 
-The Architecture version is ``7.18.1`` for GCC compiler and ``7.18.1`` for IAR compiler.
+The Architecture version is ``8.0.0`` for GCC compiler and ``8.0.0`` for IAR compiler.
 
-This Platform provides the following Foundation Libraries:
+This |VEEPORT| provides the following Foundation Libraries:
 
 .. list-table::
    :header-rows: 1
@@ -96,7 +95,7 @@ This Platform provides the following Foundation Libraries:
    * - BON
      - 1.4
    * - DEVICE
-     - 1.0
+     - 1.1
    * - DRAWING
      - 1.0
    * - ECOM
@@ -140,12 +139,12 @@ This Platform provides the following Foundation Libraries:
    * - WATCHDOG
      - 1.0
 
-The |PLATFORM| is derived into:
+The |VEEPORT| is derived into:
 
-- a Mono-Sandbox Platform (default)
-- a Multi-Sandbox Platform
+- a Mono-Sandbox |VEEPORT| (default)
+- a Multi-Sandbox |VEEPORT|
 
-The |PLATFORM| can be built using two toolchains:
+The |VEEPORT| can be built using two toolchains:
 
 - GCC
 - IAR
@@ -155,7 +154,7 @@ Requirements
 
 - PC with Windows 10
 - Internet connection to `MicroEJ Central Repository <https://developer.microej.com/central-repository/>`_
-- |RCP| Dist. ``20.12`` or higher, available `here <https://developer.microej.com/get-started/>`_
+- |RCP| Dist. ``21.11`` or higher, available `here <https://developer.microej.com/get-started/>`_
 - |BOARD_NAME| board
 
 BSP Setup
@@ -184,22 +183,20 @@ IAR Embedded Workbench Setup
 BSP Compilation
 ---------------
 
-Before the first build of the BSP, ensure you have cloned the repository and all its submodules
-and also the patch for STM32CubeF7 implementation is applied. To update git submodules, run the 
+Before the first build of the BSP, ensure you have cloned the repository and all its submodules. To update git submodules, run the 
 following command in "git submodule update --init --recursive" in the root project "P0234_STM32F7508-DK".
-to apply the patch you can run the script **RunAtFirstBSPCompile** located in  ``xxx/stm32f7508_freertos-bsp/projects/microej/scripts``.
 
-The Platform provides a pre-compiled Mono-Sandbox Application for each toolchain.
+The |VEEPORT| provides a pre-compiled Mono-Sandbox Application for each toolchain.
 Validate the BSP installation by compiling the BSP to build a MicroEJ
 Firmware.
 
 **Using the provided build scripts**
 
-To build the ``stm32f750-freertos-bsp`` project, open a
+To build the ``stm32f7508_freertos-bsp`` project, open a
 terminal:
 
-- If you are using the GCC toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/SW4STM32``.
-- If you are using the IAR toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/EWARM``.
+- If you are using the GCC toolchain go to the directory ``xxx/stm32f7508_freertos-bsp/projects/microej/SW4STM32``.
+- If you are using the IAR toolchain go to the directory ``xxx/stm32f7508_freertos-bsp/projects/microej/EWARM``.
 
 .. note::
 
@@ -223,7 +220,7 @@ Import the projects in the workspace:
 
 - ``File`` > ``Import`` > ``General`` > ``Existing Projects into Workspace`` >
   ``Next``
-- Point ``Select root directory`` to ``stm32f750-freertos-bsp/projects/```
+- Point ``Select root directory`` to ``stm32f7508_freertos-bsp/projects/```
 - Click ``Finish``
 
 Build the BSP:
@@ -261,8 +258,8 @@ bootloader. Please Follow the steps below:
 
 - Connect the USB connector of the board to your computer.
 - Open a terminal.
-- If you are using the GCC toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/SW4STM32``.
-- If you are using the IAR toolchain go to the directory ``xxx/stm32f750-freertos-bsp/projects/microej/EWARM``.
+- If you are using the GCC toolchain go to the directory ``xxx/stm32f7508_freertos-bsp/projects/microej/SW4STM32``.
+- If you are using the IAR toolchain go to the directory ``xxx/stm32f7508_freertos-bsp/projects/microej/EWARM``.
 
 To ensure that your board is detected by your PC, open your Windows device manager and check at your ports, you should see the STMicroelectronics STLink Virtual COM port (COMx where x is the number of the port).
 
@@ -279,7 +276,7 @@ The firmware is launched.
 Logs Output
 -----------
 
-MicroEJ platform uses the virtual UART from the |BOARD_NAME|
+|VEEPORT| uses the virtual UART from the |BOARD_NAME|
 USB port.  A COM port is automatically mounted when the board is
 plugged to a computer using USB cable.  All board logs are available
 through this COM port.
@@ -315,10 +312,10 @@ A JTAG interface is also directly available through the USB interface.
 Please refer to the `README MicroEJ BSP`_ section debugging for more
 details.
 
-Platform Setup
+|VEEPORT| Setup
 ==============
 
-Platform Import
+|VEEPORT| Import
 ---------------
 
 Import the projects in |RCP| Workspace:
@@ -332,7 +329,7 @@ Inside |RCP|, the selected example is imported as several projects
 prefixed by the given name:
 
 - ``stm32f7508_freertos-configuration``: Contains the
-  platform configuration description. Some modules are described in a
+  |VEEPORT| configuration description. Some modules are described in a
   specific sub-folder / with some optional configuration files
   (``.properties`` and / or ``.xml``).
 
@@ -343,21 +340,21 @@ prefixed by the given name:
   support package.
 
 - ``stm32f7508_freertos-fp``: Contains the board description
-  and images for the |SIM|. This project is updated once the platform
+  and images for the |SIM|. This project is updated once the |VEEPORT|
   is built.
 
 - ``STM32F7508-Platform-CM7hardfp_GCC48-{version}``:
-  Contains the |RCP| Platform project for the GCC toolchain which is empty by default until
-  the Platform is built. This platform project will be the one built by default. To build using
+  Contains the |RCP| |VEEPORT| project for the GCC toolchain which is empty by default until
+  the |VEEPORT| is built. This |VEEPORT| project will be the one built by default. To build using
   IAR toolchain instead, please see the note below.
   
 - ``STM32F7508-Platform-CM7hardfp_IAR83-{version}``:
-  Contains the |RCP| Platform project for the IAR toolchain which is empty by default until
-  the Platform is built. This platform project will not be the one used by default. To build using
+  Contains the |RCP| |VEEPORT| project for the IAR toolchain which is empty by default until
+  the |VEEPORT| is built. This |VEEPORT| project will not be the one used by default. To build using
   IAR toolchain instead, please see the note below.
 
-By default, the Platform is configured as a Mono-Sandbox Evaluation
-Platform which will allow you to run any application on the Simulator.
+By default, the |VEEPORT| is configured as a Mono-Sandbox Evaluation
+|VEEPORT| which will allow you to run any application on the Simulator.
 However, to be able to run an application on the Device you need a license, if you don't have one, follow the procedure described
 `here <https://docs.microej.com/en/latest/SDKUserGuide/licenses.html>`__.
 
@@ -370,21 +367,21 @@ However, to be able to run an application on the Device you need a license, if y
 
 .. note::
 
-  To build a Multi-Sandbox platform, open ``stm32f7508_freertos-configuration/STM32F7508.platform``,
+  To build a Multi-Sandbox |VEEPORT|, open ``stm32f7508_freertos-configuration/STM32F7508.platform``,
   go to the ``Content`` tab and check ``Multi Applications``.
 
 
-Platform Build
+|VEEPORT| Build
 --------------
 
-To build the Platform, please follow the steps below:
+To build the |VEEPORT|, please follow the steps below:
 
 - Right-click on ``stm32f7508_freertos-configuration``
   project in your |RCP| workspace.
 - Click on ``Build Module``
 
 The build starts.  This step may take several minutes.  The first
-time, the Platform build requires to download modules that are
+time, the |VEEPORT| build requires to download modules that are
 available on the MicroEJ Central Repository.  You can see the progress
 of the build steps in the MicroEJ console.
 
@@ -394,21 +391,21 @@ Please wait for the final message:
 
                           BUILD SUCCESSFUL
 
-At the end of the execution the |PLATFORM| is fully built for the
+At the end of the execution the |VEEPORT| is fully built for the
 |BOARD_NAME| board and is ready to be linked into the |CIDE|
 project.
 
 
-The Platform project should be refreshed with no error in the |RCP|
+The |VEEPORT| project should be refreshed with no error in the |RCP|
 ``STM32F7508-Platform-CM7hardfp_GCC48-{version}``, or ``STM32F7508-Platform-CM7hardfp_IAR83-{version}``
 if you changed the toolchain for IAR.
 
 .. note::
 
-  If the platform still shows an error, proceed to a manual refresh of the MicroEJ SDK package explorer (``right click in the package explorer`` -> ``Refresh``)
+  If the |VEEPORT| still shows an error, proceed to a manual refresh of the MicroEJ SDK package explorer (``right click in the package explorer`` -> ``Refresh``)
 
 Please refer to https://docs.microej.com/en/latest/PlatformDeveloperGuide/platformOverview.html#build-process 
-for more details about the MicroEJ platform build process
+for more details about the |VEEPORT| build process
 
 Please refer to https://docs.microej.com/en/latest/ApplicationDeveloperGuide/standaloneApplication.html
 for more information on how to build a MicroEJ Standalone Application.
@@ -419,8 +416,8 @@ Testsuite Configuration
 To run a Testsuite on the |BOARD_NAME| board please refer to the testsuite tutorial `here <https://docs.microej.com/en/latest/Tutorials/tutorialRunATestSuiteOnDevice.html>`__ 
 
 In ``config.properties``, the property ``target.platform.dir`` must be
-set to the absolute path to the platform.  For example
-``C:/Platform-STMicroelectronics-STM32F7508-DK/STM32F7508-Platform-CM7hardfp_GCC48-{version}/source``.
+set to the absolute path to the |VEEPORT|.  For example
+``C:/STMicroelectronics-STM32F7508-DK/STM32F7508-Platform-CM7hardfp_GCC48-{version}/source``.
 
 Troubleshooting
 ===============

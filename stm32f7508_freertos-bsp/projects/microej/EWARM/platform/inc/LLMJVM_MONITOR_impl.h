@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2017-2021 MicroEJ Corp. All rights reserved.
+ * Copyright 2017-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ MicroJvm Monitoring low level API
  * @author MicroEJ Developer Team
- * @version 1.0.0
- * @date 1 June 2017
+ * @version 1.2.0
+ * @date 28 April 2023
  */
 
 #include <stdint.h>
@@ -25,28 +25,28 @@
 #endif
 
 /*
- * This function is called once during MicroJvm virtual machine startup.
+ * This function is called once during MicroEJ Core Engine startup.
  * It may be used to initialize specific data.
  * <p>
  * When <code>auto_start</code> is true, the monitoring traces must be generated now
- * (i.e. call the <code>TRACE_start()</code> function). If <code>auto_start</code>
+ * (i.e., call the <code>LLTRACE_start()</code> function). If <code>auto_start</code>
  * is false, the monitoring traces must not be generated until the function
- * <code>TRACE_start()</code> is called. Even if <code>auto_start</code> is false,
- * the MicroJvm virtual machine will call the LLMJVM_MONITOR_IMPL_* functions.
+ * <code>LLTRACE_start()</code> is called. Even if <code>auto_start</code> is false,
+ * the MicroEJ Core Engine will call the LLMJVM_MONITOR_IMPL_* functions.
  *
  * @param auto_start
- *            true to start monitoring now, false otherwise
+ *            true to start monitoring now, false otherwise.
  */
 void LLMJVM_MONITOR_IMPL_initialize(bool auto_start);
 
 /**
- * This function is called during MicroJvm virtual machine end.
+ * This function is called during MicroEJ Core Engine end.
  * It may be used to freed specific data.
  */
 void LLMJVM_MONITOR_IMPL_on_shutdown(void);
 
 /**
- * This function is called by the MicroJvm virtual machine when a new Java thread
+ * This function is called by the MicroEJ Core Engine when a new Java thread
  * is started.
  * <p>
  * Implementation can use the function <code>MJVM_MONITOR_get_thread_info()</code> to
@@ -58,7 +58,7 @@ void LLMJVM_MONITOR_IMPL_on_shutdown(void);
 void LLMJVM_MONITOR_IMPL_on_thread_create(int32_t thread_id);
 
 /**
- * This function is called by the MicroJvm virtual machine when the priority or
+ * This function is called by the MicroEJ Core Engine when the priority or
  * the name of a Java thread is modified.
  * <p>
  * Implementation can use the function <code>MJVM_MONITOR_get_thread_info()</code> to
@@ -70,8 +70,8 @@ void LLMJVM_MONITOR_IMPL_on_thread_create(int32_t thread_id);
 void LLMJVM_MONITOR_IMPL_on_thread_modified(int32_t thread_id);
 
 /**
- * This function is called by the MicroJvm virtual machine when the state of a
- * Java thread is modified (e.g. when a thread is waiting, running, etc.).
+ * This function is called by the MicroEJ Core Engine when the state of a
+ * Java thread is modified (e.g., when a thread is waiting, running, etc.).
  *
  * @param thread_id
  * 		ID of the modified thread.
@@ -82,13 +82,13 @@ void LLMJVM_MONITOR_IMPL_on_thread_modified(int32_t thread_id);
 void LLMJVM_MONITOR_IMPL_on_thread_state_changed(int32_t thread_id, MJVM_MONITOR_state_t new_state);
 
 /**
- * This function is called by the MicroJvm virtual machine when it enter in idle
- * mode (i.e. all the Java threads are sleeping).
+ * This function is called by the MicroEJ Core Engine when it enter in idle
+ * mode (i.e., all the Java threads are sleeping).
  */
 void LLMJVM_MONITOR_IMPL_on_idle(void);
 
 /**
- * This function is called by the MicroJvm virtual machine when a garbage collector
+ * This function is called by the MicroEJ Core Engine when a garbage collector
  * operation is started.
  *
  * @param current_thread_id
@@ -97,7 +97,7 @@ void LLMJVM_MONITOR_IMPL_on_idle(void);
 void LLMJVM_MONITOR_IMPL_on_gc_start(int32_t current_thread_id);
 
 /**
- * This function is called by the MicroJvm virtual machine when a garbage collector
+ * This function is called by the MicroEJ Core Engine when a garbage collector
  * operation is finished.
  *
  * @param current_thread_id
@@ -106,7 +106,23 @@ void LLMJVM_MONITOR_IMPL_on_gc_start(int32_t current_thread_id);
 void LLMJVM_MONITOR_IMPL_on_gc_stop(int32_t current_thread_id);
 
 /**
- * This function is called by the MicroJvm virtual machine when a new Java object is
+ * This function is called by the MicroEJ Core Engine when an method is invoked.
+ *
+ * @param method
+ * 		the invoked method.
+ */
+void LLMJVM_MONITOR_IMPL_on_invoke_method(void* method);
+
+/**
+ * This function is called by the MicroEJ Core Engine when a method returns.
+ *
+ * @param method
+ * 		the invoked method.
+ */
+void LLMJVM_MONITOR_IMPL_on_return_method(void* method);
+
+/**
+ * This function is called by the MicroEJ Core Engine when a new Java object is
  * allocated.
  *
  * @param type
@@ -134,7 +150,7 @@ void LLMJVM_MONITOR_IMPL_on_gc_stop(int32_t current_thread_id);
 void LLMJVM_MONITOR_IMPL_on_allocate(void* type, int32_t size, void* method, void* instruction_address, int32_t total_memory, int32_t free_memory, bool immortal);
 
 /**
- * This function is called by the MicroJvm virtual machine when a Java exception
+ * This function is called by the MicroEJ Core Engine when a Java exception
  * is thrown.
  *
  * @param exception_type

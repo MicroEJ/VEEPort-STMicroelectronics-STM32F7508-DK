@@ -9,16 +9,11 @@ STM32F7508-Platform-CM7hardfp_IAR83-*/build/
 
 # Ignore dropins generated during the Platform build
 ## Platform Configuration Additions
-stm32f7508_freertos-configuration/dropins/scripts/deployInBSP.xml
-stm32f7508_freertos-configuration/dropins/scripts/deployToolBSPRun.microejTool
-stm32f7508_freertos-configuration/dropins/scripts/fullLink.microejLaunch
-stm32f7508_freertos-configuration/dropins/scripts/fullLink.microejLaunch.properties
-stm32f7508_freertos-configuration/dropins/scripts/init-bsp/
-stm32f7508_freertos-configuration/dropins/scripts/init-license-checker/
+stm32f7508_freertos-configuration/dropins/javaAPIs/device-1.1-api*
+stm32f7508_freertos-configuration/dropins/javaLibs/device-1.1.jar
+stm32f7508_freertos-configuration/dropins/workbenchExtension_device-wbe.jar
 stm32f7508_freertos-configuration/dropins/resources/os/
-stm32f7508_freertos-configuration/dropins/tools/license-checker.jar
 stm32f7508_freertos-configuration/dropins/tools/imageio-webp.jar
-stm32f7508_freertos-configuration/dropins/workbenchExtension_launchScriptFramework.jar
 
 # Ignore STM32CubeIDE generated files
 stm32f7508_freertos-bsp/projects/microej/cdt_workspace/.metadata/

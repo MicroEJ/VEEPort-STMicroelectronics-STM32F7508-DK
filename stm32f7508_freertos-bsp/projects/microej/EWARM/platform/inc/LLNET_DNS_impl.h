@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2016 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -28,6 +28,7 @@
  * and the calling process repeats the call to this operation for its completion
  * @return the host name length or {@link J_EHOSTUNKNOWN} error code
  * if no host associated to this address or an error occurs
+ * @warning host must not be used outside of the VM task or saved.
  */
 int32_t LLNET_DNS_IMPL_getHostByAddr(int8_t* host, int32_t offset, int32_t length, uint8_t retry);
 
@@ -43,6 +44,7 @@ int32_t LLNET_DNS_IMPL_getHostByAddr(int8_t* host, int32_t offset, int32_t lengt
  * and the calling process repeats the call to this operation for its completion
  * @return the host address size in bytes or {@link J_EHOSTUNKNOWN} error code
  * if no host address associated to this host name or an error occurs
+ * @warning host must not be used outside of the VM task or saved.
  */
 int32_t LLNET_DNS_IMPL_getHostByNameAt(int32_t index, int8_t* host, int32_t offset, int32_t length, uint8_t retry);
 
@@ -55,6 +57,7 @@ int32_t LLNET_DNS_IMPL_getHostByNameAt(int32_t index, int8_t* host, int32_t offs
  * and the calling process repeats the call to this operation for its completion
  * @return the number of addresses associated with the host name {@code hostname}
  * or {@link J_EHOSTUNKNOWN} error code if an error occurs
+ * @warning dst must not be used outside of the VM task or saved.
  */
 int32_t LLNET_DNS_IMPL_getHostByNameCount(int8_t* hostname, int32_t offset, int32_t length, uint8_t retry);
 

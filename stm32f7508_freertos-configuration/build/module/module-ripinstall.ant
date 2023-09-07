@@ -1,0 +1,30 @@
+<!--
+	ANT
+
+	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
+	
+-->
+<project name="module-ripinstall" xmlns:ea="antlib:org.apache.easyant" xmlns:mam="antlib:com.is2t.mam.ant" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<!--
+		This script fills the platform's dropins folder.
+	-->
+
+	<!-- Global properties -->
+	<dirname file="${ant.file.module-ripinstall}" property="module-ripinstall.dir"/>
+	<property name="dropins.dir" location="${project.dir}/dropins"/>
+	
+	<!-- Unzip RIPs to dropins folder -->
+    <target name="module-ripinstall:rips" depends="mam:init" extensionOf="abstract-compile:compile-ready">
+    	
+		<path id="allRips">
+		 	<fileset dir="${dependencies.output.dir}" includes="*.rip" erroronmissingdir="false"/>
+		</path>
+
+		<mam:copy destdir="${dropins.dir}">
+			<artifacts refid="allRips"/>
+		</mam:copy>
+    </target>
+
+</project>

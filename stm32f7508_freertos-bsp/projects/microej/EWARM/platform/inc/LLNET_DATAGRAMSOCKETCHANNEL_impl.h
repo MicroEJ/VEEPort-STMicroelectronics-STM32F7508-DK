@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2018 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -39,6 +39,7 @@
  * @return long value on success, where the 32 most significant bits converted in integer is the number of data received (in bytes)
  * and the 32 least significant bits is the remote host address size (in bytes); or a negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning dst must not be used outside of the VM task or saved.
  */
 int64_t LLNET_DATAGRAMSOCKETCHANNEL_IMPL_receive(int32_t fd, int8_t* dst, int32_t dstOffset, int32_t dstLength, int8_t* remoteHost, int32_t remoteHostLength, uint8_t retry);
 
@@ -56,6 +57,8 @@ int64_t LLNET_DATAGRAMSOCKETCHANNEL_IMPL_receive(int32_t fd, int8_t* dst, int32_
  * and the calling process repeats the call to this operation for its completion
  * @return the number of bytes sent or negative error code
  * @see {@link LLNET_ERRORS} header file for error codes
+ * @warning data must not be used outside of the VM task or saved.
+ * @warning dstAddr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_DATAGRAMSOCKETCHANNEL_IMPL_send(int32_t fd, int8_t* data, int32_t dataOffset, int32_t dataLength, int8_t* dstAddr, int32_t dstAddrLength, int32_t dstPort, uint8_t retry);
 

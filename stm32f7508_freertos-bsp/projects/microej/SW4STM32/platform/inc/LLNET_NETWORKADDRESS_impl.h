@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2014-2017 IS2T. All rights reserved.
+ * Copyright 2014-2021 IS2T. All rights reserved.
  * For demonstration purpose only.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.1
- * @date 27 July 2018
+ * @version 2.1.2
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -33,6 +33,7 @@
  * and the calling process repeats the call to this operation for its completion
  * @return the host address size in bytes or {@link J_EHOSTUNKNOWN} error code
  * if no any local address found or an error occurs
+ * @warning anyLocalAddr must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKADDRESS_IMPL_lookupInaddrAny(int8_t* anyLocalAddr, int32_t length, uint8_t retry);
 
@@ -45,6 +46,7 @@ int32_t LLNET_NETWORKADDRESS_IMPL_lookupInaddrAny(int8_t* anyLocalAddr, int32_t 
  * and the calling process repeats the call to this operation for its completion
  * @return the local host name length or {@link J_EHOSTUNKNOWN} error code
  * if no local host found or an error occurs
+ * @warning localHostname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKADDRESS_IMPL_getLocalHostnameNative(int8_t* localHostname, int32_t length, uint8_t retry);
 
@@ -58,6 +60,7 @@ int32_t LLNET_NETWORKADDRESS_IMPL_getLocalHostnameNative(int8_t* localHostname, 
  * and the calling process repeats the call to this operation for its completion
  * @return the loopback address size in bytes  or {@link J_EHOSTUNKNOWN} error code
  * if no loopback address found or an error occurs
+ * @warning loopback must not be used outside of the VM task or saved.
  */
 int32_t LLNET_NETWORKADDRESS_IMPL_loopbackAddress(int8_t* loopback, int32_t length, uint8_t retry);
 

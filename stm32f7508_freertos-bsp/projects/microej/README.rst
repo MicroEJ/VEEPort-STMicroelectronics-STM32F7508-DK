@@ -3,11 +3,10 @@
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |PLATFORM_VER| replace:: 1.6.1
+.. |VEEPORT_VER| replace:: 2.0.0
 .. |RCP| replace:: MICROEJ SDK
-.. |PLATFORM| replace:: MicroEJ Platform
-.. |PLATFORMS| replace:: MicroEJ Platforms
-.. |SIM| replace:: MicroEJ Simulator
+.. |VEEPORT| replace:: VEE Port
+.. |SIM| replace:: Simulator
 .. |ARCH| replace:: MicroEJ Architecture
 .. |CIDE| replace:: MICROEJ SDK
 .. |RTOS| replace:: FreeRTOS RTOS
@@ -21,10 +20,10 @@
 |BOARD_NAME| BSP
 ================
 
-This project contains the BSP sources of the |PLATFORM| for the
+This project contains the BSP sources of the |VEEPORT| for the
 |BOARD_NAME|.
 
-This document does not describe how to setup the |PLATFORM|.  Please
+This document does not describe how to setup the |VEEPORT|.  Please
 refer to the `README`_ for that.
 
 Board Configuration
@@ -101,7 +100,7 @@ Debugging with the |BOARD_NAME|
 GCC Debugging
 ~~~~~~~~~~~~~
 
-- Open the file ``-bsp/projects/microej/SW4STM32/set_project_env.bat``.
+- Open the file ``stm32f7508_freertos-bsp/projects/microej/SW4STM32/set_project_env.bat``.
 - Set the target configuration to ``Debug``.
 
 .. code-block::
@@ -111,7 +110,7 @@ GCC Debugging
 - Open the CDT project in STM32CubeIDE:
 
   - Go to ``File > Import... > General > Existing Projects into Workspace``
-  - Check ``Select root directory`` and browse for the ``-bsp/projects/microej/SW4STM32`` directory
+  - Check ``Select root directory`` and browse for the ``stm32f7508_freertos-bsp/projects/microej/SW4STM32`` directory
   - Select ``application`` project 
   - Ensure that ``Copy projects into workspace`` is not checked and click on Finish.
   - Ensure that the ``Debug`` Build configuration is selected
@@ -128,14 +127,14 @@ GCC Debugging
 IAR Debugging 
 ~~~~~~~~~~~~~
 
-- Open the file ``-bsp/projects/microej/EWARM/set_project_env.bat``.
+- Open the file ``stm32f7508_freertos-bsp/projects/microej/EWARM/set_project_env.bat``.
 - Set the target configuration to ``Debug``.
 
 ..  code-block::
 
       SET IAREW_PROJECT_CONFIGURATION=Debug
 
-- Open the IAR project in IAR Workbench (open the file ``-bsp/projects/microej/EWARM/application.eww`` from IAR Workbench or by double-clicking on it from the MicroEJ SDK).
+- Open the IAR project in IAR Workbench (open the file ``stm32f7508_freertos-bsp/projects/microej/EWARM/application.eww`` from IAR Workbench or by double-clicking on it from the MicroEJ SDK).
 - Ensure that the ``Debug`` target is selected in the workspace tab
 - Build and link the firmware: Right-click on the ``application`` project > ``Make`` or Press 'F7'
 - Connect the |BOARD_NAME| to your computer

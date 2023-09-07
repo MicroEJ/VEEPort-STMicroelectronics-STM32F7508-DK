@@ -13,19 +13,27 @@ SET ERRORLEVEL=0
 
 REM Save application current directory and jump this script's directory
 SET CURRENT_DIRECTORY=%CD%
+SET SCRIPT_DIRECTORY=%~dp0
 
-CALL "%~dp0\set_project_env.bat"
+CALL "%SCRIPT_DIRECTORY%\set_project_env.bat"
 IF %ERRORLEVEL% NEQ 0 (
 	exit /B %ERRORLEVEL%
 )
 
-IF DEFINED APPLY_FIRST_BSP_COMPILE_HOOKS (
-	CD /D "%~dp0\..\scripts"
-	CALL RunAtFirstBSPCompile.bat
-	CD /D "%~dp0"
+REM Apply the git patch
+CMD /C %SCRIPT_DIRECTORY%\..\scripts\patchSTM32CubeF7.bat && (
+	SET ERRORLEVEL=0
+	) || (
+	SET ERRORLEVEL=1
 )
 
-CD /D %~dp0%
+REM exit early if there are errors in applying the patch
+IF %ERRORLEVEL% NEQ 0 (
+	ECHO "Failed to patch STM32CubeF7 SDK"
+	EXIT /B %ERRORLEVEL%
+)
+
+CD /D %SCRIPT_DIRECTORY%
 
 @echo on
 
@@ -59,4 +67,4 @@ IF %ERRORLEVEL% NEQ 0 (
 	EXIT /B %ERRORLEVEL%
 )
 
-cd /D "%CURRENT_DIRECTORY%"
+CD /D "%CURRENT_DIRECTORY%"

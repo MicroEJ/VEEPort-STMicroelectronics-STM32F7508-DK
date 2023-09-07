@@ -45,14 +45,15 @@ define block HEAP                      with alignment = 4, size = __ICFEDIT_size
 define block CSTACK                    with alignment = 4, size = __ICFEDIT_size_cstack__ { };
 
 /* Define MicroEJ specific memory blocks */
-define block RW_MICROEJ_ICETEA_HEAP    with alignment = 4  { section ICETEA_HEAP };
-define block RW_MICROEJ_JAVA_HEAP      with alignment = 4  { section _java_heap };
-define block RW_MICROEJ_IMMORTALS      with alignment = 4  { section _java_immortals };
-define block RW_MICROEJ_VM_STACK       with alignment = 4  { section .bss.vm.stacks.java };
+define block RW_MICROEJ_ICETEA_HEAP    with alignment = 4  { section .bss.microej.runtime };
+define block RW_MICROEJ_HEAP           with alignment = 4  { section .bss.microej.heap };
+define block RW_MICROEJ_IMMORTALS      with alignment = 4  { section .bss.microej.immortals };
+define block RW_MICROEJ_VM_STACK       with alignment = 4  { section .bss.microej.stacks };
 define block RW_MICROEJ_MICROUI_HEAP   with alignment = 4  { section .bss.microui.display.imagesHeap };
 define block RW_MICROEJ_NETWORK_HEAP   with alignment = 4  { section .NetworkHeap object LLNET_NETWORK_MEM.o };
-define block RW_MICROEJ_DISPLAY_MEM    with alignment = 4  { section .DisplayMem object LLUI_DISPLAY.o };
 define block RW_MICROEJ_KF_HEAP        with alignment = 4  { section .KfHeap object LLKERNEL_SDRAM.o };
+
+define block RW_MICROEJ_DISPLAY_MEM    with alignment = 512K, end alignment = 512K  { section .DisplayMem object LLUI_DISPLAY.o };
 
 /* Define the ITCM region content */
 define block RO_ITCM_CODE         with alignment = 4
@@ -136,7 +137,7 @@ initialize manually
 initialize by copy { readwrite };
 
 /* Do not initialize sections marked with .noinit along with sections mapped in SDRAM which is not yet configured at startup */
-do not initialize  { section .noinit, section _java_heap, section _java_immortals, section .bss.microui.display.imagesHeap, section .NetworkHeap object LLNET_NETWORK_MEM.o, section .DisplayMem object LLUI_DISPLAY.o, section .KfHeap object LLKERNEL_SDRAM.o };
+do not initialize  { section .noinit, section .bss.microej.heap, section .bss.microej.immortals, section .bss.microui.display.imagesHeap, section .NetworkHeap object LLNET_NETWORK_MEM.o, section .DisplayMem object LLUI_DISPLAY.o, section .KfHeap object LLKERNEL_SDRAM.o };
 
 /* The vector table goes first into FLASH */
 place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
@@ -166,10 +167,7 @@ place in FLASH_region        { readonly object I64DivMod.o };
 place in FLASH_region        { readonly object lz77_init_single.o };
 place in FLASH_region        { readonly object zero_init3.o };
 
-/* Toolchain libraries (optional, performance increases compared with default QSPI mapping) */
-place in FLASH_region        { readonly object m7M_tls.a } except { object fpinit_M.o, object *64*.o, object *complex*.o, object *cos*.o, object *sin*.o, object *tan*.o };
-
-/* Java VM Core (optional, performance increases compared with default QSPI mapping) */
+/* VM Core (optional, performance increases compared with default QSPI mapping) */
 place in FLASH_region        { readonly object *VMCOREMicroJvm*.o };
 place in FLASH_region        { readonly object *iceTea_lang*.o };
 place in FLASH_region        { readonly object *iceTea_support_armv7m*.o };
@@ -187,12 +185,6 @@ place in QSPI_region         { block RO_ITCM_CODE_INIT };
 /* Place in DTCM the Ethernet buffers */
 place in DTCM_region         { zeroinit section .RxDescripSection, section .TxDescripSection, section .RxBUF, section .TxBUF object ethernetif.o };
 
-/* Place in DTCM the SD Card buffers */
-place in DTCM_region         { zeroinit object LLFS_STM32_init_sdcard.o };
-place in DTCM_region         { zeroinit object fs_helper_FatFs.o };
-place in DTCM_region         { zeroinit object LLFS_impl.o };
-place in DTCM_region         { zeroinit section .ScratchBUF object sd_diskio_dma_rtos.o };
-
 /* Place in DTCM the VM stacks */
 place in DTCM_region         { block RW_MICROEJ_VM_STACK };
 
@@ -202,8 +194,8 @@ place in DTCM_region         { block RW_MICROEJ_ICETEA_HEAP };
 /* Initialized and uninitialized data sections goes into RAM, load LMA copy after code */
 place in SRAM_region         { readwrite, zeroinit, block HEAP, last block CSTACK };
 
-/* SDRAM used for: Display memory, Network heap, Java heap, Immortals heap, MicroUI heap and KF heap */
-place in SDRAM_region        { 	block RW_MICROEJ_DISPLAY_MEM, block RW_MICROEJ_NETWORK_HEAP, block RW_MICROEJ_JAVA_HEAP, block RW_MICROEJ_IMMORTALS, block RW_MICROEJ_MICROUI_HEAP, block RW_MICROEJ_KF_HEAP };
+/* SDRAM used for: Display memory, Network heap, MicroEJ heap, Immortals heap, MicroUI heap and KF heap */
+place in SDRAM_region        { 	block RW_MICROEJ_DISPLAY_MEM, block RW_MICROEJ_NETWORK_HEAP, block RW_MICROEJ_HEAP, block RW_MICROEJ_IMMORTALS, block RW_MICROEJ_MICROUI_HEAP, block RW_MICROEJ_KF_HEAP };
 
 /* The program code and constant data goes into QSPI */
 place in QSPI_region         { readonly };

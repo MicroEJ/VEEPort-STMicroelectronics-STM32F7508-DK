@@ -28,6 +28,6 @@
     		The last module version is automatically fetched by default.
     		To freeze the module version, add the following attribute: ej:match="perfect"    	
     	-->
-		<dependency org="com.microej.pack.fs" name="fs-testsuite" rev="3.0.7"/>
+	<dependency org="com.microej.pack.fs" name="fs-testsuite" rev="3.0.7" ej:match="perfect"/>
     </dependencies>
 </ivy-module>

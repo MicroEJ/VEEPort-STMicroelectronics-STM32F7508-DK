@@ -1,0 +1,9 @@
+
+<!--
+	Copyright 2015-2022 MicroEJ Corp. All rights reserved.
+	Use of this source code is governed by a BSD-style license that can be found with this software.
+-->
+<ilink>
+	<nativeImplementation name="LLCOMM_UART" nativeName="LLCOMM_BUFFERED_CONNECTION"/>
+	<nativeImplementation name="LLCOMM_CDC" nativeName="LLCOMM_BUFFERED_CONNECTION"/>
+</ilink>

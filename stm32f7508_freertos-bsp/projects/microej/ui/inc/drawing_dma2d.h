@@ -37,7 +37,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include <stdint.h>
-#include "LLUI_DISPLAY_IMPL.h"
+#include "LLUI_DISPLAY_impl.h"
 #include "drawing_dma2d_configuration.h"
 
 

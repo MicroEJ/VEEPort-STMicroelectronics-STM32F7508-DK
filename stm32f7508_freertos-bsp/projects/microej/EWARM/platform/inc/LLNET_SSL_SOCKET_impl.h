@@ -1,9 +1,9 @@
 /*
  * C
  *
- * Copyright 2015-2019 IS2T. All rights reserved.
- * For demonstration purpose only.
+ * Copyright 2015-2021 IS2T. All rights reserved.
  * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * For demonstration purpose only.
  */
 #ifndef __LLNET_SSL_SOCKET_IMPL__
 #define __LLNET_SSL_SOCKET_IMPL__
@@ -12,8 +12,8 @@
  * @file
  * @brief MicroEJ SSL low level API
  * @author MicroEJ Developer Team
- * @version 5.1.0
- * @date 29 March 2019
+ * @version 5.1.1
+ * @date 7 May 2021
  */
 
 #include <sni.h>
@@ -47,6 +47,7 @@ int32_t LLNET_SSL_SOCKET_IMPL_initialize(void);
  * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
  * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
  * @return the new SSL Socket ID on success, {@link J_CREATE_SSL_SOCKET_ERROR} on error
+ * @warning hostname must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SSL_SOCKET_IMPL_create(int32_t contextID, int32_t fd, uint8_t* hostname, int32_t hostnameLen, uint8_t autoclose, uint8_t useClientMode, uint8_t needClientAuth, uint8_t retry);
 
@@ -108,6 +109,7 @@ int32_t LLNET_SSL_SOCKET_IMPL_initialServerHandShake(int32_t sslID, int32_t fd, 
  * @return the number of bytes read on success; {@link J_EOF} if there is no more data when the end of the stream
  * has been reached or a negative error code
  * @see {@link LLNET_SSL_ERRORS} header file for error codes
+ * @warning buf must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SSL_SOCKET_IMPL_read(int32_t sslID, int32_t fd, int8_t* buf, int32_t off, int32_t len, uint8_t retry);
 
@@ -132,6 +134,7 @@ int32_t LLNET_SSL_SOCKET_IMPL_available(int32_t sslID, uint8_t retry);
  * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
  * @return the number of bytes written on success or a negative error code
  * @see {@link LLNET_SSL_ERRORS} header file for error codes
+ * @warning buf must not be used outside of the VM task or saved.
  */
 int32_t LLNET_SSL_SOCKET_IMPL_write(int32_t sslID, int32_t fd, int8_t* buf, int32_t off, int32_t len, uint8_t retry);
 

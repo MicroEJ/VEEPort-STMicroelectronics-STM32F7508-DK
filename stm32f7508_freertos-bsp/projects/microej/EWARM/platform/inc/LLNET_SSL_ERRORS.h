@@ -13,8 +13,8 @@
  * @file
  * @brief MicroEJ SSL low level API
  * @author MicroEJ Developer Team
- * @version 5.1.0
- * @date 29 March 2019
+ * @version 5.1.1
+ * @date 7 May 2021
  */
 
 #define J_SSL_NO_ERROR							 0 /* not an error */

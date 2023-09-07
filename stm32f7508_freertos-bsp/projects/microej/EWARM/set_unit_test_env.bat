@@ -23,6 +23,7 @@ SET IAREW_PROJECT_CONFIGURATION=Unit_test
 
 REM Device macro file relative to IAREW_INSTALLATION_DIR (e.g.: arm\config\debugger\NXP\LPC5460x.dmac)
 SET IAREW_PROJECT_DEVICE_MACRO=arm\config\debugger\ST\STM32F7xx.dmac
+SET IAREW_PROJECT_DEVICE_MACRO_2=arm\config\debugger\ST\STM32F7xx_DBG.dmac
 
 REM Device flash loader file relative to IAREW_INSTALLATION_DIR (e.g.: arm\config\flashloader\NXP\FlashNXPLPC5460xM4F512K.board)
 SET IAREW_PROJECT_FLASH_LOADER=arm\config\flashloader\ST\FlashSTM32F7xx_STM32F7508-DISCO.board

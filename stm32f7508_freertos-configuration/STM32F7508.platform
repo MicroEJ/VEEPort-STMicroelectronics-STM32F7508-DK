@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
-	XML
-
 	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
-<platform hardwarePartNumber="STM32F7508" name="Platform" version="1.6.1" provider="MicroEJ" vendorUrl="http://developer.microej.com/4.0/sdk/license" workbenchMinVersion="1.7.0">
-    <environment architecture="CM7" baseline="14" hardwarePartNumber="CM7" toolchain="CM7hardfp_GCC48" name="flopi7G26" techVersion="1.6" version="7.18.1" level="eval" provider="MicroEJ" licenseTag="IS2T_J8F5C"/>
-    <group name="device"/>
+<platform hardwarePartNumber="STM32F7508" name="Platform" version="2.0.0" provider="MicroEJ" vendorUrl="http://developer.microej.com/4.0/sdk/license" workbenchMinVersion="1.7.0">
+    <environment architecture="CM7" baseline="14" hardwarePartNumber="CM7" toolchain="CM7hardfp_GCC48" name="flopi7G26" techVersion="1.6" version="8.0.0" level="eval" provider="MicroEJ" licenseTag="IS2T_J8F5C"/>
     <group name="frontPanel"/>
     <group name="fs"/>
     <group name="hal"/>
     <group name="extensible"/>
     <group name="net"/>
-    <group name="ecom"/>
     <group name="ssl"/>
     <group name="ui">
         <without name="display_decoder_bmpm"/>

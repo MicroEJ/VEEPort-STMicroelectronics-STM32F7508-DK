@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2008-2021 MicroEJ Corp. All rights reserved.
+ * Copyright 2008-2022 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -115,11 +115,11 @@ int32_t SNI_throwNativeException(int32_t errorCode, const char* message);
  * Throws a new <code>ej.sni.NativeIOException</code> after the end of the current native
  * method or SNI callback. <code>NativeIOException</code> class is a subclass of
  * <code>java.io.IOException</code>. <code>NativeIOException</code> instances are checked
- * exceptions, they need to be declared in the native method throws clause (e.g.
+ * exceptions, they need to be declared in the native method throws clause (e.g.,
  * <code>throws IOException</code>).
  *
  * If the native method declaration is not compatible with <code>NativeIOException</code>
- * (i.e. the throws clause does not specify <code>NativeIOException</code> or one of its
+ * (i.e., the throws clause does not specify <code>NativeIOException</code> or one of its
  * superclasses) then a code>NativeException</code> is thrown instead.
  *
  * The virtual machine keeps a reference to the message until the end of the current native
@@ -147,7 +147,7 @@ int32_t SNI_throwNativeException(int32_t errorCode, const char* message);
 int32_t SNI_throwNativeIOException(int32_t errorCode, const char* message);
 
 /**
- * Checks if an exception is pending in the current Java thread (i.e. a successful call to
+ * Checks if an exception is pending in the current Java thread (i.e., a successful call to
  * <code>SNI_throwNativeException</code> or <code>SNI_throwNativeIOException</code> has
  * been made prior to this call).
  *
@@ -240,7 +240,7 @@ int32_t SNI_registerResource(void* resource, SNI_closeFunction close, SNI_getDes
  * The <code>close</code> parameter is used to uniquely identify the registered resource. If the given native
  * resource is not found,  this function returns <code>SNI_ILLEGAL_ARGUMENT</code>.
  *
- * @param resource a resource previously registered with <code>SNI_registerResource()</code>
+ * @param resource a resource previously registered with <code>SNI_registerResource()</code>.
  *
  * @param close the <code>close</code> argument given to <code>SNI_registerResource()</code> when the native
  * resource has been registered.
