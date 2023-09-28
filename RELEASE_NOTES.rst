@@ -3,7 +3,7 @@
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.1.0
+.. |VEEPORT_VER| replace:: 2.1.1
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |VEEPORT| replace:: VEE Port
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
