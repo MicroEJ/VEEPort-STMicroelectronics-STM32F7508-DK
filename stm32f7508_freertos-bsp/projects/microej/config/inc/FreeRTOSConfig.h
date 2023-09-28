@@ -1,8 +1,12 @@
+/**
+ * C
+ *
+ * Copyright 2013-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
+ */
 /*
  * FreeRTOS Kernel V10.2.1
  * Copyright (C) 2019 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- *
- * Copyright 2020-2021 MicroEJ Corp. This file has been modified by MicroEJ Corp.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -90,17 +94,18 @@
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
-#define INCLUDE_vTaskPrioritySet       1
-#define INCLUDE_uxTaskPriorityGet      1
-#define INCLUDE_vTaskDelete            1
-#define INCLUDE_vTaskCleanUpResources  1
-#define INCLUDE_vTaskSuspend           1
-#define INCLUDE_vTaskDelayUntil        1
-#define INCLUDE_vTaskDelay             1
-#define INCLUDE_xTaskGetSchedulerState 1
-#define INCLUDE_xQueueGetMutexHolder   1
-#define INCLUDE_xTaskGetIdleTaskHandle 1
-#define INCLUDE_pxTaskGetStackStart    1
+#define INCLUDE_vTaskPrioritySet            1
+#define INCLUDE_uxTaskPriorityGet           1
+#define INCLUDE_vTaskDelete                 1
+#define INCLUDE_vTaskCleanUpResources       1
+#define INCLUDE_vTaskSuspend                1
+#define INCLUDE_vTaskDelayUntil             1
+#define INCLUDE_vTaskDelay                  1
+#define INCLUDE_xTaskGetSchedulerState      1
+#define INCLUDE_xTaskGetCurrentTaskHandle   1
+#define INCLUDE_xQueueGetMutexHolder        1
+#define INCLUDE_xTaskGetIdleTaskHandle      1
+#define INCLUDE_pxTaskGetStackStart         1
 
 /*------------- CMSIS-RTOS V2 specific defines -----------*/
 /* When using CMSIS-RTOSv2 set configSUPPORT_STATIC_ALLOCATION to 1

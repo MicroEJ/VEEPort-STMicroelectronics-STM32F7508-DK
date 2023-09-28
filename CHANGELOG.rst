@@ -6,8 +6,30 @@
  Changelog
 ===========
 
+
 ----------------------
-[2.0.0] - Unreleased
+[2.1.0] - 2023-09-27
+----------------------
+
+Added
+=====
+
+- Script ``dump_mcu_memory_stm32.py`` to dump memory section of the MCU
+- Documentation GUI badge
+
+Changed
+=======
+
+- SystemView documentation in RELEASE NOTES
+
+Fixed
+=====
+
+- Fix CORE validation execution by renaming testFloat and testDouble natives
+- Fix hardfault as soon as the SystemView analysis is started when the JVM is not running
+
+----------------------
+[2.0.0] - 2023-09-07
 ----------------------
 
 Added

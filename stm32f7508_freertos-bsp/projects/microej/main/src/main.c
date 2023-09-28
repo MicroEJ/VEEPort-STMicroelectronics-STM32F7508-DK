@@ -1,4 +1,10 @@
 /**
+ * C
+ *
+ * Copyright 2013-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
+ */
+/**
   ******************************************************************************
   * @file    main.c
   * @author  MCD Application Team
@@ -8,8 +14,6 @@
   *
   * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
-  *
-  * Copyright 2020-2023 MicroEJ Corp. This file has been modified by MicroEJ Corp.
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -25,12 +29,14 @@
 #include "microej_main.h"
 #include "cpuload.h"
 #include "memory.h"
+#include "stm32f7xx.h"
 #include "stm32f7xx_ll_system.h"
 #if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 #include "watchdog.h"
 #include "watchdog_config.h"
 #include "SEGGER_RTT.h"
 #include "SEGGER_SYSVIEW.h"
+#include "SEGGER_SYSVIEW_configuration.h"
 #endif
 
 #ifdef VALIDATION_BUILD
@@ -39,6 +45,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #endif
+
+
+
 
 /** @addtogroup STM32F7xx_HAL_Examples
   * @{
@@ -60,10 +69,20 @@
 #define JAVA_TASK_STACK_SIZE     MICROJVM_STACK_SIZE/4
 #endif
 
+#if (defined(ENABLE_SYSTEM_VIEW)) && (1 == SEGGER_SYSVIEW_POST_MORTEM_MODE)
+#define SYSVIEW_LAUNCH_PM_STACK_SIZE    	  (1024)
+#define SYSVIEW_LAUNCH_PM_TASK_PRIORITY       ( 11 )
+#define SYSVIEW_LAUNCH_PM_TASK_STACK_SIZE     SYSVIEW_LAUNCH_PM_STACK_SIZE/4
+#endif
+
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
 /* Global extern variables ---------------------------------------------------*/
+
+TaskHandle_t pvMicrojvmCreatedTask;
+
 #ifndef USE_FULL_ASSERT
 uint32_t ErrorCounter = 0;
 #endif
@@ -176,6 +195,19 @@ void xJavaTaskFunction(void * pvParameters)
 	/* Should reach this point only if the VM exits */
 	vTaskDelete( xTaskGetCurrentTaskHandle() );
 }
+
+
+#if (defined(ENABLE_SYSTEM_VIEW)) && (1 == SEGGER_SYSVIEW_POST_MORTEM_MODE)
+void xStartPostMortemAnalysis(void * pvParameters)
+{
+	printf("Start post mortem analysis. \n");
+	SEGGER_SYSVIEW_Start();
+
+	// One shot task, we leave here.
+	vTaskDelete( xTaskGetCurrentTaskHandle() );
+}
+#endif
+
 #endif
 
 #ifdef IPERF_BUILD
@@ -270,11 +302,24 @@ int app_main(void)
 	T_CORE_main();
 #else
 	/* Start MicroJvm task */
-	TaskHandle_t pvCreatedTask;
-	xTaskCreate( xJavaTaskFunction, "MicroJvm", JAVA_TASK_STACK_SIZE, NULL, JAVA_TASK_PRIORITY, &pvCreatedTask );
+	xTaskCreate( xJavaTaskFunction, "MicroJvm", JAVA_TASK_STACK_SIZE, NULL, JAVA_TASK_PRIORITY, &pvMicrojvmCreatedTask );
 #ifdef ENABLE_SYSTEM_VIEW
-	SEGGER_SYSVIEW_setMicroJVMTask((U32)pvCreatedTask);
+	SEGGER_SYSVIEW_setMicroJVMTask((U32)pvMicrojvmCreatedTask);
 #endif
+
+
+#if (defined(ENABLE_SYSTEM_VIEW)) && (1 == SEGGER_SYSVIEW_POST_MORTEM_MODE)
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+	/*
+	* Magic number described in section B2.3.10 of
+	* ARM CoreSight Architecture Specification document (v3.0)
+	*/
+	DWT->LAR = 0xC5ACCE55;
+	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+
+	xTaskCreate( xStartPostMortemAnalysis, "SV_Post_Mortem", SYSVIEW_LAUNCH_PM_TASK_STACK_SIZE, NULL, SYSVIEW_LAUNCH_PM_TASK_PRIORITY, NULL);
+#endif
+
 #endif
 
 #ifndef VALIDATION_BUILD
@@ -551,8 +596,8 @@ static void Error_Handler(void)
 
 #if !defined(VALIDATION_BUILD) && !defined(IPERF_BUILD)
 #include "sni.h"
-jfloat Java_com_is2t_microjvm_test_MJVMPortValidation_testFPU__FF (jfloat a, jfloat b) {return a * b;}
-jdouble Java_com_is2t_microjvm_test_MJVMPortValidation_testFPU__DD (jdouble a, jdouble b) {return a * b;}
+jfloat Java_com_microej_core_tests_MicroejCoreValidation_testFloat (jfloat a, jfloat b) {return a * b;}
+jdouble Java_com_microej_core_tests_MicroejCoreValidation_testDouble (jdouble a, jdouble b) {return a * b;}
 #endif
 
 /**

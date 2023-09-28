@@ -1,3 +1,10 @@
+/*
+ * C
+ *
+ * Copyright 2017-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
+ */
+
 /*********************************************************************
 *                SEGGER Microcontroller GmbH & Co. KG                *
 *                        The Embedded Experts                        *
@@ -61,7 +68,10 @@
 File    : SEGGER_SYSVIEW_Config_FreeRTOS.c
 Purpose : Setup configuration of SystemView with MicroEJ and FreeRTOS.
 */
+#include <stdio.h>
 #include "FreeRTOS.h"
+#include "task.h"
+#include "main.h"
 #include "SEGGER_SYSVIEW.h"
 #include "LLMJVM_MONITOR_sysview.h"
 #include "LLTRACE_sysview_configuration.h"
@@ -112,8 +122,23 @@ static void _cbSendSystemDesc(void) {
 SEGGER_SYSVIEW_OS_API SYSVIEW_MICROEJ_X_OS_TraceAPI;
 
 static void SYSVIEW_MICROEJ_X_OS_SendTaskList(void){
-  SYSVIEW_X_OS_TraceAPI.pfSendTaskList();
-  LLMJVM_MONITOR_SYSTEMVIEW_send_task_list();
+	TaskHandle_t xHandle;
+	TaskStatus_t xTaskDetails;
+
+	SYSVIEW_X_OS_TraceAPI.pfSendTaskList();
+
+	/* Obtain the handle of the current task. */
+	xHandle = xTaskGetCurrentTaskHandle();
+	configASSERT( xHandle ); // Check the handle is not NULL.
+
+	// Check if the current task handle is the Microjvm task handle. pvMicrojvmCreatedTask is an external variable.
+	if( xHandle == pvMicrojvmCreatedTask){
+		// Launched by the JVM, we execute LLMJVM_MONITOR_SYSTEMVIEW_send_task_list()
+		LLMJVM_MONITOR_SYSTEMVIEW_send_task_list();
+	}else{
+		// Not launched by the JVM, we do nothing.
+	}
+
 }
 
 void SEGGER_SYSVIEW_Conf(void) {

@@ -1,4 +1,10 @@
 /**
+ * C
+ *
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
+ */
+/**
   ******************************************************************************
   * @file    main.h 
   * @author  MCD Application Team
@@ -8,8 +14,6 @@
   *
   * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
-  *
-  * Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the
@@ -25,6 +29,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #ifdef IPERF_BUILD
 #include "iperf.h"
 #endif
@@ -46,6 +52,11 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported variables ---------------------------------------------------*/
+
+/**
+ * @brief External FreeRTOS task handle of the MicroEJ Core Engine task.
+ */
+extern TaskHandle_t pvMicrojvmCreatedTask;
 
 #ifndef USE_FULL_ASSERT
 extern uint32_t    ErrorCounter;

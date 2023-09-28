@@ -1,9 +1,8 @@
 /*
  * C
  *
- * Copyright 2013-2020 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2013-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
 /* Includes ------------------------------------------------------------------*/
@@ -18,10 +17,17 @@
 #include "semphr.h"
 #include "task.h"
 
+#include "SEGGER_SYSVIEW_configuration.h"
+
 /* Defines -------------------------------------------------------------------*/
 
 #define IO_TASK_PRIORITY ( 12 )
+
+#if (defined(ENABLE_SYSTEM_VIEW)) && (1 == SEGGER_SYSVIEW_POST_MORTEM_MODE)
+#define IO_TASK_STACK_SIZE (512) // IO_TASK_STACK_SIZE increased: cause stack overflow with SystemView post mortem analysis
+#else
 #define IO_TASK_STACK_SIZE (128) // portSTACK_TYPE is 32 bits wide, so 128 * 4 = 512 bits
+#endif
 
 /* Global --------------------------------------------------------------------*/
 

@@ -56,7 +56,7 @@
 *                                                                    *
 **********************************************************************
 
-* Copyright 2020 MicroEJ Corp. This file has been modified by MicroEJ Corp.  *
+* Copyright 2020-2023 MicroEJ Corp. This file has been modified by MicroEJ Corp.  *
 
 -------------------------- END-OF-HEADER -----------------------------
 
@@ -126,12 +126,19 @@ Revision: $Rev: 6249 $
 *
 *       SystemView buffer configuration
 */
-#define SEGGER_SYSVIEW_RTT_BUFFER_SIZE      4096                                // Number of bytes that SystemView uses for the buffer.
-#define SEGGER_SYSVIEW_RTT_CHANNEL          1                                   // The RTT channel that SystemView will use. 0: Auto selection
+#define SEGGER_SYSVIEW_SYNC_PERIOD_SHIFT	8									// Configure how frequently synchronization is sent
 
 #define SEGGER_SYSVIEW_USE_STATIC_BUFFER    1                                   // Use a static buffer to generate events instead of a buffer on the stack
 
 #define SEGGER_SYSVIEW_POST_MORTEM_MODE     0                                   // 1: Enable post mortem analysis mode
+
+#if (1 == SEGGER_SYSVIEW_POST_MORTEM_MODE)
+#define SEGGER_SYSVIEW_RTT_BUFFER_SIZE      10*1024                                // Number of bytes that SystemView uses for the buffer. More memory is necessary for post mortem analysis.
+#else
+#define SEGGER_SYSVIEW_RTT_BUFFER_SIZE      4*1024                                // Number of bytes that SystemView uses for the buffer.
+#endif
+
+#define SEGGER_SYSVIEW_RTT_CHANNEL          1                                   // The RTT channel that SystemView will use. 0: Auto selection
 
 /*********************************************************************
 *

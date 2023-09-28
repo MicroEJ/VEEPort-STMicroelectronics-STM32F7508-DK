@@ -2,10 +2,10 @@
 stm32f7508_freertos-configuration/target~/
 
 # Ignore Platform directory.  Automatically filled when building the Platform.
-STM32F7508-Platform-CM7hardfp_GCC48-*/source/
-STM32F7508-Platform-CM7hardfp_GCC48-*/build/
-STM32F7508-Platform-CM7hardfp_IAR83-*/source/
-STM32F7508-Platform-CM7hardfp_IAR83-*/build/
+STM32F7508-VEEPort-CM7hardfp_GCC48-*/source/
+STM32F7508-VEEPort-CM7hardfp_GCC48-*/build/
+STM32F7508-VEEPort-CM7hardfp_IAR83-*/source/
+STM32F7508-VEEPort-CM7hardfp_IAR83-*/build/
 
 # Ignore dropins generated during the Platform build
 ## Platform Configuration Additions

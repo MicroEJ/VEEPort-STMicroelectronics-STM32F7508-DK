@@ -5,12 +5,17 @@
 .. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/arch_8.0.json
    :alt: arch_8.0 badge
    :align: left
+
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/gui_3.json
+   :alt: gui_3 badge
+   :align: left
+
 ..
     Copyright 2020-2023 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.0.0
+.. |VEEPORT_VER| replace:: 2.1.0
 .. |RCP| replace:: MICROEJ SDK
 .. |VEEPORT| replace:: VEE Port
 .. |SIM| replace:: Simulator
@@ -81,7 +86,7 @@ Here is a list of |BOARD_NAME| useful documentation links:
 - MCU documentation available `here <https://www.st.com/en/microcontrollers-microprocessors/stm32f750n8.html#documentation>`__
 
 |VEEPORT| Specifications
-=======================
+========================
 
 The Architecture version is ``8.0.0`` for GCC compiler and ``8.0.0`` for IAR compiler.
 
@@ -232,7 +237,7 @@ Build the BSP:
 Import the projects in the workspace:
 
 - ``File`` > ``Open workspace`` 
-- Select ``application.eww` from ``stm32f7508_freertos-bsp\projects\microej\EWARM``
+- Select ``application.eww`` from ``stm32f7508_freertos-bsp\projects\microej\EWARM``
 - Click ``Open``
 
 Build the BSP:
