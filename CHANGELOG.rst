@@ -6,6 +6,14 @@
  Changelog
 ===========
 
+----------------------
+[2.1.2] - 2023-10-02
+----------------------
+
+Fixed
+=====
+
+- Fix SystemView live analysis, missing task name for Core Engine tasks.
 
 ----------------------
 [2.1.1] - 2023-09-28

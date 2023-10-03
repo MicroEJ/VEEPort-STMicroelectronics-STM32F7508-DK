@@ -81,7 +81,7 @@
 
 /* Global extern variables ---------------------------------------------------*/
 
-TaskHandle_t pvMicrojvmCreatedTask;
+TaskHandle_t pvMicrojvmCreatedTask = NULL;
 
 #ifndef USE_FULL_ASSERT
 uint32_t ErrorCounter = 0;

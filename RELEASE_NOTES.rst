@@ -3,7 +3,7 @@
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.1.1
+.. |VEEPORT_VER| replace:: 2.1.2
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |VEEPORT| replace:: VEE Port
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
@@ -469,11 +469,7 @@ The following steps to run a System View live analysis:
 
 - Open System View PC application
 
-- Go to ``Target > Recorder Configuration``
-
-- Select ``J-Link`` as System View Recorder
-
-- Click ``Ok``
+- Go to ``Target > Start Recording``
 
 - Select the following Recorder Configuration:
 
@@ -488,8 +484,6 @@ The following steps to run a System View live analysis:
   - ``RTT Control Block Detection = Auto``
 
 - Click ``Ok``
-
-- Select ``Target > Start Recording``
 
 .. note::
 
@@ -515,11 +509,7 @@ Troubleshooting
 
 - Open System View PC application
 
-- Go to ``Target > Recorder Configuration``
-
-- Select ``J-Link`` as System View Recorder
-
-- Click ``Ok``
+- Go to ``Target > Start Recording``
 
 - Select the following Recorder Configuration:
 
@@ -531,11 +521,9 @@ Troubleshooting
 
   - ``Interface Speed (kHz) = 4000``
 
-  - ``RTT Control Block Detection = Search Range`` add `SEGGER_RTT block address` that you see at boot on UART, i.e. 0x20000000 2048
+  - ``RTT Control Block Detection = Address`` add `SEGGER_RTT block address` that you see at boot on UART, i.e. 0x20011d84.
 
 - Click ``Ok``
-
-- Select ``Target > Start Recording``
 
 .. note::
 

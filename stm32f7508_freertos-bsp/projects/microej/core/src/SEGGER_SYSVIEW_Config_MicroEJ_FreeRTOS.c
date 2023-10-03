@@ -75,6 +75,7 @@ Purpose : Setup configuration of SystemView with MicroEJ and FreeRTOS.
 #include "SEGGER_SYSVIEW.h"
 #include "LLMJVM_MONITOR_sysview.h"
 #include "LLTRACE_sysview_configuration.h"
+#include "SEGGER_SYSVIEW_configuration.h"
 
 extern const SEGGER_SYSVIEW_OS_API SYSVIEW_X_OS_TraceAPI;
 
@@ -122,22 +123,43 @@ static void _cbSendSystemDesc(void) {
 SEGGER_SYSVIEW_OS_API SYSVIEW_MICROEJ_X_OS_TraceAPI;
 
 static void SYSVIEW_MICROEJ_X_OS_SendTaskList(void){
-	TaskHandle_t xHandle;
-	TaskStatus_t xTaskDetails;
-
 	SYSVIEW_X_OS_TraceAPI.pfSendTaskList();
 
+// The strategy to send tasks info is different in post mortem and live analysis.
+#if (1 == SEGGER_SYSVIEW_POST_MORTEM_MODE)
+	/**
+	 * POST MORTEM analysis
+	 *
+	 * Using the post mortem analysis, FreeRTOS tasks regularly call the SYSVIEW_MICROEJ_X_OS_SendTaskList() function when
+	 * a packet (systemview event) is sent to the SEGGER circular buffer. It is necessary because the information of tasks
+	 * must be regularly uploaded in the circular buffer in order to provide a valid analysis at any moment.
+	 * Consequently, we only allow to call LLMJVM_MONITOR_SYSTEMVIEW_send_task_list() when the current task is the Microjvm.
+	 */
+
 	/* Obtain the handle of the current task. */
-	xHandle = xTaskGetCurrentTaskHandle();
+	TaskHandle_t xHandle = xTaskGetCurrentTaskHandle();
 	configASSERT( xHandle ); // Check the handle is not NULL.
 
-	// Check if the current task handle is the Microjvm task handle. pvMicrojvmCreatedTask is an external variable.
+	 // Check if the current task handle is the Microjvm task handle. pvMicrojvmCreatedTask is an external variable.
 	if( xHandle == pvMicrojvmCreatedTask){
 		// Launched by the JVM, we execute LLMJVM_MONITOR_SYSTEMVIEW_send_task_list()
 		LLMJVM_MONITOR_SYSTEMVIEW_send_task_list();
-	}else{
-		// Not launched by the JVM, we do nothing.
 	}
+#else
+	/**
+	 * LIVE analysis
+	 *
+	 * Using the live analysis, the call of SYSVIEW_MICROEJ_X_OS_SendTaskList() is triggered by
+	 * the SystemView Software through the J-Link probe. Consequently, the Microjvm task will never call
+	 * the function LLMJVM_MONITOR_SYSTEMVIEW_send_task_list(). However, if the Microjvm task is created,
+	 * the function must be called LLMJVM_MONITOR_SYSTEMVIEW_send_task_list().
+	 */
+	// Check if the Microjvm task handle is not NULL. pvMicrojvmCreatedTask is an external variable.
+	if( NULL != pvMicrojvmCreatedTask){
+		// The JVM task is running, we execute LLMJVM_MONITOR_SYSTEMVIEW_send_task_list()
+		LLMJVM_MONITOR_SYSTEMVIEW_send_task_list();
+	}
+#endif
 
 }
 
