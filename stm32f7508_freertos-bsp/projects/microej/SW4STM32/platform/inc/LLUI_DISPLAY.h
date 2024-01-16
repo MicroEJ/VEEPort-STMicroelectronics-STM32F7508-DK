@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -23,7 +23,7 @@ extern "C" {
 /*
  * @brief Requires ui_drawing.h typedefs.
  */
-#include "ui_drawing.h"
+#include "LLUI_PAINTER_impl.h"
 
 // --------------------------------------------------------------------------------
 // Typedefs and Structures
@@ -54,6 +54,31 @@ typedef enum
 	LLUI_DISPLAY_NOK = -9
 
 } LLUI_DISPLAY_Status;
+
+// --------------------------------------------------------------------------------
+// Inline functions
+// --------------------------------------------------------------------------------
+
+/*
+ * @brief Function to report a non-critical incident that occurred during a drawing operation.
+ *
+ * Sets drawing_log_flags in a MICROUI_GraphicsContext. This will not set the DRAWING_LOG_ERROR flag (unless explicitly specified as a parameter),
+ * which will not cause an exception to be thrown when checking the flags in the application. This is meant to report non-critical
+ * incidents.
+ */
+static inline void LLUI_DISPLAY_reportWarning(MICROUI_GraphicsContext* gc, jint flags) {
+	gc->drawing_log_flags |= flags;
+}
+
+/*
+ * @brief Function to report an error that occurred during a drawing operation.
+ *
+ * Sets drawing_log_flags in a MICROUI_GraphicsContext. This will additionally set the DRAWING_LOG_ERROR flag, causing an exception to be thrown
+ * when checking the flags in the application.
+ */
+static inline void LLUI_DISPLAY_reportError(MICROUI_GraphicsContext* gc, jint flags) {
+	LLUI_DISPLAY_reportWarning(gc, DRAWING_LOG_ERROR | flags);
+}
 
 // --------------------------------------------------------------------------------
 // Functions provided by the graphics engine
@@ -114,6 +139,26 @@ void LLUI_DISPLAY_configureClip(MICROUI_GraphicsContext* gc, bool enable);
  * @return true when the clip is enabled (the clip must be checked).
  */
 bool LLUI_DISPLAY_isClipEnabled(MICROUI_GraphicsContext* gc);
+
+/*
+ * @brief Function to modify the clip area in a graphics context.
+ *
+ * The user must save the current clip area before modifying it and restore it afterwards.
+ *
+ * This function sets the flag DRAWING_LOG_CLIP_MODIFIED as it does not modify the clip values of the GraphicsContext used in the application.
+ */
+void LLUI_DISPLAY_setClip(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
+
+/*
+ * @brief Function to modify the clip area in a graphics context.
+ *
+ * The resulting clip area will be the intersection of the current clip area and the clip area passed as arguments.
+ *
+ * The user must save the current clip area before modifying it and restore it afterwards.
+ *
+ * This function sets the flag DRAWING_LOG_CLIP_MODIFIED as it does not modify the clip values of the GraphicsContext used in the application.
+ */
+void LLUI_DISPLAY_intersectClip(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
 
 /*
  * @brief Tells if given pixel fits the clip or not.
@@ -260,7 +305,7 @@ bool LLUI_DISPLAY_clipRegion(MICROUI_GraphicsContext* gc, jint* x, jint* y, jint
  * @param[in] gc the MicroUI GraphicsContext target of destination.
  * @param[in] img the MicroUI Image to draw.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to check.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to check.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to check.
  * @param[in] width the width of the region to check.
  * @param[in] height the height of the region to check.
  * @param[in] destX the x coordinate of the top-left point in the destination.
@@ -316,6 +361,20 @@ bool LLUI_DISPLAY_requestRender(void);
  * @return the MicroUI Image pixels buffer address.
  */
 uint8_t* LLUI_DISPLAY_getBufferAddress(MICROUI_Image* image);
+
+/*
+ * @brief Tells if format is the display buffer format or not. If yes, all
+ * software algorithms listed in ui_drawing_soft.h and dw_drawing_soft.h can
+ * be used. If not, these software algorithms must not be used (no check).
+ *
+ * @see MICROUI_ImageFormat
+ *
+ * @param[in] format the format to check. The format is one value from the
+ * MICROUI_ImageFormat enumeration.
+ *
+ * @return true if format refers to the display format
+ */
+bool LLUI_DISPLAY_isDisplayFormat(jbyte format);
 
 /*
  * @brief Tells if format is a custom format or not.

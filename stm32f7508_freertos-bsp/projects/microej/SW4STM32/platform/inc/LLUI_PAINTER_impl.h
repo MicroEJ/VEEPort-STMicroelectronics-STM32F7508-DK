@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -150,134 +150,152 @@ typedef enum
 	 * @brief Defines an image with the same pixel representation and layout as
 	 * the LCD memory.
 	 */
-	MICROUI_IMAGE_FORMAT_LCD = 0,
+	MICROUI_IMAGE_FORMAT_DISPLAY = 0x00,
 
 	/*
 	 * @brief Defines an image whose pixel format is ARGB8888.
 	 */
-	MICROUI_IMAGE_FORMAT_ARGB8888 = 2,
-
-	/*
-	 * @brief Defines an image whose pixel format is RGB888.
-	 */
-	MICROUI_IMAGE_FORMAT_RGB888 = 3,
-
-	/*
-	 * @brief Defines an image whose pixel format is RGB565.
-	 */
-	MICROUI_IMAGE_FORMAT_RGB565 = 4,
+	MICROUI_IMAGE_FORMAT_ARGB8888 = 0x02,
 
 	/*
 	 * @brief Defines an image whose pixel format is ARGB1555.
 	 */
-	MICROUI_IMAGE_FORMAT_ARGB1555 = 5,
+	MICROUI_IMAGE_FORMAT_ARGB1555 = 0x05,
 
 	/*
 	 * @brief Defines an image whose pixel format is ARGB4444.
 	 */
-	MICROUI_IMAGE_FORMAT_ARGB4444 = 6,
+	MICROUI_IMAGE_FORMAT_ARGB4444 = 0x06,
+
+	/*
+	 * @brief Defines an image whose pixel format is ARGB8888 pre-multiplied: each color component is multiplied by the
+	 * opacity.
+	 */
+	MICROUI_IMAGE_FORMAT_ARGB8888_PRE = 0x18,
+
+	/*
+	 * @brief Defines an image whose pixel format is ARGB1555 pre-multiplied: each color component is multiplied by the
+	 * opacity.
+	 */
+	MICROUI_IMAGE_FORMAT_ARGB1555_PRE = 0x19,
+
+	/*
+	 * @brief Defines an image whose pixel format is ARGB4444 pre-multiplied: each color component is multiplied by the
+	 * opacity.
+	 */
+	MICROUI_IMAGE_FORMAT_ARGB4444_PRE = 0x1A,
+
+	/*
+	 * @brief Defines an image whose pixel format is RGB888.
+	 */
+	MICROUI_IMAGE_FORMAT_RGB888 = 0x03,
+
+	/*
+	 * @brief Defines an image whose pixel format is RGB565.
+	 */
+	MICROUI_IMAGE_FORMAT_RGB565 = 0x04,
 
 	/*
 	 * @brief Defines an image whose pixel format is Alpha1.
 	 */
-	MICROUI_IMAGE_FORMAT_A1 = 12,
+	MICROUI_IMAGE_FORMAT_A1 = 0x0C,
 
 	/*
 	 * @brief Defines an image whose pixel format is Alpha2.
 	 */
-	MICROUI_IMAGE_FORMAT_A2 = 11,
+	MICROUI_IMAGE_FORMAT_A2 = 0x0B,
 
 	/*
 	 * @brief Defines an image whose pixel format is Alpha4.
 	 */
-	MICROUI_IMAGE_FORMAT_A4 = 7,
+	MICROUI_IMAGE_FORMAT_A4 = 0x07,
 
 	/*
 	 * @brief Defines an image whose pixel format is Alpha8.
 	 */
-	MICROUI_IMAGE_FORMAT_A8 = 8,
+	MICROUI_IMAGE_FORMAT_A8 = 0x08,
 
 	/*
 	 * @brief Defines an image whose pixel format is Color1.
 	 */
-	MICROUI_IMAGE_FORMAT_C1 = 15,
+	MICROUI_IMAGE_FORMAT_C1 = 0x0F,
 
 	/*
 	 * @brief Defines an image whose pixel format is Color2.
 	 */
-	MICROUI_IMAGE_FORMAT_C2 = 14,
+	MICROUI_IMAGE_FORMAT_C2 = 0x0E,
 
 	/*
 	 * @brief Defines an image whose pixel format is Color4.
 	 */
-	MICROUI_IMAGE_FORMAT_C4 = 13,
+	MICROUI_IMAGE_FORMAT_C4 = 0x0D,
 
 	/*
 	 * @brief Defines an image whose pixel format is Alpha1-Color1.
 	 */
-	MICROUI_IMAGE_FORMAT_AC11 = 18,
+	MICROUI_IMAGE_FORMAT_AC11 = 0x12,
 
 	/*
 	 * @brief Defines an image whose pixel format is Alpha2-Color2.
 	 */
-	MICROUI_IMAGE_FORMAT_AC22 = 17,
+	MICROUI_IMAGE_FORMAT_AC22 = 0x11,
 
 	/*
 	 * @brief Defines an image whose pixel format is Alpha4-Color4.
 	 */
-	MICROUI_IMAGE_FORMAT_AC44 = 16,
+	MICROUI_IMAGE_FORMAT_AC44 = 0x10,
 
 	/*
 	 * @brief Defines an image whose pixel format is a LUT entry on 8 bits and target
 	 * an ARGB8888 color.
 	 */
-	MICROUI_IMAGE_FORMAT_LARGB8888 = 10,
+	MICROUI_IMAGE_FORMAT_LARGB8888 = 0x0A,
 
 	/*
 	 * @brief Defines an undefined format. Used by LLUI_DISPLAY_IMPL_decodeImage() to
 	 * not specify a specific format.
 	 */
-	MICROUI_IMAGE_FORMAT_UNDEFINED = 128,
+	MICROUI_IMAGE_FORMAT_UNDEFINED = 0x80,
 
 	/*
-	 * @brief Defines the custom format 7 (0xf8).
+	 * @brief Defines the custom format 7.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_7 = 248,
+	MICROUI_IMAGE_FORMAT_CUSTOM_7 = 0xF8,
 
 	/*
-	 * @brief Defines the custom format 6 (0xf9).
+	 * @brief Defines the custom format 6.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_6 = 249,
+	MICROUI_IMAGE_FORMAT_CUSTOM_6 = 0xF9,
 
 	/*
-	 * @brief Defines the custom format 5 (0xfa).
+	 * @brief Defines the custom format 5.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_5 = 250,
+	MICROUI_IMAGE_FORMAT_CUSTOM_5 = 0xFA,
 
 	/*
-	 * @brief Defines the custom format 4 (0xfb).
+	 * @brief Defines the custom format 4.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_4 = 251,
+	MICROUI_IMAGE_FORMAT_CUSTOM_4 = 0xFB,
 
 	/*
-	 * @brief Defines the custom format 3 (0xfc).
+	 * @brief Defines the custom format 3.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_3 = 252,
+	MICROUI_IMAGE_FORMAT_CUSTOM_3 = 0xFC,
 
 	/*
-	 * @brief Defines the custom format 2 (0xfd).
+	 * @brief Defines the custom format 2.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_2 = 253,
+	MICROUI_IMAGE_FORMAT_CUSTOM_2 = 0xFD,
 
 	/*
-	 * @brief Defines the custom format 1 (0xfe).
+	 * @brief Defines the custom format 1.
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_1 = 254,
+	MICROUI_IMAGE_FORMAT_CUSTOM_1 = 0xFE,
 
 	/*
 	 * @brief Defines the custom format 0 (0xff).
 	 */
-	MICROUI_IMAGE_FORMAT_CUSTOM_0 = 255,
+	MICROUI_IMAGE_FORMAT_CUSTOM_0 = 0xFF,
 
 } MICROUI_ImageFormat;
 
@@ -360,25 +378,140 @@ typedef struct
 
 	/*
 	 * @brief Top-left X coordinate of current clip.
+	 *
+	 * Read-only. Call LLUI_DISPLAY_setClip to modify this value.
 	 */
 	jshort clip_x1;
 
 	/*
 	 * @brief Top-left Y coordinate of current clip.
+	 *
+	 * Read-only. Call LLUI_DISPLAY_setClip to modify this value.
 	 */
 	jshort clip_y1;
 
 	/*
 	 * @brief Bottom-right X coordinate of current clip.
+	 *
+	 * Read-only. Call LLUI_DISPLAY_setClip to modify this value.
 	 */
 	jshort clip_x2;
 
 	/*
 	 * @brief Bottom-right Y coordinate of current clip.
+	 *
+	 * Read-only. Call LLUI_DISPLAY_setClip to modify this value.
 	 */
 	jshort clip_y2;
 
+	/*
+	 * @brief Log flags from drawing operations.
+	 */
+	jint drawing_log_flags;
+
+	/*
+	 * @brief The drawing engine identifier. Useful to retrieve the engine able to
+	 * draw in the GraphicsContext buffer. The "0" value indicates the default engine:
+	 * the same engine used to draw in the display buffer.
+	 * @see LLUI_DISPLAY_IMPL_getDrawerIdentifier()
+	 */
+	uint8_t drawer;
+
 } MICROUI_GraphicsContext;
+
+/*
+ * @brief Drawing functions' return status.
+ *
+ * A function has to return DRAWING_DONE when the drawing has been fully done during
+ * the function call (synchronous drawing). When the drawing is performed by an
+ * asynchronous third party process (software or hardware), the function has to
+ * return DRAWING_RUNNING to notify to the Graphics Engine the drawing is not fully
+ * done yet.
+ */
+typedef enum {
+
+	/*
+	 * @brief Value to return when the drawing has been synchronously performed.
+	 */
+	DRAWING_DONE = 0,
+
+	/*
+	 * @brief Value to return when the drawing will be asynchronously performed.
+	 */
+	DRAWING_RUNNING = 1
+
+} DRAWING_Status;
+
+/*
+ * @brief Flags describing incidents occurring during drawings.
+ */
+typedef enum DRAWING_Incident {
+
+	/*
+	 * @brief Value used when no incident occurred.
+	 */
+	DRAWING_SUCCESS = 0,
+
+	/*
+	 * @brief Flag stating that an error occurred during a drawing.
+	 *
+	 * This flag will cause an exception to be thrown when checking the flags in the application.
+	 * No exception will be thrown if this flag is not set, although other flags will keep their state and be readable in the application.
+	 * This flag is to be combined with other flags describing the error.
+	 */
+	DRAWING_LOG_ERROR = 1 << 31,
+
+	/*
+	 * @brief Flag stating that a drawing function is lacking an implementation.
+	 */
+	DRAWING_LOG_NOT_IMPLEMENTED = 1 << 0,
+
+	/*
+	 * @brief Flag stating that a function was called in a context that does not allow that operation.
+	 */
+	DRAWING_LOG_FORBIDDEN = 1 << 1,
+
+	/*
+	 * @brief Flag stating that the system ran out of memory while attempting to perform a drawing.
+	 */
+	DRAWING_LOG_OUT_OF_MEMORY = 1 << 2,
+
+	/*
+	 * @brief Flag stating that the clip area of a graphics context was modified by LLUI_DISPLAY_setClip or
+	 * LLUI_DISPLAY_intersectClip.
+	 *
+	 * If this flag is set, the caller is responsible for saving the previous clip area and restore it afterwards.
+	 *
+	 * This flag merely warns the user that the clip values returned by <code>GraphicsContext.getClipX</code>,
+	 * <code>GraphicsContext.getClipY</code>, <code>GraphicsContext.getClipWidth</code> and
+	 * <code>GraphicsContext.getClipHeight</code> may not be identical to the clip values used in the low-level side. It
+	 * is meant to be used as a debugging hint if a drawing seems incorrect.
+	 *
+	 * @see LLUI_DISPLAY_setClip
+	 * @see LLUI_DISPLAY_intersectClip
+	 */
+	DRAWING_LOG_CLIP_MODIFIED = 1 << 3,
+
+	/*
+	 * @brief Flag stating that an undefined character was drawn.
+	 *
+	 * This happens when drawing a string that contains a character that is not included in the font used.
+	 */
+	DRAWING_LOG_MISSING_CHARACTER = 1 << 4,
+
+	/*
+	 * @brief Flag describing incidents occurring in a drawing library.
+	 *
+	 * Refer to the MicroUI implementation in the VEE port for more information about this incident.
+	 */
+	DRAWING_LOG_LIBRARY_INCIDENT = 1 << 29,
+
+	/*
+	 * @brief Flag describing incidents that do not match other values.
+	 */
+	DRAWING_LOG_UNKNOWN_INCIDENT = 1 << 30
+
+} DRAWING_Incident;
 
 // --------------------------------------------------------------------------------
 // MicroUI 3 native functions that must be implemented
@@ -672,7 +805,7 @@ void LLUI_PAINTER_IMPL_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, j
  * @param[in] gc the MicroUI GraphicsContext target.
  * @param[in] img the MicroUI Image to draw.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to copy.
  * @param[in] width the width of the region to copy.
  * @param[in] height the height of the region to copy.
  * @param[in] x the x coordinate of the top-left point in the destination.

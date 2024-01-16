@@ -1,7 +1,7 @@
 <!--
 	ANT
 
-	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+	Copyright 2020-2024 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <project name="module">
@@ -40,7 +40,7 @@
 	<import file="${module.dir}/build/module/module.ant"/>
 
     <!-- Launch artifact-checker plugin during packaging step -->
-	<target name="bind-artifact-checker-plugin" depends="artifact-checker:check-current-module" extensionOf="package"/>
+	<target name="bind-artifact-checker-plugin" depends="artifact-checker:check-current-module" extensionOf="verify"/>
 	
 	
 	<!-- Apply BSP patch before copying into the generated VEE Port -->

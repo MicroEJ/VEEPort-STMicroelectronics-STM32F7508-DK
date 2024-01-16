@@ -5,7 +5,7 @@
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <ivy-module version="2.0" xmlns:ea="http://www.easyant.org" xmlns:ej="https://developer.microej.com" ej:version="2.0.0">
-    <info organisation="com.mycompany" module="stm32f7508_freertos-fp" status="integration" revision="1.0.0"/>
+    <info organisation="com.mycompany" module="stm32f7508_freertos-fp" status="integration" revision="1.0.1"/>
 
 	<configurations defaultconfmapping="default->default;provided->provided">
 		<conf name="default" visibility="public" description="Runtime dependencies to other artifacts"/>
@@ -14,7 +14,7 @@
 
     <dependencies>
         <dependency org="ej.tool.frontpanel" name="widget" rev="2.0.0"/>
-        <dependency org="com.microej.pack.ui" name="ui-pack" rev="13.2.0">
+        <dependency org="com.microej.pack.ui" name="ui-pack" rev="13.7.2">
 	       <artifact name="frontpanel" type="jar"/>
 		</dependency>
     </dependencies>

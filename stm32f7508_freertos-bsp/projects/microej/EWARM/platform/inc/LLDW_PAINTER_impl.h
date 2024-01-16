@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020-2022 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -384,7 +384,7 @@ void LLDW_PAINTER_IMPL_drawThickCircleArc(MICROUI_GraphicsContext* gc, jint x, j
  * @param[in] gc the MicroUI GraphicsContext target.
  * @param[in] img the MicroUI Image to draw.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to draw.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to draw.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to draw.
  * @param[in] width the width of the region to copy.
  * @param[in] height the height of the region to copy.
  * @param[in] x the x coordinate of the top-left point in the destination.

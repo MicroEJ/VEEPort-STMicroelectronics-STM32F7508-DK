@@ -64,9 +64,9 @@
 #define IPERF_TASK_PRIORITY      ( 11 ) /** Should be > tskIDLE_PRIORITY & < configTIMER_TASK_PRIORITY */
 #define IPERF_TASK_STACK_SIZE    IPERF_STACK_SIZE/4
 #elif !defined(VALIDATION_BUILD)
-#define MICROJVM_STACK_SIZE      (5 * 1024)
-#define JAVA_TASK_PRIORITY       ( 11 ) /** Should be > tskIDLE_PRIORITY & < configTIMER_TASK_PRIORITY */
-#define JAVA_TASK_STACK_SIZE     MICROJVM_STACK_SIZE/4
+#define MICROEJ_VEE_STACK_SIZE      (5 * 1024)
+#define MICROEJ_VEE_TASK_PRIORITY       ( 11 ) /** Should be > tskIDLE_PRIORITY & < configTIMER_TASK_PRIORITY */
+#define MICROEJ_VEE_TASK_STACK_SIZE     MICROEJ_VEE_STACK_SIZE/4
 #endif
 
 #if (defined(ENABLE_SYSTEM_VIEW)) && (1 == SEGGER_SYSVIEW_POST_MORTEM_MODE)
@@ -81,7 +81,7 @@
 
 /* Global extern variables ---------------------------------------------------*/
 
-TaskHandle_t pvMicrojvmCreatedTask = NULL;
+TaskHandle_t pvMicroEJVeeCreatedTask = NULL;
 
 #ifndef USE_FULL_ASSERT
 uint32_t ErrorCounter = 0;
@@ -178,7 +178,7 @@ __weak void LLCOMM_stack_initialize(void)
 	// does nothing by default, overrided when ECOM-COMM is used
 }
 
-void xJavaTaskFunction(void * pvParameters)
+void xMicroEJVeeTaskFunction(void * pvParameters)
 {
 	/* Start the CPU Load task */
 	cpuload_init();
@@ -301,10 +301,10 @@ int app_main(void)
 #elif defined(VALIDATION_BUILD)
 	T_CORE_main();
 #else
-	/* Start MicroJvm task */
-	xTaskCreate( xJavaTaskFunction, "MicroJvm", JAVA_TASK_STACK_SIZE, NULL, JAVA_TASK_PRIORITY, &pvMicrojvmCreatedTask );
+	/* Start MicroEJVee task */
+	xTaskCreate( xMicroEJVeeTaskFunction, "MicroEJVee", MICROEJ_VEE_TASK_STACK_SIZE, NULL, MICROEJ_VEE_TASK_PRIORITY, &pvMicroEJVeeCreatedTask );
 #ifdef ENABLE_SYSTEM_VIEW
-	SEGGER_SYSVIEW_setMicroJVMTask((U32)pvMicrojvmCreatedTask);
+	SEGGER_SYSVIEW_setMicroJVMTask((U32)pvMicroEJVeeCreatedTask);
 #endif
 
 

@@ -9,13 +9,12 @@
  * @file
  * @brief This file allows to configure the implementation of microui_event_decoder.c.
  * @author MicroEJ Developer Team
- * @version 2.0.1
- * @date 16 December 2022
+ * @version 3.1.0
  * @since MicroEJ UI Pack 13.1.0
  */
 
 #if !defined MICROUI_EVENT_DECODER_CONF_H
-# define MICROUI_EVENT_DECODER_CONF_H
+#define MICROUI_EVENT_DECODER_CONF_H
 
 // -----------------------------------------------------------------------------
 // Includes

@@ -5,63 +5,77 @@
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
-#ifndef DRAWING_DMA2D_CONFIGURATION_H
-#define DRAWING_DMA2D_CONFIGURATION_H
+#ifndef UI_DRAWING_DMA2D_CONFIGURATION_H
+#define UI_DRAWING_DMA2D_CONFIGURATION_H
 
 /**
  * @file
- * @brief Use STM32 DMA2D (ChromART) for MicroEJ ui_drawing.h implementation.
+ * @brief This file provides the configuration of ui_drawing_dma2d.c.
  *
- * 		This library provides the configuration of drawing_dma2d.c
- *
- * 		How to use this library:
- * 		 - Set the define DRAWING_DMA2D_CACHE_MANAGEMENT to DRAWING_DMA2D_CACHE_MANAGEMENT_DISABLED
- *			or DRAWING_DMA2D_CACHE_MANAGEMENT_ENABLED depending on the MPU configuration
+ * How to use this library:
+ *  - Set the define DRAWING_DMA2D_CACHE_MANAGEMENT to DRAWING_DMA2D_CACHE_MANAGEMENT_DISABLED
+ *	  or DRAWING_DMA2D_CACHE_MANAGEMENT_ENABLED depending on the MPU configuration
  * 		 
  *
  * @author MicroEJ Developer Team
- * @version 3.1.0
- * @date 13 April 2023
+ * @version 4.0.0
  */
 
 #ifdef __cplusplus
-	extern "C" {
+extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// Includes
+// --------------------------------------------------------------------------------
 
 #include <stdint.h>
 
-/* Defines and Macros --------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// Defines
+// --------------------------------------------------------------------------------
 
 /*
  * @brief Value to disable the cache management
  * @see DRAWING_DMA2D_CACHE_MANAGEMENT 
  */ 
 #define DRAWING_DMA2D_CACHE_MANAGEMENT_DISABLED (0U)
-            
+
 /*
  * @brief Value to enable the cache management
  * @see DRAWING_DMA2D_CACHE_MANAGEMENT 
  */ 
 #define DRAWING_DMA2D_CACHE_MANAGEMENT_ENABLED  (1U)
 
+#if !defined (__DCACHE_PRESENT) || (__DCACHE_PRESENT == 0U)
+
 /*
- * @brief To ensure the best SDRAM performance, the SDRAM section must be configured 
+ * @brief This MCU does not have or does not use a cache. Cache management in
+ * ui_drawing_dma2d.c is disabled.
+ */
+#define DRAWING_DMA2D_CACHE_MANAGEMENT (DRAWING_DMA2D_CACHE_MANAGEMENT_DISABLED)
+
+#else // !defined (__DCACHE_PRESENT) || (__DCACHE_PRESENT == 0U)
+
+/*
+ * @brief This MCU has a cache. Cache management must be configured.
+ *
+ * To ensure the best SDRAM performance, the SDRAM section must be configured
  * as cacheable, write-through and shareable. As per the application notes below, 
  * this is required to maintain cache coherency. If the section is not defined as shareable, 
  * cache maintenance has to be performed, which adds overhead to all dma2d transfers: 
  * cache clean before the transfer and cache invalidate after the transfer. 
- * 
- * Cache management requirements are detailed in the following documents: 
- * https://www.st.com/resource/en/application_note/an4838-introduction-to-memory-protection-unit-management-on-stm32-mcus-stmicroelectronics.pdf
- * https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf
  */
 
-
 /*
- * @brief Cache management is not required in the following cases:
+ * @brief Cache management requirements are detailed in the following documents:
+ * https://www.st.com/resource/en/application_note/an4838-introduction-to-memory-protection-unit-management-on-stm32-mcus-stmicroelectronics.pdf
+ * https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf
+ *
+ * Cache management is not required in the following cases:
+ *
  * - MCU without cache (e.g Cortex-M4)
+ *
  * - Memory region containing display buffers is non-cacheable e.g.:
  *      MPU_InitStruct.BaseAddress = 0xC0000000;
  *      MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
@@ -87,10 +101,11 @@
  */
 #define DRAWING_DMA2D_CACHE_MANAGEMENT (DRAWING_DMA2D_CACHE_MANAGEMENT_DISABLED)
 
-
 /*
  * @brief Cache management is required in the following cases:
- * - MCU with cache (e.g. Cortex-M7) and the memory is configured as follows: 
+ *
+ * - MCU with cache (e.g. Cortex-M7) and the memory is configured as follows:
+ *
  *      - Memory region containing display buffers configured as write-back e.g.:
  *          MPU_InitStruct.BaseAddress = 0xC0000000;
  *          MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
@@ -117,12 +132,15 @@
  */
 //#define DRAWING_DMA2D_CACHE_MANAGEMENT (DRAWING_DMA2D_CACHE_MANAGEMENT_ENABLED)
 
+#endif // !defined (__DCACHE_PRESENT) || (__DCACHE_PRESENT == 0U)
 
-/* EOF -----------------------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// EOF
+// --------------------------------------------------------------------------------
 
 #ifdef __cplusplus
-	}
+}
 #endif
 
-#endif // DRAWING_DMA2D_CONFIGURATION_H
+#endif // UI_DRAWING_DMA2D_CONFIGURATION_H
 

@@ -26,8 +26,7 @@
 # Target Platform [required]
 ###############################################################################
 
-#target.platform.dir=${easyant.module.dir}/../../../../../STM32F7508-VEEPort-CM7hardfp_GCC48-2.2.0/source
-target.platform.dir=${easyant.module.dir}/../../../../../STM32F7508-VEEPort-CM7hardfp_IAR83-2.2.0/source
+# target.platform.dir=[absolute_path]
 
 ###############################################################################
 # BSP Connection [required]
@@ -39,14 +38,14 @@ target.platform.dir=${easyant.module.dir}/../../../../../STM32F7508-VEEPort-CM7h
 #microej.testsuite.properties.deploy.dir.microejapp=[absolute_path]
 #microej.testsuite.properties.deploy.dir.microejlib=[absolute_path]
 #microej.testsuite.properties.deploy.dir.microejinc=[absolute_path]
-#microej.testsuite.properties.deploy.bsp.microejscript=[absolute_path]
+#microej.testsuite.properties.deploy.dir.microejscript=[absolute_path]
 
 # Partial BSP Connection
 #microej.testsuite.properties.deploy.bsp.root.dir=[absolute_path]
 #microej.testsuite.properties.deploy.bsp.microejscript=true
 
 # Full BSP Connection
-microej.testsuite.properties.deploy.bsp.microejscript=true
+#microej.testsuite.properties.deploy.bsp.microejscript=true
 
 ###############################################################################
 # Trace Redirection (System.out)
@@ -54,16 +53,15 @@ microej.testsuite.properties.deploy.bsp.microejscript=true
 # otherwise the trace is assumed to be redirected by 'run.bat' or 'run.sh' script.
 ###############################################################################
 
-microej.testsuite.properties.testsuite.trace.ip=localhost
-microej.testsuite.properties.testsuite.trace.port=5555
+#microej.testsuite.properties.testsuite.trace.ip=localhost
+#microej.testsuite.properties.testsuite.trace.port=5555
 
 # Platform specific option to redirect trace on dedicated UART
-microej.testsuite.properties.debug.traces.uart=SET
+#microej.testsuite.properties.debug.traces.uart=SET
 
 ###############################################################################
 # Tests to run
 ###############################################################################
-
 # Comma separated list of patterns of files that must be included	
 test.run.includes.pattern=**/_AllTests_*.class
 # Comma separated list of patterns of files that must be excluded (defaults to inner classes)
@@ -98,4 +96,3 @@ microej.testsuite.jvmArgs=-Xmx768m
 
 # A jvm args to pass to launch scripts forked vm
 microej.testsuite.properties.launch.properties.jvm=-Xmx2048M
-microej.testsuite.properties.watchdog.enabled=false

@@ -12,8 +12,7 @@
  *
  * @see LLUI_INPUT_LOG_impl.c file comment
  * @author MicroEJ Developer Team
- * @version 2.0.1
- * @date 16 December 2022
+ * @version 3.1.0
  * @since MicroEJ UI Pack 13.1.0
  */
 
@@ -23,10 +22,6 @@
 
 // calls Microui events decoder functions
 #include "microui_event_decoder.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifdef MICROUIEVENTDECODER_ENABLED
 
@@ -207,7 +202,7 @@ static void decode_event_button(uint32_t event, uint32_t index, MICROUI_EVENT_DE
 static void decode_event_pointer_data(uint32_t event, uint32_t data, uint32_t index) {
 	(void)event;
 
-	LLUI_DEBUG_TRACE("[%02lu: 0x%08lx]    at %lu,%lu (", index, data, POINTER_X(data), POINTER_Y(data));
+	LLUI_DEBUG_TRACE("[%02u: 0x%08x]    at %u,%u (", index, data, POINTER_X(data), POINTER_Y(data));
 	if (0 == POINTER_TYPE(data)) {
 		LLUI_DEBUG_TRACE("absolute)");
 	}
@@ -264,7 +259,7 @@ static void decode_event_state(uint32_t event, uint32_t index, MICROUI_EVENT_DEC
 	(void)index;
 	(void)fct_data_decoder;
 
-	LLUI_DEBUG_TRACE("TODO %s 0x%08lx\n", __FUNCTION__, event);
+	LLUI_DEBUG_TRACE("TODO %s 0x%08x\n", __FUNCTION__, event);
 }
 
 /*
@@ -310,10 +305,11 @@ static void decode_event_input(uint32_t event, uint32_t index, MICROUI_EVENT_DEC
 
 static void decode_event_user_data(uint32_t event, uint32_t data, uint32_t index) {
 	(void)event;
-	LLUI_DEBUG_TRACE("    [%02lu] 0x%08lx\n", index, data);
+	LLUI_DEBUG_TRACE("    [%02u] 0x%08x\n", index, data);
 }
 
 static void decode_event_user(uint32_t event, uint32_t index, MICROUI_EVENT_DECODER_decode_event_data* fct_data_decoder) {
+	(void)index;
 	LLUI_DEBUG_TRACE("User input event");
 
 	uint8_t size = (uint8_t)USEREVENT_SIZE(event);
@@ -352,11 +348,11 @@ void MICROUI_EVENT_DECODER_describe_dump_end(void) {
 }
 
 void MICROUI_EVENT_DECODER_drop_data(uint32_t data, uint32_t index) {
-	LLUI_DEBUG_TRACE("[%02lu: 0x%08lx] garbage\n", index, data);
+	LLUI_DEBUG_TRACE("[%02u: 0x%08x] garbage\n", index, data);
 }
 
 void MICROUI_EVENT_DECODER_decode_event(uint32_t event, uint32_t index, MICROUI_EVENT_DECODER_decode_event_data* fct_data_decoder) {
-	LLUI_DEBUG_TRACE("[%02lu: 0x%08lx] ", index, event);
+	LLUI_DEBUG_TRACE("[%02u: 0x%08x] ", index, event);
 
 	uint8_t event_type = (uint8_t)(event >> 24);
 
@@ -421,6 +417,3 @@ void MICROUI_EVENT_DECODER_decode_event(uint32_t event, uint32_t index, MICROUI_
 // EOF
 // -----------------------------------------------------------------------------
 
-#ifdef __cplusplus
-}
-#endif

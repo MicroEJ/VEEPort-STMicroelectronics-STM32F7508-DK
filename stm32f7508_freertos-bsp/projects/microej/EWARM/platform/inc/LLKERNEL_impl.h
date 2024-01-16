@@ -105,7 +105,8 @@ void LLKERNEL_IMPL_freeWorkingBuffer(void* chunk_address);
  * Allocates a new Feature and reserves its ROM and RAM areas. If the
  * implementation does not support custom Feature allocation, it must return
  * <code>0</code>. In this latter case, the Feature is allocated in the
- * Kernel Working Buffer and installed in-place. <br>
+ * Kernel Working Buffer and installed in-place.
+ * <p>
  * Warning: ROM and RAM areas reservation must take care of address alignment
  * constraints required by {@link LLKERNEL_getFeatureAddressROM} and
  * {@link LLKERNEL_getFeatureAddressRAM}.
@@ -132,22 +133,27 @@ int32_t LLKERNEL_IMPL_allocateFeature(int32_t size_ROM, int32_t size_RAM);
 void LLKERNEL_IMPL_freeFeature(int32_t handle);
 
 /**
- * Gets the number of currently allocated Features. This is the number of
- * Features that have been allocated using
- * {@link LLKERNEL_allocateFeature} but not yet released by
- * {@link LLKERNEL_freeFeature}.
+ * Gets the current number of allocated Features.
+ * <p>
+ * This function is called once at the start of the Core Engine. Afterward, the Core Engine will retrieve Feature
+ * handles by calling {@link LLKERNEL_getFeatureHandle} for each index in the range <code>[0..allocated_features_count[</code>.
  * 
- * @return the number of allocated Features (<code>0</code> if none)
+ * @return the number of Features allocated using {@link LLKERNEL_allocateFeature}, but not yet released by
+ *         {@link LLKERNEL_freeFeature}. If there are no Features, it will return <code>0</code>.
+ * @see LLKERNEL_getFeatureHandle
  */
 int32_t LLKERNEL_IMPL_getAllocatedFeaturesCount(void);
 
 /**
- * Gets the Feature handle that corresponds to the given allocation index.
+ * Gets the Feature handle that matches the given allocation index.
+ * <p>
+ * This function is called at the start of the Core Engine for each allocation index from <code>0</code> to
+ * <code>{@link LLKERNEL_getAllocatedFeaturesCount}-1</code>.
  * 
  * @param allocation_index
- *            an index in the range
- *            <code>[0..{@link LLKERNEL_getAllocatedFeaturesCount}[</code>
- * @return the Feature handle
+ *            an index in the range <code>[0..{@link LLKERNEL_getAllocatedFeaturesCount}[</code>
+ * @return a handle that uniquely identifies the allocated Feature. <code>0</code> is not allowed.
+ * @see LLKERNEL_getAllocatedFeaturesCount
  */
 int32_t LLKERNEL_IMPL_getFeatureHandle(int32_t allocation_index);
 

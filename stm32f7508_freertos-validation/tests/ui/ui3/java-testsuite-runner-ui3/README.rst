@@ -19,7 +19,7 @@ Requirements
 
 -  MicroEJ SDK version ``5.1.0`` (included in MicroEJ SDK dist. ``19.05``).
 -  MicroEJ Platform built from a MicroEJ UI Pack version ``13.0.0`` or higher.
--  See Platform Test Suites `documentation <../../README.rst>`_.
+-  See Platform Test Suites `documentation <../../../README.rst>`_.
 
 Usage
 -----
@@ -47,7 +47,7 @@ In MicroEJ SDK,
     *****************************************************************************************************
     *                                  MicroEJ UI Validation - 1.0.0                                  *
     *****************************************************************************************************
-    * Copyright 2021-2023 MicroEJ Corp. All rights reserved.                                            *
+    * Copyright 2021-2022 MicroEJ Corp. All rights reserved.                                            *
     * Use of this source code is governed by a BSD-style license that can be found with this software.  *
     *****************************************************************************************************
     
@@ -76,7 +76,7 @@ Platform Test Suite Mode
 
 -  In MicroEJ SDK, import the ``java-testsuite-runner-ui3`` project in your workspace.
 
--  Follow the configuration and execution steps described in Platform Test Suites `documentation <../../README.rst>`_.
+-  Follow the configuration and execution steps described in Platform Test Suites `documentation <../../../README.rst>`_.
 
 Tests Suite Description
 -----------------------
@@ -98,6 +98,7 @@ fast, the LCD is gray. The LCD being cut in multiple parts indicates a synchroni
 Drawing Time
 ~~~~~~~~~~~~
 
+This test is useful when the implementation of ``LLUI_DISPLAY_IMPL_flush`` uses the  `SWITCH mode <https://docs.microej.com/en/latest/PlatformDeveloperGuide/uiDisplay.html#switch>`_.
 "Drawing time" test determinates the maximum drawing time (in milliseconds) for a given
 framerate. The possible framerates depend on the LCD and on the post-flush copy step. When the
 drawing time exceeds the maximum drawing time, the framerate is divided by two when the flush
@@ -141,7 +142,7 @@ Restrictions
 None.
 
 ..
-    Copyright 2021-2023 MicroEJ Corp. All rights reserved.
+    Copyright 2021-2022 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 

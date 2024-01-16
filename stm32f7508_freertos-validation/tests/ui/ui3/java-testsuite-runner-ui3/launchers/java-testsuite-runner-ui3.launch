@@ -75,7 +75,7 @@
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDdeploy.bsp.microejlib" value="false"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDdeploy.script" value="deployInBSP.xml"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDecom.comm.nb.comm" value="1"/>
-<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDej.ecom.com.0.port" value="6"/>
+<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDej.ecom.com.0.port" value="2"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDej.ecom.com.validIDs" value="-0-"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDmemories.enabled" value="true"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationJPFConfigurationTabCSTART_com.is2t.microej.workbench.std.launch.ext.HiddenOption_CENDs3.board.compliant.force" value=""/>
@@ -137,16 +137,16 @@
 <listEntry value="${project_loc:java-testsuite-runner-ui3}/build/common.properties"/>
 </listAttribute>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationOutputDir" value="${project_loc:java-testsuite-runner-ui3}"/>
-<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformArchitecture" value="CM7"/>
+<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformArchitecture" value="CM4"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformBaseline" value="14"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformEdition" value="STD"/>
-<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformHPN" value="STM32F7508"/>
+<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformHPN" value="STM32F429IEVAL"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformLevel" value="prod"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformLicenseTag" value="IS2T_J8F5C"/>
-<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformName" value="Platform"/>
+<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformName" value="STM32F429IEVAL_TestUI_rgb565"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformProvider" value="MicroEJ"/>
-<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformToolchain" value="CM7hardfp_GCC48"/>
-<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformVersion" value="1.6.1"/>
+<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformToolchain" value="CM4hardfp_IAR83"/>
+<stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationPlatformVersion" value="4.1.1"/>
 <stringAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationProject" value="java-testsuite-runner-ui3"/>
 <booleanAttribute key="com.is2t.microej.workbench.stdMicroEJLaunchConfigurationVerbose" value="false"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">

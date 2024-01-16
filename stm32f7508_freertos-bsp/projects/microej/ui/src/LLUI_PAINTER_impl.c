@@ -9,8 +9,7 @@
  * @brief This file implements all MicroUI drawing native functions.
  * @see LLUI_PAINTER_impl.h file comment
  * @author MicroEJ Developer Team
- * @version 2.0.1
- * @date 16 December 2022
+ * @version 3.1.0
  * @since MicroEJ UI Pack 13.0.0
  */
 
@@ -19,21 +18,24 @@
 // --------------------------------------------------------------------------------
 
 // implements LLUI_PAINTER_impl functions
-#include "LLUI_PAINTER_impl.h"
+#include <LLUI_PAINTER_impl.h>
+
+// use graphical engine functions to synchronize drawings
+#include <LLUI_DISPLAY.h>
+
+// check UI Pack version
+#include <LLUI_DISPLAY_impl.h>
 
 // calls ui_drawing functions
 #include "ui_drawing.h"
 
-// use graphical engine functions to synchronize drawings
-#include "LLUI_DISPLAY.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // --------------------------------------------------------------------------------
 // Macros and Defines
 // --------------------------------------------------------------------------------
+
+#if (defined(LLUI_MAJOR_VERSION) && (LLUI_MAJOR_VERSION != 13)) || (defined(LLUI_MINOR_VERSION) && (LLUI_MINOR_VERSION < 5))
+#error "This CCO is only compatible with UI Pack [13.5.0,14.0.0["
+#endif
 
 // macros to log a drawing
 #define LOG_DRAW_START(fn) LLUI_DISPLAY_logDrawingStart(CONCAT_DEFINES(LOG_DRAW_, fn))
@@ -85,6 +87,7 @@ static inline void _check_bound(jint max, jint* bound, jint* size, jint* origin)
 // LLUI_PAINTER_impl.h functions
 // --------------------------------------------------------------------------------
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_writePixel(MICROUI_GraphicsContext* gc, jint x, jint y) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_writePixel)) {
 		DRAWING_Status status;
@@ -100,9 +103,9 @@ void LLUI_PAINTER_IMPL_writePixel(MICROUI_GraphicsContext* gc, jint x, jint y) {
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(writePixel);
 	}
-	// else: pixel out of clip: nothing to do (requestDrawing() has not been called)
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawLine)) {
 		LOG_DRAW_START(drawLine);
@@ -110,9 +113,9 @@ void LLUI_PAINTER_IMPL_drawLine(MICROUI_GraphicsContext* gc, jint startX, jint s
 		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawLine(gc, startX, startY, endX, endY));
 		LOG_DRAW_END(drawLine);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawHorizontalLine(MICROUI_GraphicsContext* gc, jint x, jint y, jint length) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawHorizontalLine)) {
 		DRAWING_Status status;
@@ -133,9 +136,9 @@ void LLUI_PAINTER_IMPL_drawHorizontalLine(MICROUI_GraphicsContext* gc, jint x, j
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawHorizontalLine);
 	}
-	// else: line out of clip: nothing to do (requestDrawing() has not been called)
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawVerticalLine(MICROUI_GraphicsContext* gc, jint x, jint y, jint length) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawVerticalLine)) {
 		DRAWING_Status status;
@@ -156,9 +159,9 @@ void LLUI_PAINTER_IMPL_drawVerticalLine(MICROUI_GraphicsContext* gc, jint x, jin
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawVerticalLine);
 	}
-	// else: line out of clip: nothing to do (requestDrawing() has not been called)
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawRectangle)) {
 		DRAWING_Status status;
@@ -182,9 +185,9 @@ void LLUI_PAINTER_IMPL_drawRectangle(MICROUI_GraphicsContext* gc, jint x, jint y
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawRectangle);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_fillRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_fillRectangle)) {
 		DRAWING_Status status;
@@ -199,6 +202,7 @@ void LLUI_PAINTER_IMPL_fillRectangle(MICROUI_GraphicsContext* gc, jint x, jint y
 		if ((width > 0) && (height) > 0 && LLUI_DISPLAY_clipRectangle(gc, &x1, &y1, &x2, &y2)) {
 			LLUI_DISPLAY_configureClip(gc, false /* rectangle has been clipped */);
 			status = UI_DRAWING_fillRectangle(gc, x1, y1, x2, y2);
+
 		}
 		else {
 			// requestDrawing() has been called and accepted: notify the end of empty drawing
@@ -207,9 +211,9 @@ void LLUI_PAINTER_IMPL_fillRectangle(MICROUI_GraphicsContext* gc, jint x, jint y
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(fillRectangle);
 	}
-	// else: rectangle out of clip: nothing to do (requestDrawing() has not been called)
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawRoundedRectangle)) {
 		DRAWING_Status status;
@@ -228,9 +232,9 @@ void LLUI_PAINTER_IMPL_drawRoundedRectangle(MICROUI_GraphicsContext* gc, jint x,
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawRoundedRectangle);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_fillRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_fillRoundedRectangle)) {
 		DRAWING_Status status;
@@ -249,9 +253,9 @@ void LLUI_PAINTER_IMPL_fillRoundedRectangle(MICROUI_GraphicsContext* gc, jint x,
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(fillRoundedRectangle);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawCircleArc)) {
 		DRAWING_Status status;
@@ -270,9 +274,9 @@ void LLUI_PAINTER_IMPL_drawCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawCircleArc);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawEllipseArc)) {
 		DRAWING_Status status;
@@ -291,9 +295,9 @@ void LLUI_PAINTER_IMPL_drawEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint 
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawEllipseArc);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_fillCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_fillCircleArc)) {
 		DRAWING_Status status;
@@ -312,9 +316,9 @@ void LLUI_PAINTER_IMPL_fillCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(fillCircleArc);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_fillEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_fillEllipseArc)) {
 		DRAWING_Status status;
@@ -333,9 +337,9 @@ void LLUI_PAINTER_IMPL_fillEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint 
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(fillEllipseArc);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawEllipse)) {
 		DRAWING_Status status;
@@ -354,9 +358,9 @@ void LLUI_PAINTER_IMPL_drawEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, 
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawEllipse);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_fillEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_fillEllipse)) {
 		DRAWING_Status status;
@@ -375,9 +379,9 @@ void LLUI_PAINTER_IMPL_fillEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, 
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(fillEllipse);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawCircle)) {
 		DRAWING_Status status;
@@ -396,9 +400,9 @@ void LLUI_PAINTER_IMPL_drawCircle(MICROUI_GraphicsContext* gc, jint x, jint y, j
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawCircle);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_fillCircle)) {
 		DRAWING_Status status;
@@ -417,9 +421,9 @@ void LLUI_PAINTER_IMPL_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, j
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(fillCircle);
 	}
-	// else: refused drawing
 }
 
+// See the header file for the function documentation
 void LLUI_PAINTER_IMPL_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha) {
 	if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLUI_PAINTER_IMPL_drawImage)) {
 		DRAWING_Status status = DRAWING_DONE;
@@ -446,7 +450,7 @@ void LLUI_PAINTER_IMPL_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img
 				if (gc->image.format == img->format) {
 					// source & destination have got the same pixels memory representation
 
-					if (0xff /* fully opaque */ == l_alpha && !LLUI_DISPLAY_isTransparent(img)) {
+					if ((0xff /* fully opaque */ == l_alpha) && !LLUI_DISPLAY_isTransparent(img)) {
 						// copy source on destination without applying an opacity (beware about the overlapping)
 						status = UI_DRAWING_copyImage(gc, img, regionX, regionY, width, height, x, y);
 					}
@@ -472,13 +476,8 @@ void LLUI_PAINTER_IMPL_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img
 		LLUI_DISPLAY_setDrawingStatus(status);
 		LOG_DRAW_END(drawImage);
 	}
-	// else: refused drawing
 }
 
 // --------------------------------------------------------------------------------
 // EOF
 // --------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}
-#endif

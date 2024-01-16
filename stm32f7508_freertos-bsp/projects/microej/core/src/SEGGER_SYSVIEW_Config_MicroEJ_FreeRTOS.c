@@ -154,8 +154,8 @@ static void SYSVIEW_MICROEJ_X_OS_SendTaskList(void){
 	 * the function LLMJVM_MONITOR_SYSTEMVIEW_send_task_list(). However, if the Microjvm task is created,
 	 * the function must be called LLMJVM_MONITOR_SYSTEMVIEW_send_task_list().
 	 */
-	// Check if the Microjvm task handle is not NULL. pvMicrojvmCreatedTask is an external variable.
-	if( NULL != pvMicrojvmCreatedTask){
+	// Check if the Microjvm task handle is not NULL. pvMicroEJVeeCreatedTask is an external variable.
+	if( NULL != pvMicroEJVeeCreatedTask){
 		// The JVM task is running, we execute LLMJVM_MONITOR_SYSTEMVIEW_send_task_list()
 		LLMJVM_MONITOR_SYSTEMVIEW_send_task_list();
 	}

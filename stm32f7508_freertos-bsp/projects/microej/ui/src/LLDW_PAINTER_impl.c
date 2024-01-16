@@ -9,8 +9,7 @@
  * @brief This file implements all "Drawing" (MicroUI extended library) drawing native functions.
  * @see LLDW_PAINTER_impl.h file comment
  * @author MicroEJ Developer Team
- * @version 2.0.1
- * @date 16 December 2022
+ * @version 3.1.0
  * @since MicroEJ UI Pack 13.0.0
  */
 
@@ -19,17 +18,13 @@
 // --------------------------------------------------------------------------------
 
 // implements LLDW_PAINTER_impl functions
-#include "LLDW_PAINTER_impl.h"
-
-// calls dw_drawing functions
-#include "dw_drawing.h"
+#include <LLDW_PAINTER_impl.h>
 
 // use graphical engine functions to synchronize drawings
-#include "LLUI_DISPLAY.h"
+#include <LLUI_DISPLAY.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// calls ui_drawing functions
+#include "ui_drawing.h"
 
 // --------------------------------------------------------------------------------
 // Macros and Defines
@@ -65,7 +60,7 @@ extern "C" {
 void LLDW_PAINTER_IMPL_drawThickFadedPoint(MICROUI_GraphicsContext* gc, jint x, jint y, jint thickness, jint fade) {
 	if (((thickness > 0) || (fade > 0)) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickFadedPoint)) {
 		LOG_DRAW_START(drawThickFadedPoint);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickFadedPoint(gc, x, y, thickness, fade));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickFadedPoint(gc, x, y, thickness, fade));
 		LOG_DRAW_END(drawThickFadedPoint);
 	}
 }
@@ -73,7 +68,7 @@ void LLDW_PAINTER_IMPL_drawThickFadedPoint(MICROUI_GraphicsContext* gc, jint x, 
 void LLDW_PAINTER_IMPL_drawThickFadedLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness, jint fade, DRAWING_Cap startCap, DRAWING_Cap endCap) {
 	if (((thickness > 0) || (fade > 0)) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickFadedLine)) {
 		LOG_DRAW_START(drawThickFadedLine);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickFadedLine(gc, startX, startY, endX, endY, thickness, fade, startCap, endCap));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickFadedLine(gc, startX, startY, endX, endY, thickness, fade, startCap, endCap));
 		LOG_DRAW_END(drawThickFadedLine);
 	}
 }
@@ -81,7 +76,7 @@ void LLDW_PAINTER_IMPL_drawThickFadedLine(MICROUI_GraphicsContext* gc, jint star
 void LLDW_PAINTER_IMPL_drawThickFadedCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness, jint fade) {
 	if (((thickness > 0) || (fade > 0)) && (diameter > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickFadedCircle)) {
 		LOG_DRAW_START(drawThickFadedCircle);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickFadedCircle(gc, x, y, diameter, thickness, fade));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickFadedCircle(gc, x, y, diameter, thickness, fade));
 		LOG_DRAW_END(drawThickFadedCircle);
 	}
 }
@@ -89,7 +84,7 @@ void LLDW_PAINTER_IMPL_drawThickFadedCircle(MICROUI_GraphicsContext* gc, jint x,
 void LLDW_PAINTER_IMPL_drawThickFadedCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness, jint fade, DRAWING_Cap start, DRAWING_Cap end) {
 	if (((thickness > 0) || (fade > 0)) && (diameter > 0) && ((int32_t)arcAngle != 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickFadedCircleArc)) {
 		LOG_DRAW_START(drawThickFadedCircleArc);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickFadedCircleArc(gc, x, y, diameter, startAngle, arcAngle, thickness, fade, start, end));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickFadedCircleArc(gc, x, y, diameter, startAngle, arcAngle, thickness, fade, start, end));
 		LOG_DRAW_END(drawThickFadedCircleArc);
 	}
 }
@@ -97,7 +92,7 @@ void LLDW_PAINTER_IMPL_drawThickFadedCircleArc(MICROUI_GraphicsContext* gc, jint
 void LLDW_PAINTER_IMPL_drawThickFadedEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness, jint fade) {
 	if (((thickness > 0) || (fade > 0)) && (width > 0) && (height > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickFadedEllipse)) {
 		LOG_DRAW_START(drawThickFadedEllipse);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickFadedEllipse(gc, x, y, width, height, thickness, fade));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickFadedEllipse(gc, x, y, width, height, thickness, fade));
 		LOG_DRAW_END(drawThickFadedEllipse);
 	}
 }
@@ -105,7 +100,7 @@ void LLDW_PAINTER_IMPL_drawThickFadedEllipse(MICROUI_GraphicsContext* gc, jint x
 void LLDW_PAINTER_IMPL_drawThickLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness) {
 	if ((thickness > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickLine)) {
 		LOG_DRAW_START(drawThickLine);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickLine(gc, startX, startY, endX, endY, thickness));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickLine(gc, startX, startY, endX, endY, thickness));
 		LOG_DRAW_END(drawThickLine);
 	}
 }
@@ -113,7 +108,7 @@ void LLDW_PAINTER_IMPL_drawThickLine(MICROUI_GraphicsContext* gc, jint startX, j
 void LLDW_PAINTER_IMPL_drawThickCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness) {
 	if ((thickness > 0) && (diameter > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickCircle)) {
 		LOG_DRAW_START(drawThickCircle);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickCircle(gc, x, y, diameter, thickness));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickCircle(gc, x, y, diameter, thickness));
 		LOG_DRAW_END(drawThickCircle);
 	}
 }
@@ -121,7 +116,7 @@ void LLDW_PAINTER_IMPL_drawThickCircle(MICROUI_GraphicsContext* gc, jint x, jint
 void LLDW_PAINTER_IMPL_drawThickEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness) {
 	if ((thickness > 0) && (width > 0) && (height > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickEllipse)) {
 		LOG_DRAW_START(drawThickEllipse);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickEllipse(gc, x, y, width, height, thickness));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickEllipse(gc, x, y, width, height, thickness));
 		LOG_DRAW_END(drawThickEllipse);
 	}
 }
@@ -129,7 +124,7 @@ void LLDW_PAINTER_IMPL_drawThickEllipse(MICROUI_GraphicsContext* gc, jint x, jin
 void LLDW_PAINTER_IMPL_drawThickCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness) {
 	if ((thickness > 0) && (diameter > 0) && ((int32_t)arcAngle != 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawThickCircleArc)) {
 		LOG_DRAW_START(drawThickCircleArc);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawThickCircleArc(gc, x, y, diameter, startAngle, arcAngle, thickness));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawThickCircleArc(gc, x, y, diameter, startAngle, arcAngle, thickness));
 		LOG_DRAW_END(drawThickCircleArc);
 	}
 }
@@ -137,7 +132,7 @@ void LLDW_PAINTER_IMPL_drawThickCircleArc(MICROUI_GraphicsContext* gc, jint x, j
 void LLDW_PAINTER_IMPL_drawFlippedImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, DRAWING_Flip transformation, jint alpha) {
 	if (!LLUI_DISPLAY_isClosed(img) && (alpha > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawFlippedImage)) {
 		LOG_DRAW_START(drawFlippedImage);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawFlippedImage(gc, img, regionX, regionY, width, height, x, y, transformation, alpha));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawFlippedImage(gc, img, regionX, regionY, width, height, x, y, transformation, alpha));
 		LOG_DRAW_END(drawFlippedImage);
 	}
 }
@@ -145,7 +140,7 @@ void LLDW_PAINTER_IMPL_drawFlippedImage(MICROUI_GraphicsContext* gc, MICROUI_Ima
 void LLDW_PAINTER_IMPL_drawRotatedImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha) {
 	if (!LLUI_DISPLAY_isClosed(img) && (alpha > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawRotatedImageNearestNeighbor)) {
 		LOG_DRAW_START(drawRotatedImageNearestNeighbor);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawRotatedImageNearestNeighbor(gc, img, x, y, rotationX, rotationY, angle, alpha));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawRotatedImageNearestNeighbor(gc, img, x, y, rotationX, rotationY, angle, alpha));
 		LOG_DRAW_END(drawRotatedImageNearestNeighbor);
 	}
 }
@@ -153,7 +148,7 @@ void LLDW_PAINTER_IMPL_drawRotatedImageNearestNeighbor(MICROUI_GraphicsContext* 
 void LLDW_PAINTER_IMPL_drawRotatedImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha) {
 	if (!LLUI_DISPLAY_isClosed(img) && (alpha > 0) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawRotatedImageBilinear)) {
 		LOG_DRAW_START(drawRotatedImageBilinear);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawRotatedImageBilinear(gc, img, x, y, rotationX, rotationY, angle, alpha));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawRotatedImageBilinear(gc, img, x, y, rotationX, rotationY, angle, alpha));
 		LOG_DRAW_END(drawRotatedImageBilinear);
 	}
 }
@@ -161,7 +156,7 @@ void LLDW_PAINTER_IMPL_drawRotatedImageBilinear(MICROUI_GraphicsContext* gc, MIC
 void LLDW_PAINTER_IMPL_drawScaledImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha) {
 	if (!LLUI_DISPLAY_isClosed(img) && (alpha > 0) && (factorX > 0.f) && (factorY > 0.f) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawScaledImageNearestNeighbor)) {
 		LOG_DRAW_START(drawScaledImageNearestNeighbor);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawScaledImageNearestNeighbor(gc, img, x, y, factorX, factorY, alpha));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawScaledImageNearestNeighbor(gc, img, x, y, factorX, factorY, alpha));
 		LOG_DRAW_END(drawScaledImageNearestNeighbor);
 	}
 }
@@ -169,7 +164,7 @@ void LLDW_PAINTER_IMPL_drawScaledImageNearestNeighbor(MICROUI_GraphicsContext* g
 void LLDW_PAINTER_IMPL_drawScaledImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha) {
 	if (!LLUI_DISPLAY_isClosed(img) && (alpha > 0) && (factorX > 0.f) && (factorY > 0.f) && LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&LLDW_PAINTER_IMPL_drawScaledImageBilinear)) {
 		LOG_DRAW_START(drawScaledImageBilinear);
-		LLUI_DISPLAY_setDrawingStatus(DW_DRAWING_drawScaledImageBilinear(gc, img, x, y, factorX, factorY, alpha));
+		LLUI_DISPLAY_setDrawingStatus(UI_DRAWING_drawScaledImageBilinear(gc, img, x, y, factorX, factorY, alpha));
 		LOG_DRAW_END(drawScaledImageBilinear);
 	}
 }

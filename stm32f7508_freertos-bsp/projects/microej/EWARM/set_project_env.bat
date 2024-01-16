@@ -1,6 +1,6 @@
 @echo off
 
-REM Copyright 2019-2023 MicroEJ Corp. All rights reserved.
+REM Copyright 2019-2024 MicroEJ Corp. All rights reserved.
 REM Use of this source code is governed by a BSD-style license that can be found with this software.
 
 REM 'set_project_env.bat' implementation for IAR Embedded Workbench.
@@ -11,7 +11,16 @@ REM - setting project local variables for 'build.bat' and 'run.bat'
 
 REM Required Environment Variable
 REM IAR Embedded Workbench installation directory (e.g.: C:\Program Files (x86)\IAR Systems\Embedded Workbench VERSION)
-SET IAREW_INSTALLATION_DIR=C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4
+SET IAREW_DEFAULT_INSTALLATION_DIR=C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4
+
+IF NOT DEFINED IAREW_INSTALLATION_DIR (
+    IF NOT EXIST "%IAREW_DEFAULT_INSTALLATION_DIR%" (
+       ECHO ERROR: please set the environment variable IAREW_INSTALLATION_DIR, refer to the VEE Port documentation for more information.
+       EXIT /B 1
+    ) ELSE (
+        CALL :setDefaultIarPath
+    )
+)
 
 REM Set the project variables required by the build script for IAR Embedded Workbench
 REM IAREW project directory that contains the project file .ewp (e.g.: %~dp0\..\)
@@ -35,4 +44,8 @@ ECHO IAREW_INSTALLATION_DIR=%IAREW_INSTALLATION_DIR%
 ECHO IAREW_PROJECT_DIR=%IAREW_PROJECT_DIR%
 ECHO IAREW_PROJECT_NAME=%IAREW_PROJECT_NAME%
 ECHO IAREW_PROJECT_CONFIGURATION=%IAREW_PROJECT_CONFIGURATION%
-exit /B 0
+EXIT /B 0
+
+:setDefaultIarPath
+    SET IAREW_INSTALLATION_DIR=%IAREW_DEFAULT_INSTALLATION_DIR%
+    goto:eof

@@ -5,15 +5,14 @@
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <ivy-module version="2.0" xmlns:ea="http://www.easyant.org" xmlns:m="http://ant.apache.org/ivy/extra" xmlns:ej="https://developer.microej.com" ej:version="2.0.0"> 
-	<info organisation="com.microej.platform.st.stm32f7508-dk" module="VEEPort" status="integration" revision="2.1.2">
-		<ea:build organisation="com.is2t.easyant.buildtypes" module="build-custom" revision="1.+"/>
+	<info organisation="com.microej.veeport.st.stm32f7508-dk" module="VEEPort" status="integration" revision="2.2.0">
+		<ea:build organisation="com.is2t.easyant.buildtypes" module="build-custom" revision="2.2.+"/>
 		<ea:plugin org="com.is2t.easyant.plugins" module="eclipse-antRunner" revision="1.+"/>
 		<ea:plugin org="com.is2t.easyant.plugins" module="mam" revision="1.+"/>
 
-		<ea:plugin org="com.is2t.easyant.plugins" module="artifact-checker" revision="1.7.+"/>
-		<ea:plugin org="com.is2t.easyant.plugins" module="changelog" revision="2.0.+"/>
-		<ea:plugin org="com.is2t.easyant.plugins" module="license" revision="2.0.+"/>
-		<ea:plugin org="com.is2t.easyant.plugins" module="readme" revision="2.2.+"/>
+		<ea:plugin org="com.is2t.easyant.plugins" module="changelog" revision="3.0.+"/>
+		<ea:plugin org="com.is2t.easyant.plugins" module="license" revision="3.0.+"/>
+		<ea:plugin org="com.is2t.easyant.plugins" module="readme" revision="3.0.+"/>
 
 		<!-- Retrieve embedded and default dependencies -->
 		<ea:property name="dependencies.retrieve.conf" value="embedded,default" />
@@ -25,20 +24,21 @@
 
 	<configurations defaultconfmapping="embedded->default">
 		<conf name="default" visibility="public" description="Runtime dependencies to other artifacts"/>
-		<conf name="provided" visibility="public" description="Compile-time dependencies to APIs provided by the platform"/>
+		<conf name="provided" visibility="public" description="Compile-time dependencies to APIs provided by the VEE Port"/>
 		<conf name="documentation" visibility="public" description="Documentation related to the artifact (javadoc, PDF)"/>
 		<conf name="dist" visibility="public" description="Contains extra files like README.md, licenses"/>
 		<conf name="source" visibility="public" description="Source code"/>
-		<conf name="embedded" visibility="private" description="platform dependencies.  Use only for MicroEJ Architecture and MicroEJ Packs required to build the platform."/>
+		<conf name="embedded" visibility="private" description="VEE Port dependencies.  Use only for MicroEJ Architecture and MicroEJ Packs required to build the VEE Port."/>
     </configurations>
 
-	<publications/>
+    <publications>
+	</publications>
 
 	<dependencies>
 		<dependency org="com.microej.architecture.CM7.${xpf.toolchain.name}" name="${xpf.name}" rev="8.0.0">
 			<artifact name="${xpf.name}" m:classifier="${com.microej.platformbuilder.architecture.usage}" ext="xpf"/>
 		</dependency>
-		<dependency org="com.microej.architecture.CM7.${xpf.toolchain.name}" name="${xpf.name}-ui-pack" rev="13.4.1" transitive="false">
+		<dependency org="com.microej.architecture.CM7.${xpf.toolchain.name}" name="${xpf.name}-ui-pack" rev="13.7.2" transitive="false">
 			<artifact name="${xpf.name}-ui-pack" ext="xpfp"/>
 		</dependency>
 
@@ -55,10 +55,10 @@
 		<!-- CCO begin 
 		<dependency org="com.microej.clibrary.llimpl" name="mjvm-freertos" rev="1.1.0" transitive="false"/>
 		<dependency org="com.microej.clibrary.llimpl" name="bsp-generic" rev="1.0.0" transitive="false" />
-		<dependency org="com.microej.clibrary.llimpl" name="display-dma2d" rev="3.1.0" transitive="false" />
+		<dependency org="com.microej.clibrary.llimpl" name="display-dma2d" rev="4.1.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="fs-generic" rev="2.1.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="fs-fatfs" rev="2.1.0" transitive="false" />
-		<dependency org="com.microej.clibrary.llimpl" name="microui" rev="2.0.1" transitive="false" />
+		<dependency org="com.microej.clibrary.llimpl" name="microui" rev="3.1.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="mjvm-freertos" rev="1.0.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="net-bsd" rev="1.1.1" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="net-dns-lwip" rev="0.1.0" transitive="false" />

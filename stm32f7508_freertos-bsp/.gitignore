@@ -1,5 +1,7 @@
 /projects/microej/EWARM/*.dep
 /projects/microej/EWARM/*.ewt
+/projects/microej/EWARM/*.out
+/projects/microej/EWARM/*.log
 /projects/microej/EWARM/Debug/
 /projects/microej/EWARM/Release/
 /projects/microej/EWARM/Unit_test/
@@ -11,4 +13,6 @@
 /projects/microej/SW4STM32/Release/
 /projects/microej/SW4STM32/Unit_test/
 /projects/microej/SW4STM32/Iperf/
+/projects/microej/SW4STM32/*.out
+/projects/microej/SW4STM32/*.hex
 /projects/microej/cdt_workspace/

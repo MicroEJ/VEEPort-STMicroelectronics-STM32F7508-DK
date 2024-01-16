@@ -1,9 +1,9 @@
-﻿..
-    Copyright 2019-2023 MicroEJ Corp. All rights reserved.
-    Use of this source code is governed by a BSD-style license that can be found with this software.
+﻿.. ReStructuredText
+.. Copyright 2019-2024 MicroEJ Corp. All rights reserved.
+.. Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.1.2
+.. |VEEPORT_VER| replace:: 2.2.0
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |VEEPORT| replace:: VEE Port
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
@@ -42,7 +42,7 @@ This |VEEPORT| contains the following dependencies:
   * - flopi7G26 (Architecture)
     - 8.0.0
   * - flopi7G26UI (User Interface)
-    - 13.4.1
+    - 13.7.2
 
 - MicroEJ IAR specific packs:
 
@@ -51,7 +51,7 @@ This |VEEPORT| contains the following dependencies:
   * - flopi7I36 (Architecture)
     - 8.0.0
   * - flopi7I36UI (User Interface)
-    - 13.4.1
+    - 13.7.2
 
 - MicroEJ generic packs:
 
@@ -186,7 +186,7 @@ or a native one.
    memory allocator for all its memory allocation. The TCP MSS is 1460
    bytes.
 
-   The network portage use a BSD (Berkley Software Distribution) API
+   The network portage uses a BSD (Berkley Software Distribution) API
    with select feature. A mechanism named async_select, with a
    dedicated task, is used to request non blocking operations and wait
    for completion or timeout.
@@ -209,8 +209,10 @@ File System
 -----------
 
 |VEEPORT| features a file system interface. An SD card is
-used for the storage (previously formated to a FAT32 file system). Up
+used for the storage (previously formatted to a FAT32 file system). Up
 to 2 files can be opened simultaneously.
+
+Make sure to plug an SD Card when using the File System library.
 
 UART Connector
 --------------
@@ -536,7 +538,8 @@ Troubleshooting
 Known issues/limitations
 ========================
 
-- Implementation of ``snprintf`` does not support the ``%llx`` format
+- Implementation of ``snprintf`` does not support the ``%llx`` format.
+- The firmware does not boot when using the File System library and no SD Card is plugged (only ``MicroEJ Start`` is displayed in the console).
  
 |VEEPORT| Memory Layout
 =======================

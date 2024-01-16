@@ -13,15 +13,23 @@
 # Force to stop execution on error
 set -e
 
-# Keep current directory.
-CURRENT_DIRECTORY=$(pwd)
-
 # Set environment variables.
 cd $(dirname $0)
 . set_project_env.sh
 
-"$GNU_TOOLS_FOR_STM32_DIR/arm-none-eabi-objcopy" -O ihex "$CURRENT_DIRECTORY/application.out" "$CURRENT_DIRECTORY/application.hex"
-"$CUBE_PROGRAMMER_DIR/STM32_Programmer_CLI" -c port=SWD mode=UR -w "$CURRENT_DIRECTORY/application.hex" -el "$CUBEPROGRAMMER_DIR/ExternalLoader/N25Q128A_STM32F7508-DISCO.stldr" -rst
+if [ -z "$1" ]; then
+    APPLICATION_FILE="$(pwd)/application.out"
+else
+    APPLICATION_FILE="$(realpath "$1")"
+fi
+
+if [ ! -e "$APPLICATION_FILE" ]; then
+    echo "FAILED - file '$APPLICATION_FILE' does not exist"
+    exit 1
+fi
+
+"$GNU_TOOLS_FOR_STM32_DIR/arm-none-eabi-objcopy" -O ihex "${APPLICATION_FILE}" "${APPLICATION_FILE}.hex"
+"$CUBE_PROGRAMMER_DIR/STM32_Programmer_CLI" -c port=SWD mode=UR -w "${APPLICATION_FILE}.hex" -el "$CUBE_PROGRAMMER_DIR/ExternalLoader/N25Q128A_STM32F7508-DISCO.stldr" -rst
 
 # Restore current directory.
 cd $CURRENT_DIRECTORY

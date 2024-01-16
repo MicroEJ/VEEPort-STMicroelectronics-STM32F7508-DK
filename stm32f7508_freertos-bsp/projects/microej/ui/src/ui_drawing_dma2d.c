@@ -5,27 +5,29 @@
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
-/**
+/*
  * @file
- * @brief Use STM32 DMA2D (ChromART) for MicroEJ ui_drawing.h implementation.
+ * @brief Implementation of a set of ui_drawing.h drawing functions (MicroUI library). These are
+ * implementations over the STM32 DMA2D (ChromART) and the destination buffer format is the format
+ * specified in the VEE port. When the drawing cannot be performed by the GPU, the software
+ * implementation is used insted.
+ *
  * @author MicroEJ Developer Team
- * @version 3.1.0
- * @date 13 April 2023
+ * @version 4.1.0
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// --------------------------------------------------------------------------------
+// Includes
+// --------------------------------------------------------------------------------
 
-
-/* Includes ------------------------------------------------------------------*/
-
-#include "drawing_dma2d.h"
-#include "ui_drawing.h"
+#include "ui_drawing_dma2d.h"
+#include "ui_drawing_dma2d_configuration.h"
 #include "ui_drawing_soft.h"
-#include "bsp_util.h"
+#include "ui_image_drawing.h"
 
-/* Defines and Macros --------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// Defines
+// --------------------------------------------------------------------------------
 
 /*
  * @brief Defines the DMA2D format according DRAWING_DMA2D_BPP.
@@ -39,19 +41,17 @@ extern "C" {
 #else
 #error "Define 'DRAWING_DMA2D_BPP' is required (16, 24 or 32)"
 #endif
-    
+
+/*
+ * @brief Ensures the configuration of the cache management.
+ */
 #ifndef DRAWING_DMA2D_CACHE_MANAGEMENT
 #error "Please define the DRAWING_DMA2D_CACHE_MANAGEMENT in drawing_dma2d_configuration.h"
 #endif
     
-#if DRAWING_DMA2D_CACHE_MANAGEMENT == DRAWING_DMA2D_CACHE_MANAGEMENT_ENABLED
-#if !defined (__DCACHE_PRESENT) || (__DCACHE_PRESENT == 0U)
-#error "DRAWING_DMA2D_CACHE_MANAGEMENT cannot be enabled on a MCU that doesn't have physical cache"
-#endif
-#endif
-
-/* Structs and Typedefs ------------------------------------------------------*/
-
+// --------------------------------------------------------------------------------
+// Types
+// --------------------------------------------------------------------------------
 /*
  * @brief Function used to notify the graphical engine about the end of DMA2D work.
  * Available values are LLUI_DISPLAY_notifyAsynchronousDrawingEnd() and LLUI_DISPLAY_flushDone().
@@ -79,7 +79,9 @@ typedef struct {
 	uint32_t src_bpp; // source image's bpp
 } DRAWING_DMA2D_blending_t;
 
-/* Private fields ------------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// Private fields
+// --------------------------------------------------------------------------------
 
 /*
  * @brief STM32 HAL DMA2D declaration.
@@ -102,7 +104,9 @@ static bool g_dma2d_running;
  */
 static void* g_dma2d_semaphore;
 
-/* Private functions ---------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// Private functions
+// --------------------------------------------------------------------------------
 
 /*
  * @brief Ensures DMA2D previous work is done before returning.
@@ -157,6 +161,7 @@ static inline void _drawing_dma2d_done(void) {
  * @brief Adjusts the given address to target the given point.
  */
 static inline uint8_t* _drawing_dma2d_adjust_address(uint8_t* address, uint32_t x, uint32_t y, uint32_t stride, uint32_t bpp) {
+	// cppcheck-suppress [misra-c2012-18.4] address += offset
 	return address + ((((y * stride) + x) * bpp) / (uint32_t)8);
 }
 
@@ -418,9 +423,12 @@ static void _drawing_dma2d_overlap_vertical(DRAWING_DMA2D_blending_t* dma2d_blen
 	}
 }
 
-/* Interrupt functions -------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// Interrupt functions
+// --------------------------------------------------------------------------------
 
-void DRAWING_DMA2D_IRQHandler(void) {
+// See the header file for the function documentation
+void UI_DRAWING_DMA2D_IRQHandler(void) {
 	// notify STM32 HAL
 	HAL_DMA2D_IRQHandler(&g_hdma2d);
 
@@ -431,9 +439,12 @@ void DRAWING_DMA2D_IRQHandler(void) {
 	g_callback_notification(true);
 }
 
-/* Public functions ----------------------------------------------------------*/
+// --------------------------------------------------------------------------------
+// Public functions
+// --------------------------------------------------------------------------------
 
-void DRAWING_DMA2D_initialize(void* binary_semaphore_handle) {
+// See the header file for the function documentation
+void UI_DRAWING_DMA2D_initialize(void* binary_semaphore_handle) {
 	// configure globals
 	g_dma2d_running = false;
 	g_dma2d_semaphore = binary_semaphore_handle;
@@ -447,7 +458,8 @@ void DRAWING_DMA2D_initialize(void* binary_semaphore_handle) {
 	g_hdma2d.Instance = DMA2D;
 }
 
-void DRAWING_DMA2D_configure_memcpy(uint8_t* srcAddr, uint8_t* destAddr, uint32_t xmin, uint32_t ymin, uint32_t xmax, uint32_t ymax, uint32_t stride, DRAWING_DMA2D_memcpy* memcpy_data) {
+// See the header file for the function documentation
+void UI_DRAWING_DMA2D_configure_memcpy(uint8_t* srcAddr, uint8_t* destAddr, uint32_t xmin, uint32_t ymin, uint32_t xmax, uint32_t ymax, uint32_t stride, DRAWING_DMA2D_memcpy* memcpy_data) {
 	_drawing_dma2d_wait();
 
 	uint32_t width = (xmax - xmin + (uint32_t)1);
@@ -477,64 +489,59 @@ void DRAWING_DMA2D_configure_memcpy(uint8_t* srcAddr, uint8_t* destAddr, uint32_
 	g_dma2d_running = true;
 }
 
-void DRAWING_DMA2D_start_memcpy(DRAWING_DMA2D_memcpy* memcpy_data) {
+// See the header file for the function documentation
+void UI_DRAWING_DMA2D_start_memcpy(DRAWING_DMA2D_memcpy* memcpy_data) {
 	_cleanDCache();
 	HAL_DMA2D_Start_IT(
 			&g_hdma2d,
-			(uint32_t)memcpy_data->src_address,
-			(uint32_t)memcpy_data->dest_address,
+			// cppcheck-suppress [misra-c2012-11.4] cast address as expectded by DMA2D driver
+			(uint32_t)(memcpy_data->src_address),
+			// cppcheck-suppress [misra-c2012-11.4] cast address as expectded by DMA2D driver
+			(uint32_t)(memcpy_data->dest_address),
 			memcpy_data->width,
 			memcpy_data->height
 	);
 }
 
-/* ui_drawing.h functions --------------------------------------------*/
+// --------------------------------------------------------------------------------
+// ui_drawing.h / ui_drawing_dma2d.h functions
+// (the function names differ according to the available number of destination formats)
+// --------------------------------------------------------------------------------
 
-DRAWING_Status UI_DRAWING_fillRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1, jint x2, jint y2) {
+// See the header file for the function documentation
+DRAWING_Status UI_DRAWING_DMA2D_fillRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1, jint x2, jint y2) {
 
-	DRAWING_Status ret;
+	_drawing_dma2d_wait();
 
-	if (LLUI_DISPLAY_isClipEnabled(gc) && !LLUI_DISPLAY_clipRectangle(gc, &x1, &y1, &x2, &y2)) {
-		// drawing is out of clip: nothing to do
-		ret = DRAWING_DONE;
-	}
-	else {
-		// clip disabled (means drawing is fully in clip) or drawing fits the clip
+	LLUI_DISPLAY_setDrawingLimits(x1, y1, x2, y2);
 
+	uint32_t rectangle_width = x2 - x1 + 1;
+	uint32_t rectangle_height = y2 - y1 + 1;
+	uint32_t stride = LLUI_DISPLAY_getStrideInPixels(&gc->image);
 
-		_drawing_dma2d_wait();
+	// de-init DMA2D
+	HAL_DMA2D_DeInit(&g_hdma2d);
 
-		LLUI_DISPLAY_setDrawingLimits(x1, y1, x2, y2);
+	// configure DMA2D
+	g_hdma2d.Init.Mode = DMA2D_R2M;
+	g_hdma2d.Init.OutputOffset = stride - rectangle_width;
+	HAL_DMA2D_Init(&g_hdma2d);
 
-		uint32_t rectangle_width = x2 - x1 + 1;
-		uint32_t rectangle_height = y2 - y1 + 1;
-		uint32_t stride = LLUI_DISPLAY_getStrideInPixels(&gc->image);
+	// configure environment
+	g_callback_notification = &LLUI_DISPLAY_notifyAsynchronousDrawingEnd;
+	g_dma2d_running = true;
 
-		// de-init DMA2D
-		HAL_DMA2D_DeInit(&g_hdma2d);
+	// start DMA2D
+	_cleanDCache();
+	uint8_t* destination_address = _drawing_dma2d_adjust_address(LLUI_DISPLAY_getBufferAddress(&gc->image), x1, y1, stride, DRAWING_DMA2D_BPP);
+	// cppcheck-suppress [misra-c2012-11.4] allow cast address in u32 (see HAL_DMA2D_Start_IT())
+	HAL_DMA2D_Start_IT(&g_hdma2d, gc->foreground_color, (uint32_t)destination_address, rectangle_width, rectangle_height);
 
-		// configure DMA2D
-		g_hdma2d.Init.Mode = DMA2D_R2M;
-		g_hdma2d.Init.OutputOffset = stride - rectangle_width;
-		HAL_DMA2D_Init(&g_hdma2d);
-
-		// configure environment
-		g_callback_notification = &LLUI_DISPLAY_notifyAsynchronousDrawingEnd;
-		g_dma2d_running = true;
-
-		// start DMA2D
-		_cleanDCache();
-		uint8_t* destination_address = _drawing_dma2d_adjust_address(LLUI_DISPLAY_getBufferAddress(&gc->image), x1, y1, stride, DRAWING_DMA2D_BPP);
-		// cppcheck-suppress [misra-c2012-11.4] allow cast address in u32 (see HAL_DMA2D_Start_IT())
-		HAL_DMA2D_Start_IT(&g_hdma2d, gc->foreground_color, (uint32_t)destination_address, rectangle_width, rectangle_height);
-
-		ret = DRAWING_RUNNING;
-	}
-
-	return ret;
+	return DRAWING_RUNNING;
 }
 
-DRAWING_Status UI_DRAWING_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* image, jint x_src, jint y_src, jint width, jint height, jint x_dest, jint y_dest, jint alpha) {
+// See the header file for the function documentation
+DRAWING_Status UI_DRAWING_DMA2D_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* image, jint x_src, jint y_src, jint width, jint height, jint x_dest, jint y_dest, jint alpha) {
 
 	DRAWING_Status ret;
 	DRAWING_DMA2D_blending_t dma2d_blending_data;
@@ -546,14 +553,28 @@ DRAWING_Status UI_DRAWING_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* 
 		ret = DRAWING_RUNNING;
 	}
 	else {
+#if !defined(LLUI_IMAGE_CUSTOM_FORMATS)
 		UI_DRAWING_SOFT_drawImage(gc, image, x_src, y_src, width, height, x_dest, y_dest, alpha);
 		ret = DRAWING_DONE;
+#else
+		ret = UI_IMAGE_DRAWING_draw(gc, image, x_src, y_src, width, height, x_dest, y_dest, alpha);
+#endif
 	}
 
 	return ret;
 }
 
-DRAWING_Status UI_DRAWING_drawRegion(MICROUI_GraphicsContext* gc, jint x_src, jint y_src, jint width, jint height, jint x_dest, jint y_dest, jint alpha){
+// See the header file for the function documentation
+DRAWING_Status UI_DRAWING_DMA2D_copyImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y){
+	return (img == &gc->image) ?
+			// have to manage the overlap
+			UI_DRAWING_DMA2D_drawRegion(gc, regionX, regionY, width, height, x, y, 0xff)
+			// no overlap: draw image as usual
+			: UI_DRAWING_DMA2D_drawImage(gc, img, regionX, regionY, width, height, x, y, 0xff);
+}
+
+// See the header file for the function documentation
+DRAWING_Status UI_DRAWING_DMA2D_drawRegion(MICROUI_GraphicsContext* gc, jint x_src, jint y_src, jint width, jint height, jint x_dest, jint y_dest, jint alpha){
 
 	DRAWING_Status ret;
 	DRAWING_DMA2D_blending_t dma2d_blending_data;
@@ -580,16 +601,16 @@ DRAWING_Status UI_DRAWING_drawRegion(MICROUI_GraphicsContext* gc, jint x_src, ji
 	}
 	else {
 		// image not compatible with the DMA2D: let the Graphics Engine do the drawing
+#if !defined(LLUI_IMAGE_CUSTOM_FORMATS)
 		UI_DRAWING_SOFT_drawImage(gc, &gc->image, x_src, y_src, width, height, x_dest, y_dest, alpha);
 		ret = DRAWING_DONE;
+#else
+		ret = UI_IMAGE_DRAWING_draw(gc, &gc->image, x_src, y_src, width, height, x_dest, y_dest, alpha);
+#endif
 	}
 	return ret;
 }
 
-/* EOF -----------------------------------------------------------------------*/
-
-#ifdef __cplusplus
-}
-#endif
-
-
+// --------------------------------------------------------------------------------
+// EOF
+// --------------------------------------------------------------------------------

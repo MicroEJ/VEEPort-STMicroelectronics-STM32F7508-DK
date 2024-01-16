@@ -13,8 +13,7 @@
  *
  * @see LLUI_DISPLAY_impl.h file comment
  * @author MicroEJ Developer Team
- * @version 2.0.1
- * @date 16 December 2022
+ * @version 3.1.0
  * @since MicroEJ UI Pack 13.1.0
  */
 
@@ -24,10 +23,6 @@
 
 #include "microui_heap.h"
 #include "BESTFIT_ALLOCATOR.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 // --------------------------------------------------------------------------------
 // Macros and Defines
@@ -102,6 +97,3 @@ void LLUI_DISPLAY_IMPL_image_heap_free(uint8_t* block) {
 // EOF
 // --------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-}
-#endif

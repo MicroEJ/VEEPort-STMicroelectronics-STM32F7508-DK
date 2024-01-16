@@ -29,12 +29,12 @@ extern "C" {
 /*
  * @brief Low-Level API UI minor version.
  */
-#define LLUI_MINOR_VERSION 4
+#define LLUI_MINOR_VERSION 7
 
 /*
  * @brief Low-Level API UI patch version.
  */
-#define LLUI_PATCH_VERSION 1
+#define LLUI_PATCH_VERSION 2
 
 /**
  * @brief Intensity value to turn off a LED.

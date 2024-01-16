@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020-2021 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -16,10 +16,16 @@ extern "C" {
  * implementation. Please refer to ui_drawing.h to have more information about the
  * aim of these functions.
  *
+ * The caller must ensure the destination buffer format is identical to the display
+ * buffer format; in other words, the software algorithms can only be used to draw
+ * in the display's GraphicsContext and in the BufferedImages.
+ *
+ * The software algorithms don't check the buffer format: if a software algorithm
+ * is used to draw into another kind of buffer, the behavior is unexpected (a hard
+ * fault may occur):
+ *
  * Contrary to functions listed in ui_drawing.h, the Graphics Engine functions
- * are blocking. If a software algorithm is using a third party function listed in
- * ui_drawing.h (see ui_drawing.h file comment), a "wait end of drawing"
- * is automatically performed.
+ * are blocking.
  */
 
 // --------------------------------------------------------------------------------
@@ -41,8 +47,10 @@ extern "C" {
  * @param[in] gc the MicroUI GraphicsContext target.
  * @param[in] x the pixel X coordinate.
  * @param[in] y the pixel Y coordinate.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_writePixel(MICROUI_GraphicsContext* gc, jint x, jint y);
+DRAWING_Status UI_DRAWING_SOFT_writePixel(MICROUI_GraphicsContext* gc, jint x, jint y);
 
 /*
  * @brief Draws a line at between points startX,startY (included) and endX,endY (included).
@@ -53,8 +61,10 @@ void UI_DRAWING_SOFT_writePixel(MICROUI_GraphicsContext* gc, jint x, jint y);
  * @param[in] startY the first pixel line Y coordinate.
  * @param[in] endX the last pixel line X coordinate.
  * @param[in] endY the last pixel line Y coordinate.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY);
+DRAWING_Status UI_DRAWING_SOFT_drawLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY);
 
 /*
  * @brief Draws a horizontal line at between points x1,y (included) and x2,y (included).
@@ -64,8 +74,10 @@ void UI_DRAWING_SOFT_drawLine(MICROUI_GraphicsContext* gc, jint startX, jint sta
  * @param[in] x1 the first pixel line X coordinate.
  * @param[in] x2 the last pixel line X coordinate.
  * @param[in] y the both pixels line Y coordinate.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawHorizontalLine(MICROUI_GraphicsContext* gc, jint x1, jint x2, jint y);
+DRAWING_Status UI_DRAWING_SOFT_drawHorizontalLine(MICROUI_GraphicsContext* gc, jint x1, jint x2, jint y);
 
 /*
  * @brief Draws a vertical line at between points x,y1 (included) and x,y2 (included).
@@ -75,8 +87,10 @@ void UI_DRAWING_SOFT_drawHorizontalLine(MICROUI_GraphicsContext* gc, jint x1, ji
  * @param[in] x the both pixels line X coordinate.
  * @param[in] y1 the first pixel line Y coordinate.
  * @param[in] y2 the last pixel line Y coordinate.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawVerticalLine(MICROUI_GraphicsContext* gc, jint x, jint y1, jint y2);
+DRAWING_Status UI_DRAWING_SOFT_drawVerticalLine(MICROUI_GraphicsContext* gc, jint x, jint y1, jint y2);
 
 /*
  * @brief Draws an orthogonal rectangle at from top-left point x1,y1 (included) and bottom-right
@@ -88,8 +102,10 @@ void UI_DRAWING_SOFT_drawVerticalLine(MICROUI_GraphicsContext* gc, jint x, jint 
  * @param[in] y1 the top-left pixel Y coordinate.
  * @param[in] x2 the bottom-right pixel X coordinate.
  * @param[in] y2 the top-right pixel Y coordinate.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1, jint x2, jint y2);
+DRAWING_Status UI_DRAWING_SOFT_drawRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1, jint x2, jint y2);
 
 /*
  * @brief Fills a rectangle at from top-left point x1,y1 (included) and bottom-right
@@ -101,8 +117,10 @@ void UI_DRAWING_SOFT_drawRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1
  * @param[in] y1 the top-left pixel Y coordinate.
  * @param[in] x2 the bottom-right pixel X coordinate.
  * @param[in] y2 the top-right pixel Y coordinate.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_fillRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1, jint x2, jint y2);
+DRAWING_Status UI_DRAWING_SOFT_fillRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1, jint x2, jint y2);
 
 /*
  * @brief Draws a rounded rectangle at from top-left point x,y (included) and bottom-right
@@ -115,8 +133,10 @@ void UI_DRAWING_SOFT_fillRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1
  * @param[in] height the rectangle height.
  * @param[in] cornerEllipseWidth  the horizontal diameter of the arc at the corners.
  * @param[in] cornerEllipseHeight the vertical diameter of the arc at the corners.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
+DRAWING_Status UI_DRAWING_SOFT_drawRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
 
 /*
  * @brief Fills a rounded rectangle at from top-left point x,y (included) and bottom-right
@@ -129,8 +149,10 @@ void UI_DRAWING_SOFT_drawRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, j
  * @param[in] height the rectangle height.
  * @param[in] cornerEllipseWidth  the horizontal diameter of the arc at the corners.
  * @param[in] cornerEllipseHeight the vertical diameter of the arc at the corners.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_fillRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
+DRAWING_Status UI_DRAWING_SOFT_fillRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
 
 /*
  * @brief Draws a circular arc covering the square defined by top-left point x,y (included)
@@ -157,8 +179,10 @@ void UI_DRAWING_SOFT_fillRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, j
  * @param[in] square the diameter of the arc to draw.
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
+DRAWING_Status UI_DRAWING_SOFT_drawCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Draws an elliptical arc covering the rectangle defined by top-left point x,y (included)
@@ -187,8 +211,10 @@ void UI_DRAWING_SOFT_drawCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, 
  * @param[in] height the rectangle height.
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
+DRAWING_Status UI_DRAWING_SOFT_drawEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Fills a circular arc covering the square defined by top-left point x,y (included)
@@ -215,8 +241,10 @@ void UI_DRAWING_SOFT_drawEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y,
  * @param[in] diameter the diameter of the arc to draw.
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_fillCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
+DRAWING_Status UI_DRAWING_SOFT_fillCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Fills an elliptical arc covering the rectangle defined by top-left point x,y (included)
@@ -245,8 +273,10 @@ void UI_DRAWING_SOFT_fillCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, 
  * @param[in] height the rectangle height.
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_fillEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
+DRAWING_Status UI_DRAWING_SOFT_fillEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jfloat startAngle, jfloat arcAngle);
 
 /*
  * @brief Draws an ellipse covering the rectangle defined by top-left point x,y (included)
@@ -264,8 +294,10 @@ void UI_DRAWING_SOFT_fillEllipseArc(MICROUI_GraphicsContext* gc, jint x, jint y,
  * @param[in] y the top-left pixel Y coordinate.
  * @param[in] width the ellipse width.
  * @param[in] height the ellipse height.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
+DRAWING_Status UI_DRAWING_SOFT_drawEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
 
 /*
  * @brief Fills an ellipse covering the rectangle defined by top-left point x,y (included)
@@ -282,8 +314,10 @@ void UI_DRAWING_SOFT_drawEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, ji
  * @param[in] y the top-left pixel Y coordinate.
  * @param[in] width the ellipse width.
  * @param[in] height the ellipse height.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_fillEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
+DRAWING_Status UI_DRAWING_SOFT_fillEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height);
 
 /*
  * @brief Draws a circle covering the square defined by top-left point x,y (included)
@@ -299,8 +333,10 @@ void UI_DRAWING_SOFT_fillEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, ji
  * @param[in] x the top-left pixel X coordinate.
  * @param[in] y the top-left pixel Y coordinate.
  * @param[in] diameter the circle square size.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
+DRAWING_Status UI_DRAWING_SOFT_drawCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
 
 /*
  * @brief Fills a circle covering the square defined by top-left point x,y (included)
@@ -316,11 +352,16 @@ void UI_DRAWING_SOFT_drawCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jin
  * @param[in] x the top-left pixel X coordinate.
  * @param[in] y the top-left pixel Y coordinate.
  * @param[in] diameter the circle square size.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
+DRAWING_Status UI_DRAWING_SOFT_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
 
 /*
  * @brief Draws a region of an image.
+ *
+ * The image and the destination (MICROUI_GraphicsContext) never target the same image. See
+ * UI_DRAWING_copyImage() and UI_DRAWING_drawRegion().
  *
  * The region of the image to draw is given relative to the image (origin at the
  * upper-left corner) as a rectangle.
@@ -341,14 +382,72 @@ void UI_DRAWING_SOFT_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jin
  * @param[in] gc the MicroUI GraphicsContext target.
  * @param[in] img the MicroUI Image to draw.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to copy.
  * @param[in] width the width of the region to copy.
  * @param[in] height the height of the region to copy.
  * @param[in] x the x coordinate of the top-left point in the destination.
  * @param[in] y the y coordinate of the top-left point in the destination.
  * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void UI_DRAWING_SOFT_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
+DRAWING_Status UI_DRAWING_SOFT_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
+
+/*
+ * @brief Copy a region of an image in another image with the same pixel format.
+ *
+ * Contrary to UI_DRAWING_drawImage(), the opacity is not an option. As the source and destination
+ * have the same pixel representation, this function has just to perform a "memory copy".
+ *
+ * The region of the image to draw is given relative to the image (origin at the
+ * upper-left corner) as a rectangle.
+ *
+ * If the specified source region exceeds the image bounds, the copied region is
+ * limited to the image boundary. If the copied region goes out of the bounds of
+ * the graphics context area, pixels out of the range will not be drawn.
+ *
+ * The image and the destination (MICROUI_GraphicsContext) may target the same image. By consequence,
+ * the implementation has to check the "overlap" use-case: the region to copy overlaps the destination
+ * region.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] img the MicroUI Image to copy.
+ * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to copy.
+ * @param[in] width the width of the region to copy.
+ * @param[in] height the height of the region to copy.
+ * @param[in] x the x coordinate of the top-left point in the destination.
+ * @param[in] y the y coordinate of the top-left point in the destination.
+ *
+ * @return the drawing status (always DRAWING_DONE).
+ */
+DRAWING_Status UI_DRAWING_SOFT_copyImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y);
+
+/*
+ * @brief Draw a region of an image in the same image.
+ *
+ * Contrary to UI_DRAWING_drawImage(), the implementation has to check the "overlap" use-case:
+ * the region to copy overlaps the destination region.
+ *
+ * The region of the image to draw is given relative to the image (origin at the
+ * upper-left corner) as a rectangle.
+ *
+ * If the specified source region exceeds the image bounds, the copied region is
+ * limited to the image boundary. If the copied region goes out of the bounds of
+ * the graphics context area, pixels out of the range will not be drawn.
+ *
+ * @param[in] gc the MicroUI GraphicsContext source and target.
+ * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to copy.
+ * @param[in] width the width of the region to copy.
+ * @param[in] height the height of the region to copy.
+ * @param[in] x the x coordinate of the top-left point in the destination.
+ * @param[in] y the y coordinate of the top-left point in the destination.
+ * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status (always DRAWING_DONE).
+ */
+DRAWING_Status UI_DRAWING_SOFT_drawRegion(MICROUI_GraphicsContext* gc, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
 
 // --------------------------------------------------------------------------------
 // EOF

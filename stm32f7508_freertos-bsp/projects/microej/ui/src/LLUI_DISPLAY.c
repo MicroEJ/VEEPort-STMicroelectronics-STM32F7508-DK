@@ -20,7 +20,7 @@
 #include "bsp_util.h"
 #include "framerate.h"
 #include "interrupts.h"
-#include "drawing_dma2d.h"
+#include "ui_drawing_dma2d.h"
 #include "microej_decode.h"
 
 /* Defines -------------------------------------------------------------------*/
@@ -52,7 +52,7 @@ static void lcd_enable_interrupt(void)
 
 void DMA2D_IRQHandler(void)
 {
-	DRAWING_DMA2D_IRQHandler();
+	UI_DRAWING_DMA2D_IRQHandler();
 }
 
 void LTDC_IRQHandler(void)
@@ -92,7 +92,7 @@ void HAL_LTDC_ReloadEventCallback(LTDC_HandleTypeDef *hltdc)
 	__HAL_LTDC_ENABLE_IT(hltdc, LTDC_IT_RR);
 
 	// launch the copy from backbuffer to lcd buffer
-	DRAWING_DMA2D_start_memcpy(&dma2d_memcpy);
+	UI_DRAWING_DMA2D_start_memcpy(&dma2d_memcpy);
 }
 
 /* API -----------------------------------------------------------------------*/
@@ -124,7 +124,7 @@ void LLUI_DISPLAY_IMPL_initialize(LLUI_DISPLAY_SInitData* init_data)
 	HAL_NVIC_SetPriority(LTDC_IRQn, 5, 3);
 	HAL_NVIC_EnableIRQ(LTDC_IRQn);
 
-	DRAWING_DMA2D_initialize((void*)dma2d_sem);
+	UI_DRAWING_DMA2D_initialize((void*)dma2d_sem);
 }
 
 void LLUI_DISPLAY_IMPL_binarySemaphoreTake(void* sem)
@@ -159,7 +159,7 @@ uint8_t* LLUI_DISPLAY_IMPL_flush(MICROUI_GraphicsContext* gc, uint8_t* srcAddr, 
 #endif
 
 	HAL_LTDC_SetAddress(&hLtdcHandler, (uint32_t)srcAddr, LTDC_ACTIVE_LAYER);
-	DRAWING_DMA2D_configure_memcpy(srcAddr, destAddr, xmin, ymin, xmax, ymax, RK043FN48H_WIDTH, &dma2d_memcpy);
+	UI_DRAWING_DMA2D_configure_memcpy(srcAddr, destAddr, xmin, ymin, xmax, ymax, RK043FN48H_WIDTH, &dma2d_memcpy);
 	lcd_enable_interrupt();
 
 	return destAddr;

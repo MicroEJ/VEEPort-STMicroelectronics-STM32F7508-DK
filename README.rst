@@ -1,5 +1,5 @@
-.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.7.json
-   :alt: sdk_5.7 badge
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.x.json
+   :alt: sdk_5.x badge
    :align: left
 
 .. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/arch_8.0.json
@@ -11,11 +11,11 @@
    :align: left
 
 ..
-    Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+    Copyright 2020-2024 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.1.2
+.. |VEEPORT_VER| replace:: 2.2.0
 .. |RCP| replace:: MICROEJ SDK
 .. |VEEPORT| replace:: VEE Port
 .. |SIM| replace:: Simulator
@@ -116,13 +116,13 @@ This |VEEPORT| provides the following Foundation Libraries:
    * - HAL
      - 1.0
    * - KF
-     - 1.6
+     - 1.7
    * - MICROUI
-     - 3.1
+     - 3.4
    * - NET
      - 1.1
    * - NET-EMBEDDED-DNS-NATIVE
-     - 1.2
+     - 1.3
    * - NLS
      - 2.0
    * - PUMP
@@ -189,7 +189,7 @@ BSP Compilation
 ---------------
 
 Before the first build of the BSP, ensure you have cloned the repository and all its submodules. To update git submodules, run the 
-following command in "git submodule update --init --recursive" in the root project "P0234_STM32F7508-DK".
+following command in "git submodule update --init --recursive" at the root of this project.
 
 The |VEEPORT| provides a pre-compiled Mono-Sandbox Application for each toolchain.
 Validate the BSP installation by compiling the BSP to build a MicroEJ

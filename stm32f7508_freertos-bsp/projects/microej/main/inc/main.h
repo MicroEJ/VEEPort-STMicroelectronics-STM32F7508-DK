@@ -56,7 +56,7 @@
 /**
  * @brief External FreeRTOS task handle of the MicroEJ Core Engine task.
  */
-extern TaskHandle_t pvMicrojvmCreatedTask;
+extern TaskHandle_t pvMicroEJVeeCreatedTask;
 
 #ifndef USE_FULL_ASSERT
 extern uint32_t    ErrorCounter;

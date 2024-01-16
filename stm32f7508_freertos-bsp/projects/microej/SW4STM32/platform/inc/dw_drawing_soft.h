@@ -1,5 +1,5 @@
 /* 
- * Copyright 2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -16,10 +16,7 @@ extern "C" {
  * implementation. Please refer to dw_drawing.h to have more information about the
  * aim of these functions.
  *
- * Contrary to functions listed in dw_drawing.h, the Graphics Engine functions
- * are blocking. If a software algorithm is using a third party function listed in
- * dw_drawing.h (see dw_drawing.h file comment), a "wait end of drawing"
- * is automatically performed.
+ * See ui_drawing_soft.h to have more information.
  */
 
 // --------------------------------------------------------------------------------
@@ -43,8 +40,10 @@ extern "C" {
  * @param[in] y the point Y coordinate.
  * @param[in] thickness the point thickness.
  * @param[in] fade the fade to apply.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickFadedPoint(MICROUI_GraphicsContext* gc, jint x, jint y, jint thickness, jint fade);
+DRAWING_Status DW_DRAWING_SOFT_drawThickFadedPoint(MICROUI_GraphicsContext* gc, jint x, jint y, jint thickness, jint fade);
 
 /*
  * @brief Draws an anti-aliased line between given points.
@@ -58,8 +57,10 @@ void DW_DRAWING_SOFT_drawThickFadedPoint(MICROUI_GraphicsContext* gc, jint x, ji
  * @param[in] fade the fade to apply.
  * @param[in] startCap cap representation of start of shape
  * @param[in] endCap cap representation of end of shape
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickFadedLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness, jint fade, DRAWING_Cap startCap, DRAWING_Cap endCap);
+DRAWING_Status DW_DRAWING_SOFT_drawThickFadedLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness, jint fade, DRAWING_Cap startCap, DRAWING_Cap endCap);
 
 /*
  * @brief Draws an anti-aliased circle covering the square specified by its diameter.
@@ -72,8 +73,10 @@ void DW_DRAWING_SOFT_drawThickFadedLine(MICROUI_GraphicsContext* gc, jint startX
  * @param[in] diameter the diameter of the circle to draw
  * @param[in] thickness the circle thickness.
  * @param[in] fade the fade to apply.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickFadedCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness, jint fade);
+DRAWING_Status DW_DRAWING_SOFT_drawThickFadedCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness, jint fade);
 
 /*
  * @brief Draws an anti-aliased circle arc covering the specified square.
@@ -103,8 +106,10 @@ void DW_DRAWING_SOFT_drawThickFadedCircle(MICROUI_GraphicsContext* gc, jint x, j
  * @param[in] fade the fade to apply.
  * @param[in] start cap representation of start of shape
  * @param[in] end cap representation of end of shape
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickFadedCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness, jint fade, DRAWING_Cap start, DRAWING_Cap end);
+DRAWING_Status DW_DRAWING_SOFT_drawThickFadedCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness, jint fade, DRAWING_Cap start, DRAWING_Cap end);
 
 /*
  * @brief Draws an anti-aliased ellipse covering the specified rectangle.
@@ -121,8 +126,10 @@ void DW_DRAWING_SOFT_drawThickFadedCircleArc(MICROUI_GraphicsContext* gc, jint x
  * @param[in] width the width of the ellipse to draw
  * @param[in] height the height of the ellipse to draw
  * @param[in] thickness the ellipse thickness.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickFadedEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness, jint fade);
+DRAWING_Status DW_DRAWING_SOFT_drawThickFadedEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness, jint fade);
 
 /*
  * @brief Draws a thick line between given points.
@@ -133,8 +140,10 @@ void DW_DRAWING_SOFT_drawThickFadedEllipse(MICROUI_GraphicsContext* gc, jint x, 
  * @param[in] endX the x coordinate of the end of the line
  * @param[in] endY the y coordinate of the end of the line
  * @param[in] thickness the line thickness.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness);
+DRAWING_Status DW_DRAWING_SOFT_drawThickLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness);
 
 /*
  * @brief Draws a thick circle covering the square specified by its diameter.
@@ -146,8 +155,10 @@ void DW_DRAWING_SOFT_drawThickLine(MICROUI_GraphicsContext* gc, jint startX, jin
  * @param[in] y the y coordinate of the upper-left corner of the square where the circle is drawn
  * @param[in] diameter the diameter of the circle to draw
  * @param[in] thickness the circle thickness.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness);
+DRAWING_Status DW_DRAWING_SOFT_drawThickCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness);
 
 /*
  * @brief Draws a thick ellipse covering the specified rectangle.
@@ -163,8 +174,10 @@ void DW_DRAWING_SOFT_drawThickCircle(MICROUI_GraphicsContext* gc, jint x, jint y
  * @param[in] width the width of the ellipse to draw
  * @param[in] height the height of the ellipse to draw
  * @param[in] thickness the circle thickness.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness);
+DRAWING_Status DW_DRAWING_SOFT_drawThickEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness);
 
 /*
  * @brief Draws a thick arc covering the square specified by its diameter.
@@ -186,8 +199,10 @@ void DW_DRAWING_SOFT_drawThickEllipse(MICROUI_GraphicsContext* gc, jint x, jint 
  * @param[in] startAngle the beginning angle of the arc to draw
  * @param[in] arcAngle the angular extent of the arc from startAngle
  * @param[in] thickness the arc thickness.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawThickCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness);
+DRAWING_Status DW_DRAWING_SOFT_drawThickCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness);
 
 /*
  * @brief Draws an image applying a flip (0, 90, 180 or 270 degrees with or without
@@ -196,15 +211,17 @@ void DW_DRAWING_SOFT_drawThickCircleArc(MICROUI_GraphicsContext* gc, jint x, jin
  * @param[in] gc the MicroUI GraphicsContext target.
  * @param[in] img the MicroUI Image to draw.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to draw.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to draw.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to draw.
  * @param[in] width the width of the region to copy.
  * @param[in] height the height of the region to copy.
  * @param[in] x the x coordinate of the top-left point in the destination.
  * @param[in] y the y coordinate of the top-left point in the destination.
  * @param[in] transformation the flip to apply.
  * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawFlippedImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, DRAWING_Flip transformation, jint alpha);
+DRAWING_Status DW_DRAWING_SOFT_drawFlippedImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, DRAWING_Flip transformation, jint alpha);
 
 /*
  * @brief Draws an image applying a free rotation (0 to 360 degrees).
@@ -224,8 +241,10 @@ void DW_DRAWING_SOFT_drawFlippedImage(MICROUI_GraphicsContext* gc, MICROUI_Image
  * @param[in] rotationY the y coordinate of the rotation center.
  * @param[in] angle the rotation angle.
  * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawRotatedImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha);
+DRAWING_Status DW_DRAWING_SOFT_drawRotatedImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha);
 
 /*
  * @brief Draws an image applying a free rotation (0 to 360 degrees).
@@ -246,8 +265,10 @@ void DW_DRAWING_SOFT_drawRotatedImageNearestNeighbor(MICROUI_GraphicsContext* gc
  * @param[in] rotationY the y coordinate of the rotation center.
  * @param[in] angle the rotation angle.
  * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawRotatedImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha);
+DRAWING_Status DW_DRAWING_SOFT_drawRotatedImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha);
 
 /*
  * @brief Draws an image applying a scaling.
@@ -262,8 +283,10 @@ void DW_DRAWING_SOFT_drawRotatedImageBilinear(MICROUI_GraphicsContext* gc, MICRO
  * @param[in] factorX scaling X factor.
  * @param[in] factorY scaling Y factor.
  * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawScaledImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha);
+DRAWING_Status DW_DRAWING_SOFT_drawScaledImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha);
 
 /*
  * @brief Draws an image applying a scaling.
@@ -279,8 +302,10 @@ void DW_DRAWING_SOFT_drawScaledImageNearestNeighbor(MICROUI_GraphicsContext* gc,
  * @param[in] factorX scaling X factor.
  * @param[in] factorY scaling Y factor.
  * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status (always DRAWING_DONE).
  */
-void DW_DRAWING_SOFT_drawScaledImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha);
+DRAWING_Status DW_DRAWING_SOFT_drawScaledImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha);
 
 // --------------------------------------------------------------------------------
 // EOF

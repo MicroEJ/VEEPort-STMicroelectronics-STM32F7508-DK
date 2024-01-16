@@ -17,8 +17,7 @@
  *
  * @see LLUI_INPUT_impl.h file comment
  * @author MicroEJ Developer Team
- * @version 2.0.1
- * @date 16 December 2022
+ * @version 3.1.0
  * @since MicroEJ UI Pack 13.1.0
  */
 
@@ -30,14 +29,10 @@
 #include <string.h>
 
 // implements some LLUI_INPUT_impl functions
-#include "LLUI_INPUT_impl.h"
+#include <LLUI_INPUT_impl.h>
 
 // deport event description to another file
 #include "microui_event_decoder.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #ifdef MICROUIEVENTDECODER_ENABLED
 
@@ -181,8 +176,4 @@ void LLUI_INPUT_IMPL_log_dump(bool log_type, uint32_t log, uint32_t index) {
 // -----------------------------------------------------------------------------
 // EOF
 // -----------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}
-#endif
 

@@ -1,9 +1,9 @@
 .. 
-	Copyright 2021-2023 MicroEJ Corp. All rights reserved.
+	Copyright 2021-2024 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.1.2
+.. |VEEPORT_VER| replace:: 2.2.0
 .. |RCP| replace:: MICROEJ SDK
 .. |VEEPORT| replace:: VEE Port
 .. |SIM| replace:: Simulator
@@ -70,24 +70,28 @@ for the IAR toolchain are scripts that can be used to build and flash the BSP.
 These scripts work out of the box, assuming the toolchain is
 installed in the default path.
 
-The following environment variables are customizable:  
+The following environment variables are customizable:
 
 **GCC toolchain**
 
-- ``ECLIPSE_CDT_INSTALLATION_DIR``: The path to Eclipse CDT installation directory  (already set to the STM32CubeIDE 1.9.0 default installation directory).
-- ``CUBE_PROGRAMMER_DIR=``: The path to Cube Programmer installation directory (already set to the Cube Programmer default installation directory).
+- ``ECLIPSE_CDT_INSTALLATION_DIR``: The path to Eclipse CDT installation directory (already set to the STM32CubeIDE 1.9.0 default installation directory, e.g. ``C:\ST\STM32CubeIDE_1.9.0\STM32CubeIDE``).
+- ``CUBE_PROGRAMMER_DIR=``: The path to Cube Programmer installation directory (already set to the Cube Programmer default installation directory, e.g. ``C:\ST\STM32CubeIDE_1.9.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.0.200.202202231230\tools\bin``).
 - ``ECLIPSE_CDT_WORKSPACE_DIR``: The path to the workspace directory in which the project will be imported. (already set to the ``xxx/stm32f7508_freertos-bsp/projects/microej/cdt_workspace`` directory).
 - ``ECLIPSE_CDT_PROJECT_CONFIGURATION``: The project configuration (``Debug`` or ``Release``).
 - ``ECLIPSE_CDT_EXECUTABLE``: The Eclipse CDT executable file (``stm32cubeidec.exe`` by default).
 - ``ECLIPSE_CDT_PROJECT_DIR``: The directory that contains the ``.cproject`` CDT project file  (set to ``%~dp0``: the directory that contains the executed ``.bat``).
 - ``ECLIPSE_CDT_PROJECT_NAME``: The Eclipse CDT project name (``application`` by default).
 
+On Windows, the ``ECLIPSE_CDT_INSTALLATION_DIR`` and ``CUBE_PROGRAMMER_DIR`` variables can be overridden by defining them as system environment variables.
+
 **IAR toolchain**
 
-- ``IAREW_INSTALLATION_DIR``: The path to IAR installation directory (already set to the default IAR Workbench default installation directory).
+- ``IAREW_INSTALLATION_DIR``: The path to IAR installation directory (already set to the default IAR Workbench default installation directory, e.g. ``C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4``).
 - ``IAREW_PROJECT_CONFIGURATION``: The project configuration (``Debug`` or ``Release``).
 - ``IAREW_PROJECT_DIR``: The directory that contains the ``application.eww`` IAR project file (set to ``%~dp0``: the directory that contains the executed ``.bat``).
 - ``IAREW_PROJECT_NAME``: The Eclipse CDT project name (``application`` by default).
+
+On Windows, the ``IAREW_INSTALLATION_DIR`` variable can be overridden by defining it as a system environment variable.
 
 The environment variables can be defined globally by the user or in
 the ``set_local_env.bat`` scripts.  When the ``.bat`` scripts

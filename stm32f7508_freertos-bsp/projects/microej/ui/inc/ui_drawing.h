@@ -1,11 +1,10 @@
 /* 
- * Copyright 2020-2022 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
-#ifndef _UI_DRAWING
-#define _UI_DRAWING
+#if !defined UI_DRAWING_H
+#define UI_DRAWING_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -26,11 +25,9 @@ extern "C" {
  *
  * This cut simplifies the MicroUI native function implementation, which becomes:
  *
- * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...)
- * {
+ * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...) {
  * 		// tell to the Graphics Engine if drawing can be performed
- * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx))
- * 		{
+ * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx)) {
  * 			// perform the drawings and set drawing status
  * 			LLUI_DISPLAY_setDrawingStatus(_drawing_xxx(gc, ...));
  * 		}
@@ -39,20 +36,16 @@ extern "C" {
  *
  * When clip is checked very early, the native implementation becomes:
  *
- * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...)
- * {
+ * void _drawing_native_xxx(MICROUI_GraphicsContext* gc, ...) {
  * 		// tell to the Graphics Engine if drawing can be performed
- * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx))
- * 		{
+ * 		if (LLUI_DISPLAY_requestDrawing(gc, (SNI_callback)&_drawing_native_xxx)) {
  * 			DRAWING_Status status;
  *
- * 			if (LLUI_DISPLAY_isInClip(gc, ...))
- * 			{
+ * 			if (LLUI_DISPLAY_isInClip(gc, ...)) {
  * 				// perform the drawings
  * 				status = _drawing_xxx(gc, ...);
  * 			}
- * 			else
- * 			{
+ * 			else {
  * 				// drawing is out of clip: nothing to draw
  * 				status = DRAWING_DONE;
  *			}
@@ -64,67 +57,115 @@ extern "C" {
  * }
  *
  * This cut allows to use a third party drawer like a dedicated CPU (hardware accelerator).
- * However, all drawing functions are already implemented in the Graphics Engine as
+ * However, all drawing functions are already implemented in ui_drawing.c as
  * weak implementation. This allows to override one or several functions without
- * the need to override all functions.
+ * the need to override all functions. Default ui_drawing.c implementation calls the
+ * Graphics Engine software algorithms.
  *
- * Default Graphics Engine implementation is using software algorithms. However
- * some software algorithms may call some others drawing functions. For instance
- * to draw a vertical line, a call to "fill rectangle" is performed. If the drawing
- * implementation file implements only "fill rectangle" function over a GPU, this
- * function will be used to draw vertical lines too.
- *
- * The default Graphics Engine software algorithms are listed in ui_drawing_soft.h.
+ * The Graphics Engine software algorithms are listed in ui_drawing_soft.h.
  * This allows to the ui_drawing.h to test if it is able to perform a drawing and
  * if not, to call the software algorithm instead. For instance a GPU may be able
- * to draw an image applying a rotation but it can apply this rotation and a mirror
+ * to draw an image applying a rotation but it can't apply this rotation and an opacity
  * at the same time. In this case, the drawing implementation function has to check
- * if the parameter "mirror" is false; if not, implementation has to call software
- * algorithm instead.
+ * the parameter "alpha" and calls or not Graphics Engine software algorithm.
  *
  * The implementation of these drawings must respect the graphics context clip and
  * the flush dirty area as explained in LLUI_PAINTER_impl.h.
+ *
+ * @author MicroEJ Developer Team
+ * @version 3.1.0
  */
 
 // --------------------------------------------------------------------------------
 // Includes
 // --------------------------------------------------------------------------------
 
+#include <LLUI_PAINTER_impl.h>
+#include <LLDW_PAINTER_impl.h>
+
+// --------------------------------------------------------------------------------
+// Defines
+// --------------------------------------------------------------------------------
+
 /*
- * @brief Requires LLUI_PAINTER_impl.h typedefs.
+ * @brief Concat two defines
  */
-#include "LLUI_PAINTER_impl.h"
+#ifndef CONCAT
+#define CONCAT0(p,s) p ## s
+#define CONCAT(p,s) CONCAT0(p,s)
+#endif
 
 // --------------------------------------------------------------------------------
-// Typedefs and Structures
+// API
 // --------------------------------------------------------------------------------
+
+#if defined(LLUI_GC_SUPPORTED_FORMATS) && (LLUI_GC_SUPPORTED_FORMATS > 1)
 
 /*
- * @brief Drawing functions' return status.
+ * @brief Tells if drawer "1" matches the destination format. The VEE port must implement
+ * this function when it includes the support to target the destination format. It not, the
+ * default weak implementation in ui_drawing.c redirects all the drawings for this destination
+ * format in the stub implementation.
+ */
+bool UI_DRAWING_is_drawer_1(jbyte image_format);
+
+#if (LLUI_GC_SUPPORTED_FORMATS > 2)
+/*
+ * @brief Tells drawer "2" matches the destination format. See UI_DRAWING_is_drawer_1.
+ */
+bool UI_DRAWING_is_drawer_2(jbyte image_format);
+
+#endif // #if (LLUI_GC_SUPPORTED_FORMATS > 2)
+
+#endif // #if defined(LLUI_GC_SUPPORTED_FORMATS) && (LLUI_GC_SUPPORTED_FORMATS > 1)
+
+/*
+ * @brief Returns the new image row stride in bytes.
  *
- * A function has to return DRAWING_DONE when the drawing has been fully done during
- * the function call (synchronous drawing). When the drawing is performed by an
- * asynchronous third party process (software or hardware), the function has to
- * return DRAWING_RUNNING to notify to the Graphics Engine the drawing is not fully
- * done yet.
+ * @param[in] image_format the new RAW image format. The format is one value from the
+ * MICROUI_ImageFormat enumeration.
+ * @param[in] image_width the new image width (in pixels).
+ * @param[in] image_height the new image height (in pixels).
+ * @param[in] default_stride the minimal row stride (in bytes)
+ *
+ * @return expected row stride (in bytes)
+ *
+ * @see LLUI_DISPLAY_IMPL_getNewImageStrideInBytes()
  */
-typedef enum
-{
-	/*
-	 * @brief Value to return when the drawing has been synchronously performed.
-	 */
-	DRAWING_DONE = 0,
+uint32_t UI_DRAWING_getNewImageStrideInBytes(jbyte image_format, uint32_t image_width, uint32_t image_height, uint32_t default_stride);
 
-	/*
-	 * @brief Value to return when the drawing will be asynchronously performed.
-	 */
-	DRAWING_RUNNING = 1
+/*
+ * @brief Adjusts the new image characteristics: data size and alignment.
+ *
+ * @param[in] image_format the new RAW image format. The format is one value from the
+ * MICROUI_ImageFormat enumeration.
+ * @param[in] width the new image width (in pixels).
+ * @param[in] height the new image height (in pixels).
+ * @param[in/out] data_size the minimal data size (in bytes).
+ * @param[in/out] data_alignment the minimal data alignment to respect (in bytes).
+ *
+ * @see LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics()
+ */
+void UI_DRAWING_adjustNewImageCharacteristics(jbyte image_format, uint32_t width, uint32_t height, uint32_t* data_size, uint32_t* data_alignment);
 
-} DRAWING_Status;
+/*
+ * @brief Initializes the image's buffer.
+ *
+ * @param[in] image the MicroUI Image to initialize.
+ *
+ * @see LLUI_DISPLAY_IMPL_initializeNewImage()
+ */
+void UI_DRAWING_initializeNewImage(MICROUI_Image* image);
 
-// --------------------------------------------------------------------------------
-// Functions that must be implemented
-// --------------------------------------------------------------------------------
+/*
+ * @brief Frees the image's resources (if any). This function is called just before releasing
+ * the image buffer and closing the image.
+ *
+ * @param[in] image the MicroUI Image to close.
+ *
+ * @see LLUI_DISPLAY_IMPL_freeImageResources()
+ */
+void UI_DRAWING_freeImageResources(MICROUI_Image* image);
 
 /*
  * @brief Draws a pixel at given position.
@@ -451,7 +492,7 @@ DRAWING_Status UI_DRAWING_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y
  * @param[in] gc the MicroUI GraphicsContext target.
  * @param[in] img the MicroUI Image to draw.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to copy.
  * @param[in] width the width of the region to copy.
  * @param[in] height the height of the region to copy.
  * @param[in] x the x coordinate of the top-left point in the destination.
@@ -482,7 +523,7 @@ DRAWING_Status UI_DRAWING_drawImage(MICROUI_GraphicsContext* gc, MICROUI_Image* 
  * @param[in] gc the MicroUI GraphicsContext target.
  * @param[in] img the MicroUI Image to copy.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to copy.
  * @param[in] width the width of the region to copy.
  * @param[in] height the height of the region to copy.
  * @param[in] x the x coordinate of the top-left point in the destination.
@@ -507,7 +548,7 @@ DRAWING_Status UI_DRAWING_copyImage(MICROUI_GraphicsContext* gc, MICROUI_Image* 
  *
  * @param[in] gc the MicroUI GraphicsContext source and target.
  * @param[in] regionX the x coordinate of the upper-left corner of the region to copy.
- * @param[in] regionY the x coordinate of the upper-left corner of the region to copy.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to copy.
  * @param[in] width the width of the region to copy.
  * @param[in] height the height of the region to copy.
  * @param[in] x the x coordinate of the top-left point in the destination.
@@ -518,6 +559,281 @@ DRAWING_Status UI_DRAWING_copyImage(MICROUI_GraphicsContext* gc, MICROUI_Image* 
  */
 DRAWING_Status UI_DRAWING_drawRegion(MICROUI_GraphicsContext* gc, jint regionX, jint regionY, jint width, jint height, jint x, jint y, jint alpha);
 
+/*
+ * @brief Draws a thick point with fade at given position.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] x the point X coordinate.
+ * @param[in] y the point Y coordinate.
+ * @param[in] thickness the point thickness.
+ * @param[in] fade the fade to apply.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickFadedPoint(MICROUI_GraphicsContext* gc, jint x, jint y, jint thickness, jint fade);
+
+/*
+ * @brief Draws a thick line with fade between given points.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] startX the x coordinate of the start of the line
+ * @param[in] startY the y coordinate of the start of the line
+ * @param[in] endX the x coordinate of the end of the line
+ * @param[in] endY the y coordinate of the end of the line
+ * @param[in] thickness the line thickness.
+ * @param[in] fade the fade to apply.
+ * @param[in] startCap cap representation of start of shape
+ * @param[in] endCap cap representation of end of shape
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickFadedLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness, jint fade, DRAWING_Cap startCap, DRAWING_Cap endCap);
+
+/*
+ * @brief Draws a thick circle with fade covering the square specified by its diameter.
+ *
+ * If diameter is negative or zero, nothing is drawn.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] x the x coordinate of the upper-left corner of the square where the circle is drawn
+ * @param[in] y the y coordinate of the upper-left corner of the square where the circle is drawn
+ * @param[in] diameter the diameter of the circle to draw
+ * @param[in] thickness the circle thickness.
+ * @param[in] fade the fade to apply.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickFadedCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness, jint fade);
+
+/*
+ * @brief Draws a thick circle with fade arc covering the specified square.
+ *
+ * The arc is drawn from startAngle up to arcAngle degrees. The center of the arc
+ * is defined as the center of the square whose origin is at (x,y) (upper-left
+ * corner) and whose dimension is given by diameter.
+ *
+ * Angles are interpreted such that 0 degrees is at the 3 o'clock position. A positive
+ * value indicates a counter-clockwise rotation while a negative value indicates
+ * a clockwise rotation.
+ *
+ * If diameter is negative or zero, nothing is drawn.
+ *
+ * The angles are given relative to the square. For instance an angle of 45 degrees
+ * is always defined by the line from the center of the square to the upper right
+ * corner of the square. Thus for a non squared square angles are skewed along
+ * either height or width.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] x the x coordinate of the upper-left corner of the square where the arc is drawn
+ * @param[in] y the y coordinate of the upper-left corner of the square where the arc is drawn
+ * @param[in] diameter the diameter of the circle to draw
+ * @param[in] startAngle the beginning angle of the arc to draw
+ * @param[in] arcAngle the angular extent of the arc from startAngle
+ * @param[in] thickness the arc thickness.
+ * @param[in] fade the fade to apply.
+ * @param[in] start cap representation of start of shape
+ * @param[in] end cap representation of end of shape
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickFadedCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness, jint fade, DRAWING_Cap start, DRAWING_Cap end);
+
+/*
+ * @brief Draws a thick ellipse with fade covering the specified rectangle.
+ *
+ * The center of the ellipse is defined as the center of the rectangle whose origin
+ * is at (x,y) (upper-left corner) and whose dimension is given by width and height.
+ *
+ * If either width or height is negative or zero, nothing is drawn.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] x the x coordinate of the upper-left corner of the rectangle where the ellipse is drawn
+ * @param[in] y the y coordinate of the upper-left corner of the rectangle where the ellipse is drawn
+ * @param[in] width the width of the ellipse to draw
+ * @param[in] height the height of the ellipse to draw
+ * @param[in] thickness the ellipse thickness.
+ * @param[in] fade the fade to apply.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickFadedEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness, jint fade);
+
+/*
+ * @brief Draws a thick line between given points.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] startX the x coordinate of the start of the line
+ * @param[in] startY the y coordinate of the start of the line
+ * @param[in] endX the x coordinate of the end of the line
+ * @param[in] endY the y coordinate of the end of the line
+ * @param[in] thickness the line thickness.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickLine(MICROUI_GraphicsContext* gc, jint startX, jint startY, jint endX, jint endY, jint thickness);
+
+/*
+ * @brief Draws a thick circle covering the square specified by its diameter.
+ *
+ * If diameter is negative or zero, nothing is drawn.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] x the x coordinate of the upper-left corner of the square where the circle is drawn
+ * @param[in] y the y coordinate of the upper-left corner of the square where the circle is drawn
+ * @param[in] diameter the diameter of the circle to draw
+ * @param[in] thickness the circle thickness.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jint thickness);
+
+/*
+ * @brief Draws a thick ellipse covering the specified rectangle.
+ *
+ * The center of the ellipse is defined as the center of the rectangle whose origin
+ * is at (x,y) (upper-left corner) and whose dimension is given by width and height.
+ *
+ * If either width or height is negative or zero, nothing is drawn.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] x the x coordinate of the upper-left corner of the square where the circle is drawn
+ * @param[in] y the y coordinate of the upper-left corner of the square where the circle is drawn
+ * @param[in] width the width of the ellipse to draw
+ * @param[in] height the height of the ellipse to draw
+ * @param[in] thickness the circle thickness.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickEllipse(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint thickness);
+
+/*
+ * @brief Draws a thick arc covering the square specified by its diameter.
+ *
+ * The arc is drawn from startAngle up to arcAngle degrees. The center of the arc is
+ * defined as the center of the square whose origin is at (x,y) (upper-left corner)
+ * and whose dimension is given by diameter.
+ *
+ * Angles are interpreted such that 0 degrees is at the 3 o'clock position. A positive
+ * value indicates a counter-clockwise rotation while a negative value indicates a
+ * clockwise rotation.
+ *
+ * If diameter is negative, nothing is drawn.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] x the x coordinate of the upper-left corner of the square where the arc is drawn
+ * @param[in] y the y coordinate of the upper-left corner of the square where the arc is drawn
+ * @param[in] diameter the diameter of the circle to draw
+ * @param[in] startAngle the beginning angle of the arc to draw
+ * @param[in] arcAngle the angular extent of the arc from startAngle
+ * @param[in] thickness the arc thickness.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawThickCircleArc(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter, jfloat startAngle, jfloat arcAngle, jint thickness);
+
+/*
+ * @brief Draws an image applying a flip (0, 90, 180 or 270 degrees with or without
+ * mirror).
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] img the MicroUI Image to draw.
+ * @param[in] regionX the x coordinate of the upper-left corner of the region to draw.
+ * @param[in] regionY the y coordinate of the upper-left corner of the region to draw.
+ * @param[in] width the width of the region to copy.
+ * @param[in] height the height of the region to copy.
+ * @param[in] x the x coordinate of the top-left point in the destination.
+ * @param[in] y the y coordinate of the top-left point in the destination.
+ * @param[in] transformation the flip to apply.
+ * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawFlippedImage(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint regionX, jint regionY, jint width, jint height, jint x, jint y, DRAWING_Flip transformation, jint alpha);
+
+/*
+ * @brief Draws an image applying a free rotation (0 to 360 degrees).
+ *
+ * The rotation is specified by the center and the angle. The reference point is
+ * the graphical object top-left corner. The rotation point is relative where the
+ * graphical object will be drawn.
+ *
+ * This method uses the nearest neighbor algorithm to render the content. This algorithm
+ * is faster than bilinear algorithm but its rendering is faster.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] img the MicroUI Image to draw.
+ * @param[in] x the x coordinate of the image reference anchor top-left point.
+ * @param[in] y the y coordinate of the image reference anchor top-left point.
+ * @param[in] rotationX the x coordinate of the rotation center.
+ * @param[in] rotationY the y coordinate of the rotation center.
+ * @param[in] angle the rotation angle.
+ * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawRotatedImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha);
+
+/*
+ * @brief Draws an image applying a free rotation (0 to 360 degrees).
+ *
+ * The rotation is specified by the center and the angle. The reference point is
+ * the graphical object top-left corner. The rotation point is relative where the
+ * graphical object will be drawn.
+ *
+ * This method uses the bilinear algorithm to render the content. This algorithm
+ * performs better rendering than nearest neighbor algorithm but it is slower to
+ * apply.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] img the MicroUI Image to draw.
+ * @param[in] x the x coordinate of the image reference anchor top-left point.
+ * @param[in] y the y coordinate of the image reference anchor top-left point.
+ * @param[in] rotationX the x coordinate of the rotation center.
+ * @param[in] rotationY the y coordinate of the rotation center.
+ * @param[in] angle the rotation angle.
+ * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawRotatedImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jint rotationX, jint rotationY, jfloat angle, jint alpha);
+
+/*
+ * @brief Draws an image applying a scaling.
+ *
+ * This method uses the nearest neighbor algorithm to render the content. This algorithm
+ * is faster than bilinear algorithm but its rendering is faster.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] img the MicroUI Image to draw.
+ * @param[in] x the x coordinate of the image reference anchor top-left point.
+ * @param[in] y the y coordinate of the image reference anchor top-left point.
+ * @param[in] factorX scaling X factor.
+ * @param[in] factorY scaling Y factor.
+ * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawScaledImageNearestNeighbor(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha);
+
+/*
+ * @brief Draws an image applying a scaling.
+ *
+ * This method uses the bilinear algorithm to render the content. This algorithm
+ * performs better rendering than nearest neighbor algorithm but it is slower to
+ * apply.
+ *
+ * @param[in] gc the MicroUI GraphicsContext target.
+ * @param[in] img the MicroUI Image to draw.
+ * @param[in] x the x coordinate of the image reference anchor top-left point.
+ * @param[in] y the y coordinate of the image reference anchor top-left point.
+ * @param[in] factorX scaling X factor.
+ * @param[in] factorY scaling Y factor.
+ * @param[in] alpha the opacity level to apply to the region.
+ *
+ * @return the drawing status.
+ */
+DRAWING_Status UI_DRAWING_drawScaledImageBilinear(MICROUI_GraphicsContext* gc, MICROUI_Image* img, jint x, jint y, jfloat factorX, jfloat factorY, jint alpha);
+
 // --------------------------------------------------------------------------------
 // EOF
 // --------------------------------------------------------------------------------
@@ -525,4 +841,4 @@ DRAWING_Status UI_DRAWING_drawRegion(MICROUI_GraphicsContext* gc, jint regionX, 
 #ifdef __cplusplus
 }
 #endif
-#endif
+#endif // UI_DRAWING_H

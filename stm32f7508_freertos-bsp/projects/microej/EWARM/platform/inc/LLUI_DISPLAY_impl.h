@@ -1,5 +1,5 @@
 /* 
- * Copyright 2011-2022 MicroEJ Corp. All rights reserved.
+ * Copyright 2011-2023 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -34,12 +34,12 @@ extern "C" {
 /*
  * @brief Low-Level API UI minor version.
  */
-#define LLUI_MINOR_VERSION 4
+#define LLUI_MINOR_VERSION 7
 
 /*
  * @brief Low-Level API UI patch version.
  */
-#define LLUI_PATCH_VERSION 1
+#define LLUI_PATCH_VERSION 2
 
 // --------------------------------------------------------------------------------
 // Typedef and Structure
@@ -445,6 +445,30 @@ bool LLUI_DISPLAY_IMPL_prepareBlendingOfIndexedColors(uint32_t* foreground, uint
 LLUI_DISPLAY_Status LLUI_DISPLAY_IMPL_decodeImage(uint8_t* addr, uint32_t length, jbyte expectedFormat, MICROUI_Image* image, bool* isFullyOpaque);
 
 /*
+ * @brief Gets the drawing engine able to draw in the GraphicsContext whose format
+ * is the given format.
+ *
+ * When the Graphics Context format is the same as the display buffer (see LLUI_DISPLAY_isDisplayFormat()),
+ * the drawing engine (called "drawer") may be the same as the one used to draw in the display
+ * buffer: the software algorithms will be used by default and the VEE Port can override one or
+ * several drawing functions to use a GPU.
+ *
+ * When this format is not same as the display buffer (see LLUI_DISPLAY_isDisplayFormat()),
+ * a dedicated drawer must be used. This engine is identified by an identifier: a value between
+ * 0 and 255. This identifier is stored in the structure "MICROUI_GraphicsContext" (see "drawer").
+ * "0" identifies the "display buffer" drawing engine.
+ *
+ * This function can return a negative value to indicate that the VEE Port does not support the
+ * destination format (no available drawing engine). It will throw an exception in the application.
+ *
+ * @param[in] image_format the new RAW image format. The format is one value from the
+ * MICROUI_ImageFormat enumeration.
+ *
+ * @return a drawing engine identifier, between 0 and 255, all other values indicate "no available drawing engine".
+ */
+int32_t LLUI_DISPLAY_IMPL_getDrawerIdentifier(jbyte image_format);
+
+/*
  * @brief Returns the new image row stride in bytes.
  *
  * Some hardware accelerators require a specific row stride when manipulating images.
@@ -504,17 +528,27 @@ uint32_t LLUI_DISPLAY_IMPL_getNewImageStrideInBytes(jbyte image_format, uint32_t
 void LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics(jbyte image_format, uint32_t width, uint32_t height, uint32_t* data_size, uint32_t* data_alignment);
 
 /*
- * @brief Initializes the image's custom header when available.
+ * @brief Initializes the image's buffer: the image data when it is a custom image (see
+ * LLUI_DISPLAY_IMPL_getDrawerIdentifier()), an optional custom header (see
+ * LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics()), etc.
  *
- * This function is only called when a custom header has been specified when creating a new
- * image (see LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics()). This implementation can
- * retrieve the custom header address by calling LLUI_DISPLAY_getBufferAddress(). The image
- * format (generic or custom) and the image dimensions can be also useful to initialize the
- * custom header (see struct MICROUI_Image).
+ * This function can retrieve the image buffer address by calling LLUI_DISPLAY_getBufferAddress().
+ * The image format (generic or custom) and the image dimensions can be also useful to initialize a
+ * custom header (see struct MICROUI_Image and LLUI_DISPLAY_IMPL_adjustNewImageCharacteristics()).
  *
  * @param[in] image the MicroUI Image to initialize.
  */
 void LLUI_DISPLAY_IMPL_initializeNewImage(MICROUI_Image* image);
+
+/*
+ * @brief Frees the image's third-party resources. For a given image format, some resources may
+ * have been allocated. This call allows to free them before freeing the image buffer itself.
+ *
+ * This function can retrieve the image buffer address by calling LLUI_DISPLAY_getBufferAddress().
+ *
+ * @param[in] image the MicroUI Image being closed.
+ */
+void LLUI_DISPLAY_IMPL_freeImageResources(MICROUI_Image* image);
 
 // --------------------------------------------------------------------------------
 // EOF

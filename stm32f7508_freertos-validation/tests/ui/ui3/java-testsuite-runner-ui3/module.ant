@@ -1,12 +1,12 @@
 <!--
 	ANT
 	
-	Copyright 2021-2023 MicroEJ Corp. All rights reserved.
+	Copyright 2021-2022 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
-<project name="jpf.microej.ui3.validation" xmlns:ea="antlib:org.apache.easyant" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:ac="antlib:net.sf.antcontrib">
+<project name="jpf.testsuite.ui3" xmlns:ea="antlib:org.apache.easyant" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:ac="antlib:net.sf.antcontrib">
 
-	<dirname file="${ant.file.jpf.testsuite.core}" property="project"/>
+	<dirname file="${ant.file.jpf.testsuite.ui3}" property="project"/>
 	<dirname file="${project}" property="workspace.dir"/>
 	
 	<target name="java-build:include-tests" extensionOf="abstract-compile:compile-ready" depends="resources-std:copy-test-resources" >
@@ -23,5 +23,5 @@
 			</not>
 		</condition>
 	</target>
-				
+	
 </project>

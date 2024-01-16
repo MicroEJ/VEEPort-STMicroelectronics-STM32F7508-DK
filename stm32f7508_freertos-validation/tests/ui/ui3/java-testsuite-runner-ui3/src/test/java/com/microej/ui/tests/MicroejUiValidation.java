@@ -1,7 +1,7 @@
 /*
  * Java
  *
- * Copyright 2021-2023 MicroEJ Corp. All rights reserved.
+ * Copyright 2021-2022 MicroEJ Corp. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 package com.microej.ui.tests;
@@ -9,6 +9,7 @@ package com.microej.ui.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -95,6 +96,14 @@ public class MicroejUiValidation {
 	public static void setUpBeforeClass() throws Exception {
 		MicroUI.start();
 		printProduct();
+	}
+
+	/**
+	 * Stops MicroUI.
+	 */
+	@AfterClass
+	public static void afterClass() {
+		MicroUI.stop();
 	}
 
 	/**

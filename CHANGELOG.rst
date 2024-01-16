@@ -1,10 +1,34 @@
 ..
-    Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+    Copyright 2020-2024 MicroEJ Corp. All rights reserved.
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 ===========
  Changelog
 ===========
+
+----------------------
+[2.2.0] - 2024-01-16
+----------------------
+
+Changed
+=======
+
+- Update the CI build configuration to build ``prod`` and ``eval`` VEE Port modules.
+- Update UI pack to 13.7.2.
+- Update UI test suite to 1.6.0
+- Update PCA scripts to 2.1.0.
+- Update BSP build scripts behavior on Windows, allow default toolchain path to be overridden from system environment variables.
+
+Fixed
+=====
+
+- Fix ``run.sh`` to accept ``application.out`` as parameter.
+- Fix path to the external loader file in ``run.sh`` that prevented the application to be flashed properly.
+
+Removed
+=======
+
+- Remove ``mjvm.properties`` from ``-configuration``, not required since Architecture 8.0.0.
 
 ----------------------
 [2.1.2] - 2023-10-02

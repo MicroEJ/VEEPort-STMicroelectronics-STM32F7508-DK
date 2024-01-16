@@ -66,7 +66,6 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.50.4.26131</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -342,10 +341,6 @@
                 <option>
                     <name>CCLibConfigHeader</name>
                     <state>1</state>
-                </option>
-                <option>
-                    <name>PreInclude</name>
-                    <state></state>
                 </option>
                 <option>
                     <name>CompilerMisraOverride</name>
@@ -1448,10 +1443,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>PreInclude</name>
-                    <state></state>
-                </option>
-                <option>
                     <name>CompilerMisraOverride</name>
                     <state>0</state>
                 </option>
@@ -2551,10 +2542,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>PreInclude</name>
-                    <state></state>
-                </option>
-                <option>
                     <name>CompilerMisraOverride</name>
                     <state>0</state>
                 </option>
@@ -3639,10 +3626,6 @@
                 <option>
                     <name>CCLibConfigHeader</name>
                     <state>1</state>
-                </option>
-                <option>
-                    <name>PreInclude</name>
-                    <state></state>
                 </option>
                 <option>
                     <name>CompilerMisraOverride</name>
@@ -5649,9 +5632,6 @@
                     <name>$PROJ_DIR$\..\ui\src\buttons_manager.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\ui\src\drawing_dma2d.c</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\ui\src\event_generator.c</name>
                 </file>
                 <file>
@@ -5686,6 +5666,18 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\ui\src\touch_manager.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\ui\src\ui_drawing.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\ui\src\ui_drawing_dma2d.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\ui\src\ui_drawing_stub.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\ui\src\ui_image_drawing.c</name>
                 </file>
             </group>
         </group>
