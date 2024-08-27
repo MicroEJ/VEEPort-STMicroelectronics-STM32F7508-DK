@@ -66,6 +66,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
+                    <state>8.50.9.33458</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -218,6 +219,10 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
+                    <name>PreInclude</name>
+                    <state></state>
+                </option>
+                <option>
                     <name>CCDefines</name>
                     <state>STM32F750xx</state>
                     <state>STM32F7XX</state>
@@ -348,7 +353,6 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\comm\inc</state>
                     <state>$PROJ_DIR$\..\config\inc</state>
                     <state>$PROJ_DIR$\..\core\inc</state>
                     <state>$PROJ_DIR$\..\fs\inc</state>
@@ -356,7 +360,6 @@
                     <state>$PROJ_DIR$\..\main\inc</state>
                     <state>$PROJ_DIR$\..\net\inc</state>
                     <state>$PROJ_DIR$\platform\inc</state>
-                    <state>$PROJ_DIR$\platform\inc\intern</state>
                     <state>$PROJ_DIR$\..\ssl\inc</state>
                     <state>$PROJ_DIR$\..\thirdparty\systemview\inc</state>
                     <state>$PROJ_DIR$\..\thirdparty\systemview-freertos\inc</state>
@@ -388,6 +391,9 @@
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Core\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy</state>
+                    <state>$PROJ_DIR$\..\ecom-network\inc</state>
+                    <state>$PROJ_DIR$\..\util\inc</state>
+                    <state>$PROJ_DIR$\..\security\inc</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -519,7 +525,7 @@
             <name>AARM</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>10</version>
+                <version>11</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -675,6 +681,10 @@
                 <option>
                     <name>AsmNoLiteralPool</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>PreInclude</name>
+                    <state></state>
                 </option>
             </data>
         </settings>
@@ -1164,7 +1174,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.50.4.26131</state>
+                    <state>8.50.9.33458</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -1317,6 +1327,10 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
+                    <name>PreInclude</name>
+                    <state></state>
+                </option>
+                <option>
                     <name>CCDefines</name>
                     <state>NDEBUG</state>
                     <state>STM32F750xx</state>
@@ -1448,7 +1462,6 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\comm\inc</state>
                     <state>$PROJ_DIR$\..\config\inc</state>
                     <state>$PROJ_DIR$\..\core\inc</state>
                     <state>$PROJ_DIR$\..\fs\inc</state>
@@ -1487,6 +1500,8 @@
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Core\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy</state>
+                    <state>$PROJ_DIR$\..\ecom-network\inc</state>
+                    <state>$PROJ_DIR$\..\security\inc</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1618,7 +1633,7 @@
             <name>AARM</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>10</version>
+                <version>11</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -1774,6 +1789,10 @@
                 <option>
                     <name>AsmNoLiteralPool</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>PreInclude</name>
+                    <state></state>
                 </option>
             </data>
         </settings>
@@ -2263,7 +2282,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.50.4.26131</state>
+                    <state>8.50.9.33458</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -2416,6 +2435,10 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
+                    <name>PreInclude</name>
+                    <state></state>
+                </option>
+                <option>
                     <name>CCDefines</name>
                     <state>STM32F750xx</state>
                     <state>STM32F7XX</state>
@@ -2548,7 +2571,6 @@
                 <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$\..\validation\iperf\inc</state>
-                    <state>$PROJ_DIR$\..\comm\inc</state>
                     <state>$PROJ_DIR$\..\config\inc</state>
                     <state>$PROJ_DIR$\..\core\inc</state>
                     <state>$PROJ_DIR$\..\main\inc</state>
@@ -2573,6 +2595,9 @@
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Core\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy</state>
+                    <state>$PROJ_DIR$\..\ecom-network\inc</state>
+                    <state>$PROJ_DIR$\..\util\inc</state>
+                    <state>$PROJ_DIR$\platform\inc</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -2704,7 +2729,7 @@
             <name>AARM</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>10</version>
+                <version>11</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -2860,6 +2885,10 @@
                 <option>
                     <name>AsmNoLiteralPool</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>PreInclude</name>
+                    <state></state>
                 </option>
             </data>
         </settings>
@@ -3349,7 +3378,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.50.4.26131</state>
+                    <state>8.50.9.33458</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -3502,6 +3531,10 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
+                    <name>PreInclude</name>
+                    <state></state>
+                </option>
+                <option>
                     <name>CCDefines</name>
                     <state>NDEBUG</state>
                     <state>STM32F750xx</state>
@@ -3633,7 +3666,6 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\comm\inc</state>
                     <state>$PROJ_DIR$\..\config\inc</state>
                     <state>$PROJ_DIR$\..\core\inc</state>
                     <state>$PROJ_DIR$\..\fs\inc</state>
@@ -3678,6 +3710,9 @@
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Core\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\sdk\STM32CubeF7\Drivers\STM32F7xx_HAL_Driver\Inc\Legacy</state>
+                    <state>$PROJ_DIR$\..\ecom-network\inc</state>
+                    <state>$PROJ_DIR$\..\util\inc</state>
+                    <state>$PROJ_DIR$\platform\inc</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -3809,7 +3844,7 @@
             <name>AARM</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>10</version>
+                <version>11</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -3965,6 +4000,10 @@
                 <option>
                     <name>AsmNoLiteralPool</name>
                     <state>0</state>
+                </option>
+                <option>
+                    <name>PreInclude</name>
+                    <state></state>
                 </option>
             </data>
         </settings>
@@ -4392,40 +4431,6 @@
     <group>
         <name>microej</name>
         <group>
-            <name>comm</name>
-            <excluded>
-                <configuration>Iperf</configuration>
-                <configuration>Unit_test</configuration>
-            </excluded>
-            <group>
-                <name>inc</name>
-                <file>
-                    <name>$PROJ_DIR$\..\comm\inc\LLCOMM_CDC.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\comm\inc\LLCOMM_CDC_configuration.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\comm\inc\LLCOMM_UART.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\comm\inc\LLCOMM_UART_configuration.h</name>
-                </file>
-            </group>
-            <group>
-                <name>src</name>
-                <file>
-                    <name>$PROJ_DIR$\..\comm\src\comms.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\comm\src\LLCOMM_CDC.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\comm\src\LLCOMM_UART.c</name>
-                </file>
-            </group>
-        </group>
-        <group>
             <name>config</name>
             <group>
                 <name>inc</name>
@@ -4601,6 +4606,18 @@
                     </excluded>
                 </file>
             </group>
+        </group>
+        <group>
+            <name>ecom-network</name>
+            <excluded>
+                <configuration>Iperf</configuration>
+            </excluded>
+            <file>
+                <name>$PROJ_DIR$\..\ecom-network\src\ecom_network_helper_lwip.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\ecom-network\src\LLECOM_NETWORK_impl.c</name>
+            </file>
         </group>
         <group>
             <name>fs</name>
@@ -4820,13 +4837,7 @@
                     </excluded>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\net\src\LLNET_DNS_native_impl.c</name>
-                    <excluded>
-                        <configuration>Iperf</configuration>
-                    </excluded>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\net\src\LLNET_DNS_soft_impl.c</name>
+                    <name>$PROJ_DIR$\..\net\src\LLNET_DNS_lwip.c</name>
                     <excluded>
                         <configuration>Iperf</configuration>
                     </excluded>
@@ -5058,9 +5069,6 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\platform\inc\LLNET_CONF.h</name>
-                    <excluded>
-                        <configuration>Iperf</configuration>
-                    </excluded>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\platform\inc\LLNET_CONSTANTS.h</name>
@@ -5202,10 +5210,43 @@
             <group>
                 <name>src</name>
                 <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_CIPHER_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_DIGEST_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_KEY_FACTORY_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_KEY_PAIR_GENERATOR_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_MAC_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_PRIVATE_KEY_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_PUBLIC_KEY_impl.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\security\src\LLSEC_RANDOM_impl.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\security\src\LLSEC_X509_CERT_mbedtls.c</name>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_RSA_CIPHER_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_SECRET_KEY_FACTORY_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_SECRET_KEY_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_SIG_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\security\src\LLSEC_X509_CERT_impl.c</name>
                 </file>
             </group>
         </group>
@@ -5237,6 +5278,9 @@
                 <name>src</name>
                 <file>
                     <name>$PROJ_DIR$\..\ssl\src\LLNET_SSL_CONTEXT_impl.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\ssl\src\LLNET_SSL_ERRORS.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\ssl\src\LLNET_SSL_SOCKET_impl.c</name>
@@ -5704,6 +5748,9 @@
             </group>
             <group>
                 <name>src</name>
+                <file>
+                    <name>$PROJ_DIR$\..\util\src\microej_allocator.c</name>
+                </file>
                 <file>
                     <name>$PROJ_DIR$\..\util\src\microej_async_worker.c</name>
                 </file>

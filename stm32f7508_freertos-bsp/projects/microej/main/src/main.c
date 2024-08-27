@@ -38,7 +38,7 @@
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_configuration.h"
 #endif
-
+#include "LLNET_NETWORK_MEM.h"
 #ifdef VALIDATION_BUILD
 #include "t_core_main.h"
 #else
@@ -183,6 +183,8 @@ void xMicroEJVeeTaskFunction(void * pvParameters)
 	/* Start the CPU Load task */
 	cpuload_init();
 
+	/* Initialize the net heap memory allocator  */
+	LLNET_NETWORK_HEAP_initialize();
 	/* Initialize the ECOM-COMM stack */
 	LLCOMM_stack_initialize();
 
@@ -287,7 +289,6 @@ int app_main(void)
 	 * and the watchdog will start using this computed value.
 	 */
 	start_watchdog();
-
 #ifdef ENABLE_SYSTEM_VIEW
 	printf("Enable Segger system view\n");
 	SEGGER_SYSVIEW_Conf();

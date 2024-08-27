@@ -9,6 +9,8 @@
   * Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.
   *
+  * Copyright 2024 MicroEJ Corp. This file has been modified by MicroEJ Corp.
+  *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
@@ -37,6 +39,19 @@
 /* Define those to better describe your network interface. */
 #define IFNAME0 's'
 #define IFNAME1 't'
+
+/* Define address MAC prefix */
+
+	/* ST MicroELectronic MAC prefix */
+#define PRE_MAC_ADDR0  	0x00U
+#define PRE_MAC_ADDR1   0x80U
+#define PRE_MAC_ADDR2   0xE1U
+
+/* Define indexes of bytes used to create a MAC address. This bytes are taken in the first 32-bit word chip UID  */
+#define MAC_ADDR_IDX0   0
+#define MAC_ADDR_IDX1   1
+#define MAC_ADDR_IDX2   2
+
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -133,8 +148,14 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
   */
 static void low_level_init(struct netif *netif)
 {
-  uint8_t macaddress[6]= { MAC_ADDR0, MAC_ADDR1, MAC_ADDR2, MAC_ADDR3, MAC_ADDR4, MAC_ADDR5 };
+  uint8_t macaddress[6]= { PRE_MAC_ADDR0, PRE_MAC_ADDR1, PRE_MAC_ADDR2, 0, 0, 0 };
   
+  /* modify the mac address with the chip UID */
+  uint32_t uid = HAL_GetUIDw0();
+  macaddress[3]= ((uint8_t*)&uid)[MAC_ADDR_IDX0];
+  macaddress[4]= ((uint8_t*)&uid)[MAC_ADDR_IDX1];
+  macaddress[5]= ((uint8_t*)&uid)[MAC_ADDR_IDX2];
+  /* end modification */
   EthHandle.Instance = ETH;  
   EthHandle.Init.MACAddr = macaddress;
   EthHandle.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
@@ -162,12 +183,15 @@ static void low_level_init(struct netif *netif)
   netif->hwaddr_len = ETHARP_HWADDR_LEN;
 
   /* set netif MAC hardware address */
-  netif->hwaddr[0] =  MAC_ADDR0;
-  netif->hwaddr[1] =  MAC_ADDR1;
-  netif->hwaddr[2] =  MAC_ADDR2;
-  netif->hwaddr[3] =  MAC_ADDR3;
-  netif->hwaddr[4] =  MAC_ADDR4;
-  netif->hwaddr[5] =  MAC_ADDR5;
+
+  netif->hwaddr[0] =  macaddress[0];
+  netif->hwaddr[1] =  macaddress[1];
+  netif->hwaddr[2] =  macaddress[2];
+  netif->hwaddr[3] =  macaddress[3];
+  netif->hwaddr[4] =  macaddress[4];
+  netif->hwaddr[5] =  macaddress[5];
+
+  printf("HW: %02x:%02x:%02x:%02x:%02x:%02x\n",macaddress[0],macaddress[1],macaddress[2],macaddress[3],macaddress[4],macaddress[5]);
 
   /* set netif maximum transfer unit */
   netif->mtu = 1500;

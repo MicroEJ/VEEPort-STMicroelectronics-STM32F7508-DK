@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	ANT
+ 
+  	Copyright 2012-2021 IS2T. All rights reserved.
+	Modification and distribution is permitted under certain conditions.
+  	IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+<project name="soarinit">
+
+	<import file="${ant.file.sensorsInit}/../../extension-init.xml" />
+
+	<target name="init/context/soar" extensionOf="init/context">
+		<resources id="init.ni.files"/>
+		<resources id="init.soar.bootclasspath"/> <!-- bootclasspath that is set before application classpath -->
+		
+		<!-- 
+			'execSOAR' property is defined if the SOAR must be executed
+			(i.e. execute on board or use emb characteristics on the simulator)
+		-->
+		<condition property="execSOAR">
+			<or>
+				<isset property="onBoard"/>
+				<istrue value="${s3.board.compliant}"/>
+			</or>
+		</condition>
+	</target>
+	
+	<target name="init/soar/constants" extensionOf="init/execution">
+		<augment id="init.constants">
+			<!-- Inject the architecture options required to run SOAR2-O on MicroEJ (both Simulator and Device) -->
+			<propertyref name="arch.endianness"/>
+			<propertyref name="arch.symbol.prefix"/>
+		</augment>
+	</target>	
+		
+	<target name="init/soar" extensionOf="init/execution" if="execSOAR">
+		<echo message="SOAR init" level="verbose"/>
+		<condition property="soar.verbose.level" value="info,load,link,error,warn" else="error">
+			<isset property="execution.verbose"/>
+		</condition>
+		<condition property="soar2.verbose.level" value="9" else="0">
+			<isset property="execution.verbose"/>
+		</condition>
+
+		<condition property="soar.only.info.file" value="true" else="false">
+			<isset property="onS3"/>
+		</condition>
+		
+		<property name="soar.root.name" value="${application.main.class}"/>
+		
+		<augment id="init.ni.files">
+			<fileset dir="${platform.dir}/lib" includes="*.ni"/>
+			<fileset dir="${microjvm.dir}/lib" includes="*.ni"/>
+		</augment>
+		
+		<!-- List of properties that are will be accessible in the java application using System.getProperty() -->
+		<propertyset id="emb.java.propertyset"> 
+			<!-- Add the properties defined in the commandline with the prefix "emb.java.property."  -->
+			<propertyset>
+				<propertyref prefix="emb.java.property."/>
+			  	<mapper type="glob" from="emb.java.property.*" to="*"/>
+			</propertyset>
+			<!-- Add the properties defined in the commandline with the prefix "microej.java.property."  -->
+			<propertyset>
+				<propertyref prefix="microej.java.property."/>
+			  	<mapper type="glob" from="microej.java.property.*" to="*"/>
+			</propertyset>
+		</propertyset>
+			  		
+		<!-- Add library needed by the VM -->
+  		<augment id="init.soar.bootclasspath">
+			<fileset dir="${platform.dir}/javaLibs" includes="sni-*.jar" />
+  		</augment>
+  				
+	</target>
+	
+	<target name="init/finalization/soar" extensionOf="init/finalization" if="execSOAR">
+		<pathconvert property="overall.soar.ni.files" pathsep="${path.separator}" refid="init.ni.files"/>
+		<pathconvert property="overall.soar.bootclasspath" pathsep="${path.separator}" refid="init.soar.bootclasspath"/>
+	</target>
+
+	<target name="mkdir/soar" extensionOf="launch/mkdirs" if="execSOAR">
+	
+		<property name="soar.output.dir" location="${application.output.dir}/soar"/>
+		
+		<delete dir="${soar.output.dir}" includes="**/*"/>
+		<mkdir dir="${soar.output.dir}"/>
+	</target>
+    <!-- Override the default SOAR target -->
+    <target name="soar/do" unless="${soar2.enabled}">
+            <!-- Retry the SOAR if it fails. This allows running multiple testsuites in parallel with the same license dongle. -->
+            <retry retrycount="20" retrydelay="250">
+                    <soar />
+            </retry>
+    </target>
+	
+	
+</project>

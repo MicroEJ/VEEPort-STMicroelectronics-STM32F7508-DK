@@ -1,67 +1,86 @@
 /*
  * C
  *
- * Copyright 2014-2021 IS2T. All rights reserved.
- * For demonstration purpose only.
- * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014-2022 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
+
 #ifndef LLNET_DNS_IMPL
 #define LLNET_DNS_IMPL
 
-#include <sni.h>
+#include <stdint.h>
+
 #include <intern/LLNET_DNS_impl.h>
-#include <LLNET_ERRORS.h>
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-
 /**
- * Gets the host name associated to the input host address {@code host}.
- * <p>When this method returns, the associated host name is stored in the same buffer {@code host}.
- * @param host the input buffer that contains the host address whose the host name will be got
- * and the output buffer into which the host name will be stored
- * @param offset the offset of the input host address in the buffer
- * @param length the input host address length
- * @param retry true when the previous call returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT}
- * and the calling process repeats the call to this operation for its completion
- * @return the host name length or {@link J_EHOSTUNKNOWN} error code
- * if no host associated to this address or an error occurs
+ * @brief Gets the host name associated to the input host IP address <code>address</code>.
+ *
+ * The given IP address is stored in network byte order (highest order byte of the address stored in <code>address[0]</code>).
+ * Example: Assume that the given IP address is 192.168.4.10, the content of the input <code>address</code> buffer will be: <code>address[0]=192; address[1]=168; address[2]=4; address[3]=10</code>.
+ *
+ * When this function returns, the resolved host name is stored in the <code>hostname</code> buffer.
+ *
+ * @param[in] address the IP address whose the host name will be got.
+ * @param[in] addressLength the IP address size (4 for IPv4 address or 16 for IPv6 address).
+ * @param[out] hostname the output buffer into which the resolved host name will be stored. (The host name must be a null-terminated string).
+ * @param[in] hostnameLength the <code>hostname</code> buffer length.
+ * @return the host name length.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_ERRORS.h header file for error codes.
+ *
  * @warning host must not be used outside of the VM task or saved.
  */
-int32_t LLNET_DNS_IMPL_getHostByAddr(int8_t* host, int32_t offset, int32_t length, uint8_t retry);
+int32_t LLNET_DNS_IMPL_getHostByAddr(int8_t* address, int32_t addressLength, uint8_t* hostname, int32_t hostnameLength);
 
 /**
- * Gets the host address at the {@code index} position in the host name addresses list.
- * <p>The buffer {@code host} contains the input host name whose the host address will be got and
- * when this method returns, the host address is stored in the same buffer {@code host}.
- * @param index the index of the address to get
- * @param host the input host name buffer and the output buffer into which the host address will be stored
- * @param offset the offset of the host name in the buffer
- * @param length the host name length
- * @param retry true when the previous call returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT}
- * and the calling process repeats the call to this operation for its completion
- * @return the host address size in bytes or {@link J_EHOSTUNKNOWN} error code
- * if no host address associated to this host name or an error occurs
+ * @brief Gets the IP address at the <code>index</code> position in the resolved IP addresses list of the given host name <code>hostname</code>.
+ *
+ * The buffer <code>hostname</code> contains the host name whose the IP address will be got.
+ *
+ * When this method returns, the IP address is stored in the <code>address</code> buffer.
+ *
+ * The IP address will be stored in network byte order (highest order byte of the address stored in <code>address[0]</code>).
+ * Example: Assume that the IP address is 192.168.4.10, the content of the output <code>address</code> buffer will be: <code>address[0]=192; address[1]=168; address[2]=4; address[3]=10</code>.
+ *
+ * @param[in] index the index of the IP address to get.
+ * @param[in] hostname the input host name (null-terminated string).
+ * @param[in] hostnameLength the host name length. (The length does not include the terminating null byte).
+ * @param[out] address the output buffer into which the IP address will be stored.
+ * @param[in] addressLength the output IP address buffer length.
+ * @return the IP address size in bytes (4 for IPv4 address or 16 for IPv6 address).
+ *
+ * @note NativeIOException if an error occurs.
+ *
+ * @see LLNET_ERRORS.h header file for error codes.
+ *
  * @warning host must not be used outside of the VM task or saved.
  */
-int32_t LLNET_DNS_IMPL_getHostByNameAt(int32_t index, int8_t* host, int32_t offset, int32_t length, uint8_t retry);
+int32_t LLNET_DNS_IMPL_getHostByNameAt(int32_t index, uint8_t* hostname, int32_t hostnameLength, int8_t* address, int32_t addressLength);
 
 /**
- * Returns the number of host addresses associated with the host name {@code hostname}.
- * @param hostname the host name buffer
- * @param offset the offset of the host name in the buffer
- * @param length the host name length
- * @param retry true when the previous call returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT}
- * and the calling process repeats the call to this operation for its completion
- * @return the number of addresses associated with the host name {@code hostname}
- * or {@link J_EHOSTUNKNOWN} error code if an error occurs
- * @warning dst must not be used outside of the VM task or saved.
+ * @brief Returns the number of host addresses associated with the given host name <code>hostname</code>.
+ *
+ * @param[in] hostname the host name buffer (null-terminated string).
+ * @param[in] hostnameLength the host name length. (The length does not include the terminating null byte).
+ * @return the number of addresses associated with the host name <code>hostname</code>.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_ERRORS.h header file for error codes.
+ *
+ * @warning hostname must not be used outside of the VM task or saved.
  */
-int32_t LLNET_DNS_IMPL_getHostByNameCount(int8_t* hostname, int32_t offset, int32_t length, uint8_t retry);
+int32_t LLNET_DNS_IMPL_getHostByNameCount(uint8_t* hostname, int32_t hostnameLength);
 
 #ifdef __cplusplus
 	}
 #endif
-#endif
+
+#endif // LLNET_DNS_IMPL

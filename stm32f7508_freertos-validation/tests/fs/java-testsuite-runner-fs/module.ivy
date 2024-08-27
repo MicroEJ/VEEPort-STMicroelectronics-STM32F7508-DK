@@ -2,12 +2,12 @@
 <!--
 	IVY
 	
-	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+	Copyright 2020-2024 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <ivy-module version="2.0" xmlns:ea="http://www.easyant.org" xmlns:m="http://ant.apache.org/ivy/maven" xmlns:ej="https://developer.microej.com" ej:version="2.0.0"> 
 
-	<info organisation="com.microej.testsuite" module="fs-testsuite-report" status="integration" revision="1.0.0">
+	<info organisation="com.microej.veeport.st.stm32f7508-dk.validation-reports" module="fs-testsuite-report" status="integration" revision="2.3.0">
         <ea:build organisation="com.is2t.easyant.buildtypes" module="build-microej-testsuite" revision="[2.2.0-RC0,3.0.0-RC0["/>
         <ea:plugin org="com.is2t.easyant.plugins" module="ivy-update" revision="1.+" />
 	</info>

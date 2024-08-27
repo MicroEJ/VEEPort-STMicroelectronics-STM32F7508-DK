@@ -1,12 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 	Ivy
 	
-	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+	Copyright 2020-2024 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <ivy-module version="2.0" xmlns:ea="http://www.easyant.org" xmlns:ej="https://developer.microej.com" ej:version="2.0.0">
 	<!-- Please synchronize the version of this module with the one in MicroejCoreValidation.java -->
-	<info organisation="com.microej.architecture.generic" module="core-testsuite" status="integration" revision="3.1.0">
+	<info organisation="com.microej.veeport.st.stm32f7508-dk.validation-reports" module="core-testsuite" status="integration" revision="2.3.0">
 		<ea:build organisation="com.is2t.easyant.buildtypes" module="build-microej-javaimpl" revision="4.+"/>
 		<ea:property name="target.main.classes" value="${basedir}/target~/test/classes"/>
 		<ea:property name="addon-processor.src.test.java.path.ref.name" value="src.java.path"/>

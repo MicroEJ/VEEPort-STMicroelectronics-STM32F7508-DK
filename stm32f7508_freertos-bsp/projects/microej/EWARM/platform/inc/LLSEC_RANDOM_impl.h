@@ -1,20 +1,20 @@
 /*
  * C
  *
- * Copyright 2018-2019 MicroEJ Corp. All rights reserved.
- * For demonstration purpose only.
- * MicroEJ Corp. PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2018-2023 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 
-#ifndef __LLSEC_RANDOM_IMPL__
-#define __LLSEC_RANDOM_IMPL__
+#ifndef LLSEC_RANDOM_IMPL_H
+#define LLSEC_RANDOM_IMPL_H
 
 /**
  * @file
  * @brief MicroEJ Security low level API
  * @author MicroEJ Developer Team
- * @version 1.5.0
- * @date 20 December 2020
+ * @version 2.4.0
+ * @date 16 February 2024
  */
 
 #include <stdint.h>
@@ -73,4 +73,13 @@ void LLSEC_RANDOM_IMPL_set_seed(int32_t native_id, uint8_t* seed, int32_t size);
  */
 void LLSEC_RANDOM_IMPL_generate_seed(int32_t native_id, uint8_t* seed, int32_t size);
 
-#endif //__LLSEC_RANDOM_IMPL__
+/**
+ * @brief Gets the id of the native close function.
+ *
+ * @return the id of the static native close function.
+ *
+ * @note Throws NativeException on error.
+ */
+int32_t LLSEC_RANDOM_IMPL_get_close_id();
+
+#endif //LLSEC_RANDOM_IMPL_H

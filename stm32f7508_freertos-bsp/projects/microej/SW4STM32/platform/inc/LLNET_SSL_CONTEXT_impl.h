@@ -1,9 +1,9 @@
 /*
  * C
  *
- * Copyright 2015-2021 IS2T. All rights reserved.
- * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * For demonstration purpose only.
+ * Copyright 2015-2022 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 #ifndef __LLNET_SSL_CONTEXT_IMPL__
 #define __LLNET_SSL_CONTEXT_IMPL__
@@ -12,137 +12,152 @@
  * @file
  * @brief MicroEJ SSL low level API
  * @author MicroEJ Developer Team
- * @version 5.1.1
- * @date 7 May 2021
+ * @version 6.0.0
+ * @date 26 August 2022
  */
 
-#include <sni.h>
+#include <stdint.h>
+
 #include <intern/LLNET_SSL_CONTEXT_impl.h>
 #include <LLNET_SSL_CONSTANTS.h>
 #include <LLNET_SSL_ERRORS.h>
-#include <stdint.h>
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
 /**
- * Creates a new client SSL Context based on the given SSL/TLS protocol version.
- * @param protocol the SSL/TLS protocol version (0 for SSLv3, 1 for TLSv1, 2 for TLSv1.1 and 3 for TLSv1.2).
- * @param isClientContext controls whether the underlying context will be created to manage ssl client or ssl server sockets. 
- * <code>true</code> for client sockets; <code>false</code> for server sockets.
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call.
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return the new SSL Context ID on success, {@link J_CREATE_SSL_CONTEXT_ERROR} on error (for example if not enough space to create the context).
+ * @brief Creates a new client ssl context based on the given SSL/TLS protocol version.
+ *
+ * @param[in] protocol			The SSL/TLS protocol version (0 for SSLv3, 1 for TLSv1, 2 for
+ * 								TLSv1.1, 3 for TLSv1.2, 4 for DTLSv1.0, 5 for DTLS v1.2, and 6 for TLSv1.3).
+ * @param[in] isClientContext	Controls whether the underlying context will be created to manage ssl client or ssl
+ * 								server sockets. 1 for client sockets; 0 for server sockets.
+ *
+ * @return The new ssl context ID on success.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
+ * @see LLNET_SSL_CONSTANTS.h header file for SSL/TLS protocols.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_createContext(int32_t protocol, uint8_t isClientContext, uint8_t retry);
+int32_t LLNET_SSL_CONTEXT_IMPL_createContext(int32_t protocol, uint8_t isClientContext);
 
 /**
- * Releases the SSL Context identified by the given contextID.
- * @param contextID the SSL context ID.
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @brief Releases the ssl context identified by the given contextID.
+ *
+ * @param[in] contextID	The ssl context ID.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_closeContext(int32_t contextID, uint8_t retry);
+void LLNET_SSL_CONTEXT_IMPL_freeContext(int32_t contextID);
 
 /**
- * Adds the given certificate as trusted certificate into the given SSL context.
- * @param contextID the SSL Context ID.
- * @param cert the certificate buffer.
- * @param off the offset in the buffer at which the certificate content started.
- * @param len the certificate content length.
- * @param format the certificate encoded format type (0 for PEM format and 1 for DER format).
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
- * @warning cert must not be used outside of the VM task or saved.
+ * @brief Adds the given certificate as trusted certificate to the ssl context.
+ *
+ * @param[in] contextID			The ssl context ID.
+ * @param[in] certificate		The certificate to be added.
+ * @param[in] certificateSize	The certificate size.
+ * @param[in] format			The certificate encoded format (0 for PEM format and 1 for DER format).
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
+ *
+ * @warning certificate must not be used outside of the VM task or saved.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_addTrustedCert(int32_t contextID, uint8_t *cert, int32_t off, int32_t len, int32_t format, uint8_t retry);
+void LLNET_SSL_CONTEXT_IMPL_addTrustedCertificate(int32_t contextID, uint8_t *certificate, int32_t certificateSize, int32_t format);
 
 /**
- * Removes all trusted certificates from the given SSL context.
- * @param contextID the SSL Context ID.
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @brief Removes all trusted certificates from the ssl context.
+ *
+ * @param[in] contextID	The ssl context ID.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_clearTrustStore(int32_t contextID, uint8_t retry);
+void LLNET_SSL_CONTEXT_IMPL_clearTrustStore(int32_t contextID);
 
 /**
- * Removes all credentials (private key and associated certificates) from the given ssl context.
- * @param contextID the ssl context ID.
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @brief Removes all credentials (private key and associated certificates) from the ssl context.
+ *
+ * @param[in] contextID The ssl context ID.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_clearKeyStore(int32_t contextID, uint8_t retry);
+void LLNET_SSL_CONTEXT_IMPL_clearKeyStore(int32_t contextID);
 
 /**
- * Sets the certificate of the context private key.
- * @param contextID the ssl context ID.
- * @param cert the certificate of the context private key.
- * @param offset the offset in the buffer at which the certificate content started.
- * @param len the certificate content length.
- * @param format the certificate encoded format type (0 for PEM format and 1 for DER format).
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
- * @warning cert must not be used outside of the VM task or saved.
+ * @brief Sets the certificate to be used in the ssl context.
+ *
+ * @param[in] contextID			The ssl context ID.
+ * @param[in] certificate		The certificate of the private key.
+ * @param[in] certificateSize	The certificate size.
+ * @param[in] format			The certificate encoded format (0 for PEM format and 1 for DER format).
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
+ *
+ * @warning certificate must not be used outside of the VM task or saved.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_setCertificate(int32_t contextID, uint8_t* cert, int32_t offset, int32_t len, int32_t format, uint8_t retry);
+void LLNET_SSL_CONTEXT_IMPL_setCertificate(int32_t contextID, uint8_t* certificate, int32_t certificateSize, int32_t format);
 
 /**
- * Sets the context private key.
- * @param contextID the ssl context ID.
- * @param privateKey the context private key.
- * @param offset the offset in the buffer at which the private key content started.
- * @param len the private key content length.
- * @param password the password to recover the private key if it is encrypted.
- * @param passwordOffset the offset in the password buffer at which the password content started.
- * @param passwordLen the password length.
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @brief Sets the private key to be used in the ssl context.
+ * The provided private key must be in DER-encoded encrypted PKCS#8 format.
+ *
+ * @param[in] contextID		The ssl context ID.
+ * @param[in] privateKey	The private key (in DER-encoded encrypted PKCS#8 format).
+ * @param[in] privateKeyLen	The length of private key in bytes.
+ * @param[in] password		The password string to be used to recover the encrypted PKCS#8 private key. This password is a null-terminated string.
+ * @param[in] passwordLen	The length of the password in bytes. The length does not include the terminating null byte.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
+ *
  * @warning privateKey must not be used outside of the VM task or saved.
  * @warning password must not be used outside of the VM task or saved.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_setPrivateKey(int32_t contextID, uint8_t* privateKey, int32_t offset, int32_t len, uint8_t* password,
-		int32_t passwordOffset, int32_t passwordLen, uint8_t retry);
+void LLNET_SSL_CONTEXT_IMPL_setPrivateKey(int32_t contextID, uint8_t* privateKey, int32_t privateKeyLen, uint8_t* password, int32_t passwordLen);
 
 /**
- * Initializes the chain buffer and returns its total size.
- * @param contextID the ssl context ID.
- * @param nbChainCerts the number of certificates in the chain.
- * @param chainCertsTotalSize the total size of certificates in the chain.
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return the total size of the chain buffer on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
+ * @brief Initializes the certificates chain buffer and returns its total size.
+ *
+ * @param[in] contextID				The ssl context ID.
+ * @param[in] nbChainCerts			The number of certificates in the chain.
+ * @param[in] chainCertsTotalSize	The total size of certificates in the chain.
+ *
+ * @return The total size of the chain buffer on success or a negative error code.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_initChainBuffer(int32_t contextID, int32_t nbChainCerts, int32_t chainCertsTotalSize, uint8_t retry);
+int32_t LLNET_SSL_CONTEXT_IMPL_initChainBuffer(int32_t contextID, int32_t nbChainCerts, int32_t chainCertsTotalSize);
 
 /**
- * Adds the given certificate to the certificate chain buffer associated with the context private key.
- * @param contextID the ssl context ID.
- * @param cert the certificate of the context private key.
- * @param offset the offset in the buffer at which the certificate content started
- * @param len the certificate content length
- * @param format the certificate encoded format type (0 for PEM format and 1 for DER format).
- * @param chainBufferSize the chain buffer size.
- * @param retry true if the calling process repeats the call to this operation for its completion when the previous call
- * has returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT} to indicate that the operation was not completed.
- * @return {@link J_SSL_NO_ERROR} on success or a negative error code.
- * @see {@link LLNET_SSL_ERRORS} header file for error codes.
- * @warning cert must not be used outside of the VM task or saved.
+ * @brief Adds the given certificate to the certificates's chain of the ssl context
+ *
+ * @param[in] contextID			The ssl context ID.
+ * @param[in] certificate		The certificate to be added in the chain.
+ * @param[in] certificateSize	The certificate size.
+ * @param[in] format			The certificate encoded format (0 for PEM format and 1 for DER format).
+ * @param[in] chainBufferSize	The chain buffer size.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_SSL_ERRORS.h header file for error codes.
+ *
+ * @warning certificate must not be used outside of the VM task or saved.
  */
-int32_t LLNET_SSL_CONTEXT_IMPL_addChainCertificate(int32_t contextID, uint8_t* cert, int32_t offset, int32_t len, int32_t format, int32_t chainBufferSize, uint8_t retry);
+void LLNET_SSL_CONTEXT_IMPL_addChainCertificate(int32_t contextID, uint8_t* certificate, int32_t certificateSize, int32_t format, int32_t chainBufferSize);
 
 #ifdef __cplusplus
 	}

@@ -1,13 +1,13 @@
 /*
  * C
  *
- * Copyright 2017-2019 MicroEJ Corp. All rights reserved.
- * For demonstration purpose only.
- * MicroEJ Corp. PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2017-2023 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 
-#ifndef __LLSEC_DIGEST_IMPL__
-#define __LLSEC_DIGEST_IMPL__
+#ifndef LLSEC_DIGEST_IMPL_H
+#define LLSEC_DIGEST_IMPL_H
 
 #include <intern/LLSEC_DIGEST_impl.h>
 #include <sni.h>
@@ -17,8 +17,8 @@
  * @file
  * @brief MicroEJ Security low level API
  * @author MicroEJ Developer Team
- * @version 1.5.0
- * @date 20 December 2020
+ * @version 2.4.0
+ * @date 16 February 2024
  */
 
 
@@ -61,6 +61,16 @@ int32_t LLSEC_DIGEST_IMPL_init(int32_t algorithm_id);
 void LLSEC_DIGEST_IMPL_close(int32_t algorithm_id, int32_t native_id);
 
 /**
+ * @brief Gets the id of the native close function.
+ * @param[in] algorithm_id				The algorithm ID.
+ *
+ * @return the id of the static native close function.
+ *
+ * @note Throws NativeException on error.
+ */
+int32_t LLSEC_DIGEST_IMPL_get_close_id(int32_t algorithm_id);
+
+/**
  * @brief Updates the input data.
  *
  * @param[in] algorithm_id				The algorithm ID.
@@ -90,4 +100,4 @@ void LLSEC_DIGEST_IMPL_update(int32_t algorithm_id, int32_t native_id, uint8_t* 
  */
 void LLSEC_DIGEST_IMPL_digest(int32_t algorithm_id, int32_t native_id, uint8_t* out, int32_t out_offset, int32_t out_length);
 
-#endif //__LLSEC_DIGEST_IMPL__
+#endif //LLSEC_DIGEST_IMPL_H

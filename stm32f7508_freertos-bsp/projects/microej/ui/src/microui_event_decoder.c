@@ -12,7 +12,7 @@
  *
  * @see LLUI_INPUT_LOG_impl.c file comment
  * @author MicroEJ Developer Team
- * @version 3.1.0
+ * @version 3.1.0 modified
  * @since MicroEJ UI Pack 13.1.0
  */
 
@@ -202,7 +202,8 @@ static void decode_event_button(uint32_t event, uint32_t index, MICROUI_EVENT_DE
 static void decode_event_pointer_data(uint32_t event, uint32_t data, uint32_t index) {
 	(void)event;
 
-	LLUI_DEBUG_TRACE("[%02u: 0x%08x]    at %u,%u (", index, data, POINTER_X(data), POINTER_Y(data));
+	LLUI_DEBUG_TRACE("[%02u: 0x%08x]    at %u,%u (", (unsigned int)index, (unsigned int)data,
+			(unsigned int)POINTER_X(data), (unsigned int)POINTER_Y(data));
 	if (0 == POINTER_TYPE(data)) {
 		LLUI_DEBUG_TRACE("absolute)");
 	}
@@ -259,7 +260,7 @@ static void decode_event_state(uint32_t event, uint32_t index, MICROUI_EVENT_DEC
 	(void)index;
 	(void)fct_data_decoder;
 
-	LLUI_DEBUG_TRACE("TODO %s 0x%08x\n", __FUNCTION__, event);
+	LLUI_DEBUG_TRACE("TODO %s 0x%08x\n", __FUNCTION__, (unsigned int)event);
 }
 
 /*
@@ -305,7 +306,7 @@ static void decode_event_input(uint32_t event, uint32_t index, MICROUI_EVENT_DEC
 
 static void decode_event_user_data(uint32_t event, uint32_t data, uint32_t index) {
 	(void)event;
-	LLUI_DEBUG_TRACE("    [%02u] 0x%08x\n", index, data);
+	LLUI_DEBUG_TRACE("    [%02u] 0x%08x\n", (unsigned int)index, (unsigned int)data);
 }
 
 static void decode_event_user(uint32_t event, uint32_t index, MICROUI_EVENT_DECODER_decode_event_data* fct_data_decoder) {
@@ -348,11 +349,11 @@ void MICROUI_EVENT_DECODER_describe_dump_end(void) {
 }
 
 void MICROUI_EVENT_DECODER_drop_data(uint32_t data, uint32_t index) {
-	LLUI_DEBUG_TRACE("[%02u: 0x%08x] garbage\n", index, data);
+	LLUI_DEBUG_TRACE("[%02u: 0x%08x] garbage\n", (unsigned int)index, (unsigned int)data);
 }
 
 void MICROUI_EVENT_DECODER_decode_event(uint32_t event, uint32_t index, MICROUI_EVENT_DECODER_decode_event_data* fct_data_decoder) {
-	LLUI_DEBUG_TRACE("[%02u: 0x%08x] ", index, event);
+	LLUI_DEBUG_TRACE("[%02u: 0x%08x] ", (unsigned int)index, (unsigned int)event);
 
 	uint8_t event_type = (uint8_t)(event >> 24);
 

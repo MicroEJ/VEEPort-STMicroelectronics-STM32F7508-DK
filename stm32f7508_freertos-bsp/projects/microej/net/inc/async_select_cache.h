@@ -53,7 +53,7 @@ void async_select_set_socket_timeout_in_cache(int32_t fd, int32_t timeout);
  * @param[in] fd the socket file descriptor
  * @param[in] absolute_timeout socket absolute timeout
  */
-void async_select_set_socket_absolute_timeout_in_cache(int32_t fd, int64_t absolute_timeout);
+int32_t async_select_set_socket_absolute_timeout_in_cache(int32_t fd, int64_t absolute_timeout);
 
 /**
  * @brief Remove a socket timeout from the cache

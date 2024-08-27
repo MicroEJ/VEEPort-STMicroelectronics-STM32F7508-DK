@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2024 MicroEJ Corp. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
@@ -72,11 +72,6 @@ define block RO_ITCM_CODE         with alignment = 4
 	section .text object stm32f7xx_it.o,
 	section .text object stm32f7xx_custom.o,
 
-	/* VM core BSP support functions */
-	section .text object LLBSP_generic.o,
-	section .text object LLMJVM_FreeRTOS.o,
-	section .text object time_hardware_timer.o,
-
 	/* ui dma2d cco */
 	section .text object drawing_dma2d.o
 };
@@ -98,11 +93,6 @@ define block RO_ITCM_CODE_INIT    with alignment = 4
 	section .text_init object stm32f7xx_it.o,
 	section .text_init object stm32f7xx_custom.o,
 
-	/* VM core BSP support functions */
-	section .text_init object LLBSP_generic.o,
-	section .text_init object LLMJVM_FreeRTOS.o,
-	section .text_init object time_hardware_timer.o,
-
 	/* ui dma2d cco */
 	section .text_init object drawing_dma2d.o
 };
@@ -123,11 +113,6 @@ initialize manually
 	/* SysTick interrupt handler and calees */
 	section .text object stm32f7xx_it.o,
 	section .text object stm32f7xx_custom.o,
-
-	/* VM core BSP support functions */
-	section .text object LLBSP_generic.o,
-	section .text object LLMJVM_FreeRTOS.o,
-	section .text object time_hardware_timer.o,
 
 	/* ui dma2d cco */
 	section .text object drawing_dma2d.o
@@ -172,6 +157,10 @@ place in FLASH_region        { readonly object *VMCOREMicroJvm*.o };
 place in FLASH_region        { readonly object *iceTea_lang*.o };
 place in FLASH_region        { readonly object *iceTea_support_armv7m*.o };
 place in FLASH_region        { readonly object *ist_mowana_vm*.o };
+
+/* VM core BSP support functions */
+place in FLASH_region        { readonly object LLBSP_generic.o };
+place in FLASH_region        { readonly object LLMJVM_FreeRTOS.o };
 
 /* Place in FLASH the readwrite region initializers (mandatory) */
 place in FLASH_region        { section .data_init };

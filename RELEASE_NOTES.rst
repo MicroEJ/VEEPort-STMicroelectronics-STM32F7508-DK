@@ -3,7 +3,7 @@
 .. Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.2.0
+.. |VEEPORT_VER| replace:: 2.3.0
 .. |MANUFACTURER| replace:: STMicroelectronics
 .. |VEEPORT| replace:: VEE Port
 .. |STM_IDE.PRINTABLENAME| replace:: STM32CubeIDE
@@ -58,7 +58,7 @@ This |VEEPORT| contains the following dependencies:
 .. list-table::
 
   * - NET (Network & Secure Socket Layer)
-    - 9.4.2
+    - 11.1.0
   * - HAL (Hardware Abstraction Layer)
     - 2.0.1
   * - FS (File System)
@@ -540,6 +540,9 @@ Known issues/limitations
 
 - Implementation of ``snprintf`` does not support the ``%llx`` format.
 - The firmware does not boot when using the File System library and no SD Card is plugged (only ``MicroEJ Start`` is displayed in the console).
+- Cipher RSA tests in the Security test suite do not work correctly on the VEE Ports 2.3.0 (toolchain GCC and IAR). This bug should be fixed in the next version of this VEE Port. Therefore these tests are excluded by default from the test suite.
+- The test suite security causes a systematic crash if used on the VEE port with the IAR toolchain.
+- UI pack 13.7.2 contains a synchronization bug fixed in pack UI 14.0.2 (see ``https://docs.microej.com/en/latest/VEEPortingGuide/uiChangeLog.html#section-ui-changelog``). This bug can cause random failures in the execution of the UI3 testsuite.
  
 |VEEPORT| Memory Layout
 =======================

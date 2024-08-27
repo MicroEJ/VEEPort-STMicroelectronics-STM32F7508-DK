@@ -15,7 +15,7 @@
     Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.2.0
+.. |VEEPORT_VER| replace:: 2.3.0
 .. |RCP| replace:: MICROEJ SDK
 .. |VEEPORT| replace:: VEE Port
 .. |SIM| replace:: Simulator
@@ -103,10 +103,8 @@ This |VEEPORT| provides the following Foundation Libraries:
      - 1.1
    * - DRAWING
      - 1.0
-   * - ECOM
-     - 1.1
-   * - ECOM-COMM
-     - 1.1
+   * - ECOM-NETWORK
+     - 2.1
    * - ECOM-SOCKET
      - 1.0
    * - EDC
@@ -121,8 +119,6 @@ This |VEEPORT| provides the following Foundation Libraries:
      - 3.4
    * - NET
      - 1.1
-   * - NET-EMBEDDED-DNS-NATIVE
-     - 1.3
    * - NLS
      - 2.0
    * - PUMP
@@ -130,7 +126,7 @@ This |VEEPORT| provides the following Foundation Libraries:
    * - RESOURCEMANAGER
      - 1.0
    * - SECURITY
-     - 1.3
+     - 1.7
    * - SNI
      - 1.4
    * - SP

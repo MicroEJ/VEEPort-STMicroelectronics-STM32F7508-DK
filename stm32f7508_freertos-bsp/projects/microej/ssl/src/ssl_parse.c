@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2020 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2024 MicroEJ Corp. All rights reserved.
  * This library is provided in source code for use, modification and test, subject to license terms.
  * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
@@ -18,6 +18,11 @@
 #include "LLNET_CONSTANTS.h"
 #include <net_ssl_errors.h>
 
+/* additions  to remove compilation Warnings */
+#include "FreeRTOSConfig.h"
+#include "projdefs.h"
+#include "portable.h"
+/* end of additions */
 #include "mbedtls/x509_crt.h"
 
 uint8_t * getStrFromArray(uint8_t * array, uint32_t offset, uint32_t * len) {
@@ -48,7 +53,7 @@ uint8_t * getStrFromArray(uint8_t * array, uint32_t offset, uint32_t * len) {
 			 */
 
 			/* Try first internal memory because it is faster */
-			p_str = pvPortMalloc(*len);
+			//p_str = pvPortMalloc(*len);
 
 			if (NULL == p_str) {
 				return NULL;

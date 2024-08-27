@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2024 MicroEJ Corp. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
@@ -70,6 +70,10 @@ SECTIONS
     *(.glue_7)         /* glue arm to thumb code */
     *(.glue_7t)        /* glue thumb to arm code */
     *(.eh_frame)
+    
+    /* VM core BSP support functions */
+    *LLBSP_generic.o(.text .text.*)
+    *LLMJVM_FreeRTOS.o(.text .text.*)
 
     KEEP (*(.init))
     KEEP (*(.fini))
@@ -152,11 +156,6 @@ SECTIONS
     /* SysTick interrupt handler and calees */
     *stm32f7xx_it.o(.text .text.*)
     *stm32f7xx_custom.o(.text .text.*)
-
-    /* VM core BSP support functions */
-    *LLBSP_generic.o(.text .text.*)
-    *LLMJVM_FreeRTOS.o(.text .text.*)
-    *time_hardware_timer.o(.text .text.*)
 
     /* ui dma2d cco */
     *drawing_dma2d.o(.text .text.*)

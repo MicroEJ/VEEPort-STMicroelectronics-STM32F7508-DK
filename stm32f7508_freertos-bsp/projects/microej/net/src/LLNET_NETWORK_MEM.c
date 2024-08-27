@@ -20,7 +20,6 @@
 
 // Define size to allocate for Network Heap
 #define NETWORK_HEAP_SIZE 0x40000
-
 // Declare Network Heap
 uint8_t network_heap[NETWORK_HEAP_SIZE] __attribute__((section(".NetworkHeap")));
 

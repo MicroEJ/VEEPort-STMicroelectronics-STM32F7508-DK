@@ -1,19 +1,19 @@
 /*
  * C
  *
- * Copyright 2015-2020 MicroEJ Corp. All rights reserved.
- * For demonstration purpose only.
- * MicroEJ Corp. PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2015-2023 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
-#ifndef __LLSEC_X509_CERT_IMPL__
-#define __LLSEC_X509_CERT_IMPL__
+#ifndef LLSEC_X509_CERT_IMPL_H
+#define LLSEC_X509_CERT_IMPL_H
 
 /**
  * @file
  * @brief MicroEJ Security low level API
  * @author MicroEJ Developer Team
- * @version 1.5.0
- * @date 20 December 2020
+ * @version 2.4.0
+ * @date 16 February 2024
  */
 
 #include <intern/LLSEC_X509_CERT_impl.h>
@@ -25,6 +25,7 @@
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
 
 /**
  * @brief Parses the given certificate to validate it and returns its encoded format type.
@@ -41,44 +42,45 @@ int32_t LLSEC_X509_CERT_IMPL_parse(int8_t* cert, int32_t off, int32_t len);
 
 
 /**
- * @brief Gets the size of the buffer that must be allocated to store the public key.
- * This buffer will be passed as <code>key</code> argument to
- * <code>LLSEC_X509_CERT_IMPL_get_key()</code>.
- *
- * @return The public key buffer size in bytes.
- */
-int32_t LLSEC_X509_CERT_IMPL_get_key_size(void);
-
-/**
  * @brief Gets a public key from a X509 certificate.
  *
  * @param[in] cert_data						The X509 certificate.
  * @param[in] cert_data_length				The certificate length.
- * @param[out] key							The public key extracted from the certificate.
- * @param[in] keyDataLength					The length of keyData buffer.
  *
- * @return The number of bytes copied into key.
+ * @return a pointer to the C structure holding the key data.
  *
  * @warning <code>cert_data</code> must not be used outside of the VM task or saved.
  * @warning <code>key</code> must not be used outside of the VM task or saved.
  *
  * @throws NativeException on error.
  */
-int32_t LLSEC_X509_CERT_IMPL_get_key(int8_t* cert_data, int32_t cert_data_length, uint8_t* key, int32_t key_length);
+int32_t LLSEC_X509_CERT_IMPL_get_key(int8_t* cert_data, int32_t cert_data_length);
 
 /**
  * @brief Verifies a certificate against a verification key.
  *
  * @param[in] cert_data						The X509 certificate.
  * @param[in] cert_data_length				The certificate length.
- * @param[in] key							The verification key.
- * @param[in] key_length					The key length.
+ * @param[in] public_key_id					The verification key pointer.
  *
  * @return 0 if the verification succeeded, throws a NativeException otherwise.
  *
  * @throws NativeException on error.
  */
-int32_t LLSEC_X509_CERT_IMPL_verify(int8_t* cert_data, int32_t cert_data_length, uint8_t* key, int32_t key_length);
+int32_t LLSEC_X509_CERT_IMPL_verify(int8_t* cert_data, int32_t cert_data_length, int32_t public_key_id);
+
+/**
+ * @brief Checks that the certificate is currently valid, i.e. the current time is within the specified validity period.
+ *
+ * @param[in] cert_data						The X509 certificate.
+ * @param[in] cert_data_length				The certificate length.
+ *
+ * @return {@link J_SEC_NO_ERROR} on success, {@link J_X509_CERT_EXPIRED_ERROR} if certificate expired,
+ * {@link J_X509_CERT_NOT_YET_VALID_ERROR} if certificate is not yet valid.
+ *
+ * @throws NativeException on error.
+ */
+int32_t LLSEC_X509_CERT_IMPL_check_validity(int8_t* cert_data, int32_t cert_data_length);
 
 /**
  * @brief Extracts the subject or issuer X500Principal from an X509Certificate.
@@ -95,8 +97,17 @@ int32_t LLSEC_X509_CERT_IMPL_verify(int8_t* cert_data, int32_t cert_data_length,
  */
 int32_t LLSEC_X509_CERT_IMPL_get_x500_principal_data(int8_t* cert_data, int32_t cert_data_length, uint8_t* principal_data, int32_t principal_data_length, uint8_t get_issuer);
 
+/**
+ * @brief Get the pointer for the close key  method to be used as a close resource callback with SNI.
+ *
+ * @return the pointer for the close method.
+ *
+ * @note Throws NativeException on error.
+ */
+int32_t LLSEC_X509_CERT_IMPL_get_close_key();
+
 #ifdef __cplusplus
 	}
 #endif
 
-#endif //__LLSEC_X509_CERT_IMPL__
+#endif //LLSEC_X509_CERT_IMPL_H

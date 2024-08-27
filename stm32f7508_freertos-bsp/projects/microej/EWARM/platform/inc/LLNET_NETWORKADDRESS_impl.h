@@ -1,10 +1,11 @@
 /*
  * C
  *
- * Copyright 2014-2021 IS2T. All rights reserved.
- * For demonstration purpose only.
- * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014-2022 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
+
 #ifndef LLNET_NETWORKADDRESS_IMPL
 #define LLNET_NETWORKADDRESS_IMPL
 
@@ -12,11 +13,12 @@
  * @file
  * @brief MicroEJ NET low level API
  * @author MicroEJ Developer Team
- * @version 2.1.2
- * @date 7 May 2021
+ * @version 3.0.0
+ * @date 26 August 2022
  */
 
-#include <sni.h>
+#include <stdint.h>
+
 #include <intern/LLNET_NETWORKADDRESS_impl.h>
 #include <LLNET_ERRORS.h>
 
@@ -25,46 +27,58 @@
 #endif
 
 /**
- * Gets the host address representing any local address.
- * <p>When this method returns, the {@code anyLocalAddr} buffer is filled with the host address.
- * @param anyLocalAddr the buffer into which the host address will be stored
- * @param length the buffer length
- * @param retry true when the previous call returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT}
- * and the calling process repeats the call to this operation for its completion
- * @return the host address size in bytes or {@link J_EHOSTUNKNOWN} error code
- * if no any local address found or an error occurs
+ * @brief Gets the host address representing any local address.
+ * <p>When this method returns, the <code>anyLocalAddr</code> buffer is filled with the host address.
+ *
+ * @param[out]	anyLocalAddr 	The buffer into which the host address will be stored.
+ * @param[in]	length			The buffer length.
+ *
+ * @return the host address size in bytes.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_ERRORS.h header file for error codes.
+ *
  * @warning anyLocalAddr must not be used outside of the VM task or saved.
  */
-int32_t LLNET_NETWORKADDRESS_IMPL_lookupInaddrAny(int8_t* anyLocalAddr, int32_t length, uint8_t retry);
+int32_t LLNET_NETWORKADDRESS_IMPL_lookupInaddrAny(int8_t* anyLocalAddr, int32_t length);
 
 /**
- * Gets the local host name.
- * <p>When this method returns, the {@code localHostname} buffer is filled with the local host name.
- * @param localHostname the buffer into which the local host name will be stored
- * @param length the buffer length
- * @param retry true when the previous call returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT}
- * and the calling process repeats the call to this operation for its completion
- * @return the local host name length or {@link J_EHOSTUNKNOWN} error code
- * if no local host found or an error occurs
+ * @brief Gets the local host name.
+ * <p>When this method returns, the <code>localHostname</code> buffer is filled with the local host name.
+ *
+ * @param[out]	localHostname		The buffer into which the local host name will be stored.
+ * @param[in]	length				The buffer length.
+ *
+ * @return the local host name length.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_ERRORS.h header file for error codes.
+ *
  * @warning localHostname must not be used outside of the VM task or saved.
  */
-int32_t LLNET_NETWORKADDRESS_IMPL_getLocalHostnameNative(int8_t* localHostname, int32_t length, uint8_t retry);
+int32_t LLNET_NETWORKADDRESS_IMPL_getLocalHostnameNative(uint8_t* localHostname, int32_t length);
 
 /**
- * Gets the loopback address.
- * <p>When this method returns, the {@code loopback} buffer is filled with the loopback address.
+ * @brief Gets the loopback address.
+ * <p>When this method returns, the <code>loopback</code> buffer is filled with the loopback address.
  *
- * @param loopback the buffer into which the loopback address will be stored
- * @param length the buffer length
- * @param retry true when the previous call returned {@link J_NATIVE_CODE_BLOCKED_WITHOUT_RESULT}
- * and the calling process repeats the call to this operation for its completion
- * @return the loopback address size in bytes  or {@link J_EHOSTUNKNOWN} error code
- * if no loopback address found or an error occurs
+ * @param[out]	loopback	The buffer into which the loopback address will be stored.
+ * @param[in]	length 		The buffer length.
+ *
+ * @return the loopback address size in bytes.
+ *
+ * @note Throws NativeIOException on error.
+ *
+ * @see LLNET_ERRORS.h header file for error codes.
+ *
  * @warning loopback must not be used outside of the VM task or saved.
  */
-int32_t LLNET_NETWORKADDRESS_IMPL_loopbackAddress(int8_t* loopback, int32_t length, uint8_t retry);
+int32_t LLNET_NETWORKADDRESS_IMPL_loopbackAddress(int8_t* loopback, int32_t length);
 
 #ifdef __cplusplus
 	}
 #endif
-#endif
+
+#endif // LLNET_NETWORKADDRESS_IMPL

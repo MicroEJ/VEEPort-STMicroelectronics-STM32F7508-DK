@@ -5,3 +5,4 @@
 /scripts/*
 !/scripts/init-wadapps/
 !/scripts/init-watchdog/
+!/scripts/init-soar/

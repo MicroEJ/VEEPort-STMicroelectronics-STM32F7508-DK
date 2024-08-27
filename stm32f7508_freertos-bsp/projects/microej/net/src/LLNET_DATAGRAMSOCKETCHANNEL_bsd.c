@@ -1,25 +1,25 @@
 /*
  * C
  *
- * Copyright 2014-2020 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2014-2022 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
 /**
  * @file
- * @brief LLNET_DATAGRAMSOCKETCHANNEL 2.1.0 implementation over BSD-like API.
+ * @brief LLNET_DATAGRAMSOCKETCHANNEL 3.0.0 implementation over BSD-like API.
  * @author MicroEJ Developer Team
- * @version 1.1.1
- * @date 7 February 2020
+ * @version 2.0.0
+ * @date 17 June 2022
  */
 
-#include <LLNET_DATAGRAMSOCKETCHANNEL_impl.h>
 
+#include "LLNET_DATAGRAMSOCKETCHANNEL_impl.h"
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
-#include "LLNET_CONSTANTS.h"
+#include <netinet/in.h>
+#include "sni.h"
 #include "LLNET_ERRORS.h"
 #include "LLNET_Common.h"
 
@@ -27,23 +27,40 @@
 	extern "C" {
 #endif
 
-int64_t DatagramSocketChannel_recvfrom(int32_t fd, int8_t* dst, int32_t dstOffset, int32_t dstLength, int8_t* hostPort, int32_t hostPortLength, uint8_t retry){
-	LLNET_DEBUG_TRACE("%s(fd=0x%X, dstLength=%d, hostPortLength=%d, retry=%d)\n", __func__, fd, dstLength, hostPortLength, retry);
 
+int64_t LLNET_DATAGRAMSOCKETCHANNEL_IMPL_receive(int32_t fd, int8_t* dst, int32_t dstOffset, int32_t dstLength, int8_t* hostPort, int32_t hostPortLength, int64_t absoluteTimeout)
+{
+	LLNET_DEBUG_TRACE("%s(fd=0x%X, absoluteTimeout=%lld, dstLength=%d, hostPortLength=%d)\n", __func__, fd, absoluteTimeout, dstLength, hostPortLength);
+	if (llnet_is_ready() == false) {
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return SNI_IGNORED_RETURNED_VALUE;
+	}
 	union llnet_sockaddr sockaddr = {0};
 	int32_t addrLen = sizeof(sockaddr);
 	int32_t flags = MSG_WAITALL;
-	int32_t ret = llnet_recvfrom(fd, dst+dstOffset, dstLength, flags, &sockaddr.addr, (socklen_t *)&addrLen);
+	int32_t ret;
 
-	LLNET_DEBUG_TRACE("%s recvfrom() returned %d errno = %d\n",__func__,ret,errno);
-	if (ret == -1) {
-		LLNET_DEBUG_TRACE("%s returning %d\n", __func__, map_to_java_exception(llnet_errno(fd)));
-		return map_to_java_exception(llnet_errno(fd));
+	ret = llnet_recvfrom(fd, dst+dstOffset, dstLength, flags, &sockaddr.addr, (socklen_t *)&addrLen);
+
+	LLNET_DEBUG_TRACE("%s recvfrom() returned %d errno = %d\n",__func__, ret, llnet_errno(fd));
+
+	if(0 == ret){
+		//EOF
+		return -1;
 	}
+
+	if(0 > ret){
+		//receive error
+		LLNET_handle_blocking_operation_error(fd, llnet_errno(fd), SELECT_READ, absoluteTimeout, (SNI_callback)LLNET_DATAGRAMSOCKETCHANNEL_IMPL_receive, NULL);
+		return SNI_IGNORED_RETURNED_VALUE;
+	}
+
+	//receive success
 #if LLNET_AF & LLNET_AF_IPV4
 	if (sockaddr.addr.sa_family == AF_INET) {
-		if(hostPortLength < (sizeof(in_addr_t)+sizeof(int32_t))){
-			return J_EINVAL;
+		if((uint32_t)hostPortLength < (sizeof(in_addr_t) + sizeof(int32_t))){
+			SNI_throwNativeIOException(J_EINVAL, "wrong host port length");
+			return SNI_IGNORED_RETURNED_VALUE;
 		}
 		// push host address in result buffer
 		*((in_addr_t*)hostPort) = sockaddr.in.sin_addr.s_addr;
@@ -60,9 +77,10 @@ int64_t DatagramSocketChannel_recvfrom(int32_t fd, int8_t* dst, int32_t dstOffse
 #endif
 #if LLNET_AF & LLNET_AF_IPV6
 	if (sockaddr.addr.sa_family == AF_INET6) {
-		if(hostPortLength < (sizeof(struct in6_addr)+sizeof(int32_t))){
+		if((uint32_t)hostPortLength < (sizeof(struct in6_addr) + sizeof(int32_t))){
 			LLNET_DEBUG_TRACE("%s returning J_EINVAL hostPortLength = %d\n", __func__,hostPortLength);
-			return J_EINVAL;
+			SNI_throwNativeIOException(J_EINVAL, "wrong host port length");
+			return SNI_IGNORED_RETURNED_VALUE;
 		}
 		// push host address in result buffer
 		memcpy(hostPort, (void*)&sockaddr.in6.sin6_addr, sizeof(struct in6_addr));
@@ -81,13 +99,24 @@ int64_t DatagramSocketChannel_recvfrom(int32_t fd, int8_t* dst, int32_t dstOffse
 #endif
 
 	//unsupported address family
-	return J_EAFNOSUPPORT;
+	SNI_throwNativeIOException(J_EAFNOSUPPORT, "unsupported address family");
+	return SNI_IGNORED_RETURNED_VALUE;
 }
 
-int32_t DatagramSocketChannel_sendto(int32_t fd, int8_t* src, int32_t srcoffset, int32_t srclength, int8_t* addr, int32_t addrlength, int32_t port, uint8_t retry){
-	LLNET_DEBUG_TRACE("%s(fd=0x%X, ..., retry=%d)\n", __func__, fd, retry);
+
+void LLNET_DATAGRAMSOCKETCHANNEL_IMPL_send(int32_t fd, int8_t* src, int32_t srcoffset, int32_t srclength, int8_t* addr, int32_t addrlength, int32_t port)
+{
+	LLNET_DEBUG_TRACE("%s(fd=0x%X, srclength=%d, port=%d)\n", __func__, fd, srclength, port);
 	union llnet_sockaddr sockaddr = {0};
 	int sockaddr_sizeof = 0;
+	int32_t ret;
+	int32_t fd_errno;
+
+    if(llnet_is_ready() == false){
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return;
+    }
+
 #if LLNET_AF == LLNET_AF_IPV4
 	if(addrlength == sizeof(in_addr_t))
 	{
@@ -99,13 +128,13 @@ int32_t DatagramSocketChannel_sendto(int32_t fd, int8_t* src, int32_t srcoffset,
 #endif
 
 #if LLNET_AF == LLNET_AF_DUAL
-	if(addrlength == sizeof(in_addr_t) && SNI_getArrayLength(addr) >= sizeof(struct in6_addr)){
-		// Convert IPv4 into IPv6 directly in the addr array
-		map_ipv4_into_ipv6((in_addr_t*)addr, (struct in6_addr*)addr);
-
-		// Now length of the address in addr is sizeof(struct in6_addr)
+	if(addrlength == sizeof(in_addr_t)){
+		// Convert IPv4 into IPv6 and put the result directly in the in6_addr struct
+		LLNET_map_ipv4_into_ipv6((in_addr_t*)addr, (struct in6_addr*)&sockaddr.in6.sin6_addr);
+		// Update length and addr
 		addrlength = sizeof(struct in6_addr);
-		// continue in the following if
+		addr = (int8_t*)&sockaddr.in6.sin6_addr;
+		// Continue in the following if
 	}
 #endif
 
@@ -113,99 +142,59 @@ int32_t DatagramSocketChannel_sendto(int32_t fd, int8_t* src, int32_t srcoffset,
 	if(addrlength == sizeof(struct in6_addr))
 	{
 		sockaddr.in6.sin6_family = AF_INET6;
-		memcpy((void*)&sockaddr.in6.sin6_addr, addr, sizeof(struct in6_addr));
+		// Skip copy if in6_addr struct already contains the IPv6 address
+		if((void*)addr != (void*)&sockaddr.in6.sin6_addr){
+			memcpy((void*)&sockaddr.in6.sin6_addr, addr, sizeof(struct in6_addr));
+		}
 		sockaddr.in6.sin6_port = llnet_htons(port);
 		sockaddr_sizeof = sizeof(struct sockaddr_in6);
 	}
 #endif
 	if(sockaddr_sizeof == 0){
 		LLNET_DEBUG_TRACE("%s(fd=0x%X) invalid address type addrlength=%d\n", __func__, fd, addrlength);
-		return J_EINVAL;
+		SNI_throwNativeIOException(J_EINVAL, "invalid address length");
+		return;
 	}
-	int32_t flags = 0;
 	LLNET_DEBUG_TRACE("%s(fd=0x%X) calling sendto AddrSize: %d\n", __func__, fd, sockaddr_sizeof);
 
-	int32_t ret = llnet_sendto(fd, src+srcoffset, srclength, flags,&sockaddr.addr, sockaddr_sizeof);
-
+	ret = llnet_sendto(fd, src+srcoffset, srclength, 0, &sockaddr.addr, sockaddr_sizeof);
+	fd_errno = llnet_errno(fd);
 	LLNET_DEBUG_TRACE("%s(fd=0x%X) sendto result=%d errno=%d\n", __func__, fd, ret, llnet_errno(fd));
 
-	if(ret == -1 && llnet_errno(fd) == EISCONN){
+	if(ret < 0 && fd_errno == EISCONN){
 		//The datagram socket is connected.
 		//According to BSD sendto specification, EISCONN can be set when trying to send a packet
 		//on a connected stream or datagram socket if destination address is not null.
 		//Retry to send the packet without specifying the destination address (set it to null).
-		ret = llnet_sendto(fd, src+srcoffset, srclength, flags,(struct sockaddr*)NULL, 0);
-	}
-	if(ret == -1 && (llnet_errno(fd) == EAGAIN || llnet_errno(fd) == EWOULDBLOCK)){
-		ret = 0;
-	}
-	if(ret == -1){
-		return map_to_java_exception(llnet_errno(fd));
+		ret = llnet_sendto(fd, src+srcoffset, srclength, 0, (struct sockaddr*)NULL, 0);
 	}
 
-	return ret;
+	if(ret == 0){
+		SNI_throwNativeIOException(J_EUNKNOWN, "0 byte written");
+		return;
+	}
+
+	if(0 > ret){
+		LLNET_handle_blocking_operation_error(fd, llnet_errno(fd), SELECT_READ, 0, (SNI_callback)LLNET_DATAGRAMSOCKETCHANNEL_IMPL_send, NULL);
+	}
 }
 
-int64_t LLNET_DATAGRAMSOCKETCHANNEL_IMPL_receive(int32_t fd, int8_t* dst, int32_t dstOffset, int32_t dstLength, int8_t* hostPort, int32_t hostPortLength, uint8_t retry)
-{
-	LLNET_DEBUG_TRACE("%s(fd=0x%X, ..., retry=%d hostPortLength = %d)\n", __func__, fd, retry, hostPortLength);
-
-    if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
-    }
-
-	// first, a select with zero timeout is done to check if the socket is readable or writable.
-	// The select call is non blocking when the given timeout is equals to zero.
-	// On success, the socket is ready to read or write data. A blocking call to recv function
-	// can be done. It will not block the socket.
-	int32_t selectRes = non_blocking_select(fd, SELECT_READ);
-
-	if(selectRes == 0){
-		return asyncOperation(fd, SELECT_READ, retry);
-	}else{
-		return DatagramSocketChannel_recvfrom(fd, dst, dstOffset, dstLength, hostPort, hostPortLength, retry);
-	}
-
-}
-
-int32_t LLNET_DATAGRAMSOCKETCHANNEL_IMPL_send(int32_t fd, int8_t* src, int32_t srcoffset, int32_t srclength, int8_t* addr, int32_t addrlength, int32_t port, uint8_t retry)
-{
-	LLNET_DEBUG_TRACE("%s(fd=0x%X, ..., retry=%d addrlength = %d)\n", __func__, fd, retry, addrlength);
-
-    if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
-    }
-
-	// first, a select with zero timeout is done to check if the socket is readable or writable.
-	// The select call is non blocking when the given timeout is equals to zero.
-	// On success, the socket is ready to read or write data. A blocking call to recv function
-	// can be done. It will not block the socket.
-	int32_t selectRes = non_blocking_select(fd, SELECT_WRITE);
-
-	if(selectRes == 0){
-		return asyncOperation(fd, SELECT_WRITE, retry);
-	}else{
-		return DatagramSocketChannel_sendto(fd, src, srcoffset, srclength, addr, addrlength, port, retry);
-	}
-
-}
-
-int32_t LLNET_DATAGRAMSOCKETCHANNEL_IMPL_disconnect(int32_t fd, uint8_t retry)
+void LLNET_DATAGRAMSOCKETCHANNEL_IMPL_disconnect(int32_t fd)
 {
 	LLNET_DEBUG_TRACE("%s(fd=0x%X)\n ", __func__, fd);
 
     if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return;
     }
 
 	struct sockaddr sockaddr = {0};
 	sockaddr.sa_family = AF_UNSPEC;
-	if(llnet_connect(fd, &sockaddr, sizeof(struct sockaddr)) == -1) {
-		return map_to_java_exception(llnet_errno(fd));
+	if(llnet_connect(fd, &sockaddr, sizeof(struct sockaddr)) < 0) {
+		int32_t fd_errno = llnet_errno(fd);
+		SNI_throwNativeIOException(LLNET_map_to_java_exception(fd_errno), LLNET_get_socket_error_msg(fd_errno));
 	}
-	return 0; //success
 }
-
 #ifdef __cplusplus
 	}
 #endif

@@ -20,7 +20,7 @@ Notes:
 #define SYSVIEW_FREERTOS_H
 
 #include "SEGGER_SYSVIEW.h"
-
+#include "FreeRTOSConfig.h"
 /*********************************************************************
 *
 *       Defines, configurable

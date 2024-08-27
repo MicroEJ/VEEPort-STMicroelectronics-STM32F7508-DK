@@ -3,7 +3,7 @@
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: STM32F7508-DK
-.. |VEEPORT_VER| replace:: 2.2.0
+.. |VEEPORT_VER| replace:: 2.3.0
 .. |RCP| replace:: MICROEJ SDK
 .. |VEEPORT| replace:: VEE Port
 .. |SIM| replace:: Simulator

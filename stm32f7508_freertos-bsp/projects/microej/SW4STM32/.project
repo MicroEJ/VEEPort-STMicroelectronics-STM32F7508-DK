@@ -32,11 +32,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>comm</name>
-			<type>2</type>
-			<locationURI>comm</locationURI>
-		</link>
-		<link>
 			<name>config</name>
 			<type>2</type>
 			<locationURI>config</locationURI>
@@ -45,6 +40,11 @@
 			<name>core</name>
 			<type>2</type>
 			<locationURI>core</locationURI>
+		</link>
+		<link>
+			<name>ecom-network</name>
+			<type>2</type>
+			<locationURI>ecomnetwork</locationURI>
 		</link>
 		<link>
 			<name>fs</name>
@@ -149,6 +149,10 @@
 		<variable>
 			<name>core</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/core</value>
+		</variable>
+		<variable>
+			<name>ecomnetwork</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/ecom-network</value>
 		</variable>
 		<variable>
 			<name>fs</name>

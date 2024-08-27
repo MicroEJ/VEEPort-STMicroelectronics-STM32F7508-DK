@@ -8,7 +8,7 @@
 
 #if !defined __NET_SSL_ERRORS_H__
 # define __NET_SSL_ERRORS_H__
-
+#include "sni.h"
 /*
  * This function translate a mbedtls error to a Java error
  *

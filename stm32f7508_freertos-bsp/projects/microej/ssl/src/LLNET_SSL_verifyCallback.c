@@ -1,22 +1,39 @@
 /*
  * C
  *
- * Copyright 2018-2019 IS2T. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break IS2T warranties on the whole library.
+ * Copyright 2018-2022 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
-#include <LLNET_SSL_CONTEXT_impl.h>
-#include <LLNET_SSL_CONSTANTS.h>
-#include <LLNET_SSL_ERRORS.h>
+
+/**
+ * @file
+ * @brief LLNET_SSL_verifyCallback implementation over mbedtls.
+ * @author MicroEJ Developer Team
+ * @version 3.0.0
+ * @date 17 June 2022
+ */
+
+#if !defined(MBEDTLS_CONFIG_FILE)
+#include "mbedtls/config.h"
+#else
+#include MBEDTLS_CONFIG_FILE
+#endif
+#include "mbedtls/debug.h"
+#include "LLNET_SSL_mbedtls_configuration.h"
+#include "LLNET_SSL_CONTEXT_impl.h"
+#include "LLNET_SSL_CONSTANTS.h"
+#include "LLNET_SSL_ERRORS.h"
+#include "LLNET_SSL_utils_mbedtls.h"
+#include "LLNET_SSL_verifyCallback.h"
 #include <stdlib.h>
 #include <string.h>
 
-#include "LLNET_SSL_verifyCallback.h"
-
-#include "mbedtls/x509.h"
-
 #ifdef __cplusplus
 	extern "C" {
+#endif
+
+#if MBEDTLS_DEBUG_LEVEL > 0
+#define CERT_INFO_BUF_SIZE  1024
 #endif
 
 /**
@@ -29,18 +46,17 @@ int LLNET_SSL_VERIFY_verifyCallback(void *data, mbedtls_x509_crt *crt, int depth
 	/*
 	 * If mbedtls debug level activated, print full informations on certificates
 	 */
-	const uint32_t buf_size = 1024;
-	char buf[buf_size];
+	char buf[CERT_INFO_BUF_SIZE] = {0};
 
 	printf("\nVerifying certificate at depth %d:\n", depth);
-	mbedtls_x509_crt_info(&buf[0], buf_size - 1, "  ", crt);
+	mbedtls_x509_crt_info(&buf[0], CERT_INFO_BUF_SIZE - 1, "  ", crt); //-1 to keep last byte for null-terminated character
 	printf("%s", &buf[0]);
 
-	if (*flags == 0)
+	if (0 == *flags)
 		printf("No verification issue for this certificate\n");
 	else
 	{
-		mbedtls_x509_crt_verify_info(&buf[0], buf_size, "  ! ", *flags);
+		mbedtls_x509_crt_verify_info(&buf[0], CERT_INFO_BUF_SIZE, "  ! ", *flags);
 		printf("%s\n", &buf[0]);
 	}
 #endif
@@ -49,7 +65,7 @@ int LLNET_SSL_VERIFY_verifyCallback(void *data, mbedtls_x509_crt *crt, int depth
 
 	/* If no certificate from peer is signed by on of the trust certificate,
 	 * check if one of the trust certificate is identical to one of the peer certificate */
-	if ( ((*flags) & MBEDTLS_X509_BADCERT_NOT_TRUSTED) == MBEDTLS_X509_BADCERT_NOT_TRUSTED )
+	if (MBEDTLS_X509_BADCERT_NOT_TRUSTED == ((*flags) & MBEDTLS_X509_BADCERT_NOT_TRUSTED))
 	{
 		LLNET_SSL_DEBUG_TRACE("%s(depth=%d) Certificate not trusted, clear error flag and lookup for identical certificate\n", __func__,depth);
 
@@ -59,7 +75,7 @@ int LLNET_SSL_VERIFY_verifyCallback(void *data, mbedtls_x509_crt *crt, int depth
 		*flags &= ~MBEDTLS_X509_BADCERT_NOT_TRUSTED;
 	}
 
-	if (verify_ctx->isUnTrustCA != 0)
+	if (0 != verify_ctx->isUnTrustCA)
 	{
 		/* Compare peer certificate with trusted certificates */
 
@@ -76,7 +92,7 @@ int LLNET_SSL_VERIFY_verifyCallback(void *data, mbedtls_x509_crt *crt, int depth
 				raw_compare = memcmp(trust_ca->raw.p, crt->raw.p, trust_ca->raw.len);
 			}
 
-			if (raw_compare == 0)
+			if (0 == raw_compare)
 			{
 				LLNET_SSL_DEBUG_TRACE("%s(depth=%d) Found identical certificate in trust store\n", __func__, depth);
 				verify_ctx->isUnTrustCA = 0;
@@ -90,7 +106,7 @@ int LLNET_SSL_VERIFY_verifyCallback(void *data, mbedtls_x509_crt *crt, int depth
 	}
 
 	/* if this is the last certificate of the peer chain, set back error flag */
-	if ( (depth == 0) && (verify_ctx->isUnTrustCA != 0))
+	if ( (0 == depth) && (0 != verify_ctx->isUnTrustCA))
 	{
 		LLNET_SSL_DEBUG_TRACE("%s(depth=%d) No trusted nor identical certificate in trust store\n", __func__, depth);
 		*flags |= MBEDTLS_X509_BADCERT_NOT_TRUSTED;

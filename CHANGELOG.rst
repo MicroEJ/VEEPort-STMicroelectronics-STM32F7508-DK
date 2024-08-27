@@ -7,6 +7,24 @@
 ===========
 
 ----------------------
+[2.3.0] - 2024-07-11
+----------------------
+
+Changed
+=======
+
+- Use the chip UID to create a unique address mac
+- Add tests on board in the CI
+- Update NET pack to 11.10
+- Update Security test suite to 1.7.0
+- Update Net test suite to 4.1.1
+- Update SSL test suite to 4.0.1
+- Update the stm32f7508_freertos-bspprojectsmicroejEWARMSTM32F750N8Hx_FLASH.icf to move BSP core functions from ITCM to FLASH
+- Update the stm32f7508_freertos-bspprojectsmicroejSW4STM32STM32F750N8Hx_FLASH.ld to move BSP core functions from ITCM to FLASH
+- Remove compilation warnings of the MicroEJ provided source code
+
+
+----------------------
 [2.2.0] - 2024-01-16
 ----------------------
 

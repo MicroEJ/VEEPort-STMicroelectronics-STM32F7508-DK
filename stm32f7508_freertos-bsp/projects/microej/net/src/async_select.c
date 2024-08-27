@@ -1,25 +1,26 @@
 /*
  * C
  *
- * Copyright 2017-2020 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2017-2022 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
 /**
  * @file
  * @brief Asynchronous network select implementation
  * @author MicroEJ Developer Team
- * @version 1.0.1
- * @date 19 February 2020
+ * @version 3.0.1
+ * @date 13 October 2023
  */
 
 #include "async_select.h"
 #include "async_select_configuration.h"
-#include "async_select_cache.h"
 #include <string.h>
 #include <sys/socket.h>
+//#include <sys/select.h>
+#include <netinet/in.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include "LLNET_Common.h"
 
 #ifdef __cplusplus
@@ -33,7 +34,7 @@
  * the configuration async_select_configuration.h must be updated based on the one provided
  * by the new CCO version.
  */
-#if ASYNC_SELECT_CONFIGURATION_VERSION != 2
+#if ASYNC_SELECT_CONFIGURATION_VERSION != 4
 
 	#error "Version of the configuration file async_select_configuration.h is not compatible with this implementation."
 
@@ -45,9 +46,10 @@ typedef struct async_select_Request{
 	int32_t java_thread_id;
 	// Absolute time for timeout in milliseconds, 0 if no timeout
 	int64_t absolute_timeout_ms;
-	SELECT_Operation operation;
+	select_operation operation;
 	struct async_select_Request* next;
 } async_select_Request;
+
 
 /**
  * @brief Enter critical section for the async_select component.
@@ -73,14 +75,17 @@ extern int64_t LLMJVM_IMPL_getCurrentTime__Z(uint8_t system);
 /*
  * See implementations for descriptions.
  */
+#ifdef USE_ASYNC_SELECT_THREAD
 static void async_select_do_select(void);
-static void async_select_update_notified_requests(void);
+static void async_select_notify_select(void);
 static int32_t async_select_get_notify_fd(void);
+static void async_select_time_ms_to_timeval(int64_t time_ms, struct timeval* time_timeval);
+#endif //USE_ASYNC_SELECT_THREAD
 static async_select_Request* async_select_allocate_request(void);
 static async_select_Request* async_select_free_used_request(async_select_Request* request, async_select_Request* previous_request_in_used_fifo);
+static void async_select_free_used_request_by_java_thread_id(int32_t java_thread_id);
 static void async_select_free_unused_request(async_select_Request* request);
-static int32_t async_select_send_new_request(async_select_Request* request);
-static void async_select_notify_select(void);
+static void async_select_add_new_request(async_select_Request* request);
 void async_select_request_fifo_init(void);
 
 /**
@@ -95,6 +100,8 @@ static async_select_Request* free_requests_fifo;
  * @brief Linked-list of used requests.
  */
 static async_select_Request* used_requests_fifo;
+
+#ifdef USE_ASYNC_SELECT_THREAD
 /**
  * @brief File descriptor set for SELECT_READ requests.
  */
@@ -117,72 +124,54 @@ static int32_t pipe_fds[2];
 volatile static int32_t notify_fd_cache = -1;
 
 #endif //ASYNC_SELECT_USE_PIPE_FOR_NOTIFICATION
+#endif //USE_ASYNC_SELECT_THREAD
 
 /**
  * @brief set to one once the FIFOs are initialized.
  */
 volatile static uint8_t async_select_fifo_initialized = 0;
 
-/**
- * @brief Execute a select() for the given file descriptor and operation without blocking.
- *
- * @param fd the file descriptor.
- * @param operation the operation (read or write) we want to monitor with the select().
- *
- * @return select() result.
- */
-int32_t non_blocking_select(int32_t fd, SELECT_Operation operation){
-	struct timeval zero_timeout;
-	zero_timeout.tv_sec = 0;
-	zero_timeout.tv_usec = 0;
-	fd_set io_fds;
-	fd_set* read_fds_ptr;
-	fd_set* write_fds_ptr;
-	FD_ZERO(&io_fds);
-	FD_SET(fd, &io_fds);
-
-	if(operation == SELECT_READ){
-		read_fds_ptr = &io_fds;
-		write_fds_ptr = NULL;
-	}
-	else { // SELECT_WRITE
-		read_fds_ptr = NULL;
-		write_fds_ptr = &io_fds;
-	}
-
-	int32_t selectRes = select(fd+1, read_fds_ptr, write_fds_ptr, NULL, &zero_timeout);
-
-	return selectRes;
-}
 
 /**
- * @brief Executes asynchronously a select() operation for the given file descriptor.
+ * @brief Executes asynchronously an I/0 operation on the given file descriptor.
+ * This function creates an asynchronous select request for the given file descriptor and then suspends the execution
+ * of the current Java thread using SNI_suspendCurrentJavaThreadWithCallback().
+ * Once the file descriptor of the request will be ready for the given operation or the timeout is reached, the Java
+ * thread is resumed and the given SNI callback is called.
  *
- * This function will suspend the execution of the current Java thread using
- * SNI_suspendCurrentJavaThreadWithCallback(). Once the select() succeeds the Java
- * thread is resumed and the given SNI callback is called. *
+ * <code>absolute_timeout_ms</code> is an absolute time in milliseconds computed from the system time returned by
+ * <code>LLMJVM_IMPL_getCurrentTime(1)</code>. A timeout of zero is interpreted as an infinite timeout.
  *
- * @param fd the file descriptor.
- * @param operation the operation (read or write) we want to monitor with the select().
- * @param timeout_ms timeout in millisecond
- * @param the SNI callback to call when the Java thread is resumed or timeout occurs.
+ * @param[in] fd the file descriptor.
+ * @param[in] operation the operation (read or write) we want to monitor with the select().
+ * @param[in] absolute_timeout_ms the absolute timeout in millisecond or 0 if no timeout.
+ * @param[in] callback the SNI callback to call when the Java thread is resumed or timeout occurs.
+ * @param[in] callback_suspend_arg the SNI suspend callback argument.
  *
  * @return 0 on success, -1 on failure.
+ *
+ * @note Throws NativeIOException on failure.
+ *
+ * @warning: This function needs to register a scoped native resource for the created asynchronous select request.
+ * Since several scoped native resources cannot be registered in the same native context, the function <code>SNI_unregisterScopedResource()</code>
+ * is called to unregister a potential existing scoped resource before registering the new one.
+ * Make sure that no scoped resource is registered before calling this function otherwise it will be unregistered.
+ * <code>SNI_getScopedResource()</code> can be called to check if there is an existing scoped resource.
  */
-int32_t async_select(int32_t fd, SELECT_Operation operation, int64_t timeout_ms, SNI_callback callback){
+int32_t async_select(int32_t fd, select_operation operation, int64_t absolute_timeout_ms, SNI_callback callback, void* callback_suspend_arg){
 
-	int32_t res;
+	int64_t relative_timeout_ms = 0;
+	int32_t java_thread_id = SNI_getCurrentJavaThreadID();
+
+	if(java_thread_id == SNI_ERROR){
+		// Not called from the VM task
+		return -1;
+	}
 
 	async_select_Request* request = async_select_allocate_request();
 	if(request == NULL){
 		// No request available :-(
-		return -1;
-	}
-
-	int32_t java_thread_id = SNI_getCurrentJavaThreadID();
-	if(java_thread_id == SNI_ERROR){
-		// Not called from the VM task
-		async_select_free_unused_request(request);
+		SNI_throwNativeIOException(-1, "async_select cannot allocate new request");
 		return -1;
 	}
 
@@ -190,19 +179,45 @@ int32_t async_select(int32_t fd, SELECT_Operation operation, int64_t timeout_ms,
 	request->java_thread_id = java_thread_id;
 	request->fd = fd;
 	request->operation = operation;
-	if(timeout_ms != 0){
-		request->absolute_timeout_ms = async_select_get_current_time_ms() + timeout_ms;
+	request->absolute_timeout_ms = absolute_timeout_ms;
+
+	//clear pending resume flag if any
+	SNI_clearCurrentJavaThreadPendingResumeFlag();
+
+#ifndef USE_ASYNC_SELECT_THREAD
+	if(absolute_timeout_ms != 0){
+		relative_timeout_ms = absolute_timeout_ms - async_select_get_current_time_ms();
+		if(relative_timeout_ms == 0){
+			//the relative computed timeout is 0 (0 means infinite timeout)
+			//set the timeout to 1ms to prevent infinite timeout
+			relative_timeout_ms = 1;
+		}
 	}
-	else { // infinite timeout
-		request->absolute_timeout_ms = 0;
+#endif //USE_ASYNC_SELECT_THREAD
+
+	//unregister the previous scoped resource if any
+	SNI_unregisterScopedResource();
+	//register a scoped resource for the created async request
+	//the java thread is used as the resource id. It will be used to lookup the associated request and then free the request
+	if(SNI_OK != SNI_registerScopedResource((void*)java_thread_id, (SNI_closeFunction)async_select_free_used_request_by_java_thread_id, NULL)){
+		//registration fail
+		SNI_throwNativeIOException(-1, "async_select cannot register scoped resource");
+		//free the allocated request
+		async_select_free_unused_request(request);
+		return -1;
 	}
 
-	async_select_set_socket_absolute_timeout_in_cache(fd, request->absolute_timeout_ms);
+	if(SNI_OK != SNI_suspendCurrentJavaThreadWithCallback(relative_timeout_ms, callback, callback_suspend_arg)){
+		//suspend fails
+		SNI_throwNativeIOException(-1, "async_select cannot suspend current java thread");
+		//unregister the scoped resource and free the allocated request
+		SNI_unregisterScopedResource();
+		async_select_free_unused_request(request);
+		return -1;
+	}
 
-	SNI_suspendCurrentJavaThreadWithCallback(0, callback, NULL);
-	res = async_select_send_new_request(request);
-
-	return res;
+	async_select_add_new_request(request);
+	return 0;
 }
 
 /**
@@ -234,10 +249,7 @@ void async_select_request_fifo_init(){
  * why we need to notify the async_select task.
  */
 void async_select_notify_closed_fd(int32_t fd){
-
-// If the close unblock the select we don't need to do anything here
-#ifndef ASYNC_SELECT_CLOSE_UNBLOCK_SELECT
-
+#if defined(USE_ASYNC_SELECT_THREAD) && !defined(ASYNC_SELECT_CLOSE_UNBLOCK_SELECT)
 	// Search for the file descriptor in the used requests FIFO.
 	// For the requests that match the given fd, set the timeout
 	async_select_lock();
@@ -255,26 +267,24 @@ void async_select_notify_closed_fd(int32_t fd){
 	async_select_unlock();
 
 	async_select_notify_select();
-
-#endif	//ASYNC_SELECT_CLOSE_UNBLOCK_SELECT
-
+#else
+	// If the close unblock the select we don't need to do anything here
+	(void)fd;
+#endif	// defined(USE_ASYNC_SELECT_THREAD) && !defined(ASYNC_SELECT_CLOSE_UNBLOCK_SELECT)
 }
 
+#ifdef USE_ASYNC_SELECT_THREAD
 /**
  * @brief The entry point for the async_select task.
  * This function must be called from a dedicated task.
  */
 void async_select_task_main(){
 
-	llnet_init();
-
-	async_select_request_fifo_init();
-
 	while(true){
 		// Execute a select().
 		async_select_do_select();
 		// Update the received request depending on the select() results.
-		async_select_update_notified_requests();
+		async_select_update_notified_requests(-1, 0, 0, 0);
 	}
 }
 
@@ -290,8 +300,8 @@ static int32_t async_select_get_notify_fd(){
 
 	if(pipe_fds_initialized == 0){
 		if(pipe(pipe_fds) == -1 ||
-		   set_socket_non_blocking(pipe_fds[0], true) != 0 ||
-		   set_socket_non_blocking(pipe_fds[1], true) != 0){
+			LLNET_set_non_blocking(pipe_fds[0]) != 0 ||
+			LLNET_set_non_blocking(pipe_fds[1]) != 0){
 			//error : can not create the pipe
 			return -1;
 		}
@@ -329,12 +339,12 @@ static int32_t async_select_get_notify_fd(){
 		struct sockaddr_in6 sockaddr = {0};
 		sockaddr.sin6_family = AF_INET6;
 		sockaddr.sin6_port = llnet_htons(0);
-		sockaddr.sin6_addr = in6addr_loopback;
+		memcpy(&sockaddr.sin6_addr, &ASYNC_SELECT_NOTIFY_SOCKET_BIND_IN6ADDR, sizeof(sockaddr.sin6_addr));
 #else
 		struct sockaddr_in sockaddr = {0};
 		sockaddr.sin_family = AF_INET;
-		sockaddr.sin_port = htons(0);
-		sockaddr.sin_addr.s_addr = INADDR_LOOPBACK;
+		sockaddr.sin_port = llnet_htons(0);
+		sockaddr.sin_addr.s_addr = llnet_htonl(ASYNC_SELECT_NOTIFY_SOCKET_BIND_INADDR);
 #endif
 		int32_t ret = llnet_bind(notify_fd, (struct sockaddr*)&sockaddr, sizeof(sockaddr));
 		if(ret != -1){
@@ -427,13 +437,19 @@ static void async_select_do_select(){
 			// 0 means no timeout
 			min_relative_timeout_ms = 0;
 		}
-		time_ms_to_timeval(min_relative_timeout_ms, select_timeout_ptr);
+		async_select_time_ms_to_timeval(min_relative_timeout_ms, select_timeout_ptr);
 	}
 	else {
+#ifndef ASYNC_SELECT_USE_MAX_INFINITE_TIMEOUT
 		// No request has timeout -> NULL timeout means infinite timeout
 		select_timeout_ptr = NULL;
+#else
+		// No request has timeout -> Use maximum timeout for a simulated infinite timeout
+		select_timeout_ptr = &select_timeout;
+		select_timeout.tv_sec = ASYNC_SELECT_MAX_TV_SEC_VALUE;
+		select_timeout.tv_usec = ASYNC_SELECT_MAX_TV_USEC_VALUE;
+#endif
 	}
-
 
 	// --------------
 	//  Do the select
@@ -458,12 +474,19 @@ static void async_select_do_select(){
 		LLNET_DEBUG_TRACE("async_select: select finished %d sockets available\n", res);
 	}
 }
+#endif //USE_ASYNC_SELECT_THREAD
 
 /**
- * @brief After the execution of the select() operation, update the status of the requests
- * that have been notified by the select() or have reached the timemout.
+ * @brief Notifies a new event on the file descriptor.
+ * This function is called when the file descriptor becomes ready for read or write operation.
+ * A file descriptor is ready when it is possible to perform the corresponding I/O operation without blocking.
+ *
+ * @param[in] fd The file descriptor.
+ * @param[in] on_read true if the file descriptor is ready for "read" operation; false otherwise.
+ * @param[in] on_write true if the file descriptor is ready for "write" operation; false otherwise.
+ * @param[in] on_error true if an error has occurred on the file descriptor; In this case, read and write will not block and will result in an error.
  */
-static void async_select_update_notified_requests(){
+void async_select_update_notified_requests(int32_t fd, uint8_t on_read, uint8_t on_write, uint8_t on_error){
 
 	async_select_Request* request;
 	async_select_Request* previous_request = NULL;
@@ -473,6 +496,7 @@ static void async_select_update_notified_requests(){
 	// Browse all the requests to find which have been modified
 	request = used_requests_fifo;
 	while(request != NULL){
+
 		int32_t request_fd = request->fd;
 		bool request_timeout_reached;
 
@@ -483,10 +507,22 @@ static void async_select_update_notified_requests(){
 		else {
 			request_timeout_reached = false;
 		}
+#ifdef USE_ASYNC_SELECT_THREAD
 
-		if((request->operation == SELECT_READ && FD_ISSET(request_fd, &read_fds))	// data received
-		|| (request->operation == SELECT_WRITE && FD_ISSET(request_fd, &write_fds))	// or data sent
-		|| (request_timeout_reached)												// or timeout reached
+		(void)fd;
+		(void)on_read;
+		(void)on_write;
+		(void)on_error;
+
+		if((request->operation == SELECT_READ && FD_ISSET(request_fd, &read_fds))  // data received
+		|| (request->operation == SELECT_WRITE && FD_ISSET(request_fd, &write_fds))	// or data can be sent
+#else
+		if(((request_fd == fd)
+		&& (((request->operation == SELECT_READ) && on_read) 	// data received
+		|| ((request->operation == SELECT_WRITE) && on_write) 	// or data can be sent
+		|| on_error)) 											// socket error
+#endif //USE_ASYNC_SELECT_THREAD
+		|| (request_timeout_reached) // or timeout reached
 		){
 			// Request done.
 			LLNET_DEBUG_TRACE("async_select: request done for fd=0x%X operation=%s notify thread 0x%X (%s)\n", request_fd, request->operation==SELECT_READ ? "read":"write", request->java_thread_id, request_timeout_reached==true ? "timeout":"no timeout");
@@ -532,6 +568,32 @@ static async_select_Request* async_select_free_used_request(async_select_Request
 }
 
 /**
+ * @brief Remove the request associated with the given java thread id 
+ * from the used FIFO and put it in the free FIFO.
+ *
+ * This function is thread safe.
+ *
+ */
+static void async_select_free_used_request_by_java_thread_id(int32_t java_thread_id){
+	async_select_lock();
+	async_select_Request* previous_request = NULL;
+	async_select_Request* request = used_requests_fifo;
+
+	// Browse all the requests to find which one is associated with the java thread id
+	while(request != NULL){
+		if(request->java_thread_id == java_thread_id){
+			//request found
+			async_select_free_used_request(request, previous_request);
+			//break here since there is no more than 1 request by java thread id
+			break;
+		}else{
+			previous_request = request;
+			request = request->next;
+		}
+	}
+	async_select_unlock();
+}
+/**
  * @brief Put the given request in the free FIFO.
  * The request must not be in the used FIFO.
  *
@@ -551,18 +613,18 @@ static void async_select_free_unused_request(async_select_Request* request){
 /**
  * @brief Notifies the async_select task that a new request must be managed.
  */
-static int32_t async_select_send_new_request(async_select_Request* request){
+static void async_select_add_new_request(async_select_Request* request){
 
 	async_select_lock();
 	// Add the request in the used FIFO
 	request->next = used_requests_fifo;
 	used_requests_fifo = request;
 	async_select_unlock();
-
+        
+#ifdef USE_ASYNC_SELECT_THREAD
 	// Notify the async_select task
 	async_select_notify_select();
-
-	return 0;
+#endif //USE_ASYNC_SELECT_THREAD
 }
 
 /**
@@ -591,6 +653,7 @@ static async_select_Request* async_select_allocate_request(){
 	return new_request;
 }
 
+#ifdef USE_ASYNC_SELECT_THREAD
 /**
  * @brief Unlock the select operation.
  *
@@ -641,6 +704,23 @@ static void async_select_notify_select(){
 		LLNET_DEBUG_TRACE("Error on notify select (notify_fd: 0x%X errno: %d)\n", notify_fd, llnet_errno(notify_fd));
 	}
 }
+
+/**
+ * @brief Fills-in the given timeval struct with the given time in milliseconds.
+ *
+ * @param[in] time_ms time in milliseconds.
+ * @param[in] time_timeval pointer to the timeval struct to fill-in.
+ */
+static void async_select_time_ms_to_timeval(int64_t time_ms, struct timeval* time_timeval){
+	if(time_ms >= 1000){
+		time_timeval->tv_sec = time_ms / 1000;
+		time_timeval->tv_usec = (time_ms % 1000) * 1000;
+	}else{
+		time_timeval->tv_sec = 0;
+		time_timeval->tv_usec = time_ms * 1000;
+	}
+}
+#endif //USE_ASYNC_SELECT_THREAD
 
 #ifdef __cplusplus
 	}

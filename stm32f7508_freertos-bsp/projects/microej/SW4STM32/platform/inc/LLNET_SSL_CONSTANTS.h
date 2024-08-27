@@ -1,9 +1,9 @@
 /*
  * C
  *
- * Copyright 2014-2019 IS2T. All rights reserved.
- * For demonstration purpose only.
- * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014-2022 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 #ifndef __LLNET_SSL_ERROR_CONSTANTS__
 #define __LLNET_SSL_ERROR_CONSTANTS__
@@ -12,60 +12,25 @@
  * @file
  * @brief MicroEJ SSL low level API
  * @author MicroEJ Developer Team
- * @version 5.1.1
- * @date 7 May 2021
+ * @version 6.0.0
+ * @date 26 August 2022
  */
 
-#include <sni.h>
 
+#define SSLv3_PROTOCOL 		(0) /* @brief SSL v3 protocol version. */
+#define TLSv1_PROTOCOL 		(1) /* @brief TLS v1.0 protocol version. */
+#define TLSv1_1_PROTOCOL 	(2) /* @brief TLS v1.1 protocol version. */
+#define TLSv1_2_PROTOCOL 	(3) /* @brief TLS v1.2 protocol version. */
+#define DTLSv1_PROTOCOL 	(4) /* @brief DTLS v1.0 protocol version. */
+#define DTLSv1_2_PROTOCOL 	(5) /* @brief DTLS v1.2 protocol version. */
+#define TLSv1_3_PROTOCOL	(6) /* @brief TLS v1.3 protocol version. */
 
-/**
- * SSL v3 protocol version
- */
-#define SSLv3_PROTOCOL (0)
+#define CERT_PEM_FORMAT 	(0) /* @brief PEM Certificate encoded format. */
+#define CERT_DER_FORMAT 	(1) /* @brief DER (ASN1) Certificate encoded format */
 
-/**
- * TLS v1.0 protocol version
- */
-#define TLSv1_PROTOCOL (1)
-
-/**
- * TLS v1.1 protocol version
- */
-#define TLSv1_1_PROTOCOL (2)
-
-/**
- * TLS v1.2 protocol version
- */
-#define TLSv1_2_PROTOCOL (3)
-
-/**
- * DTLS v1 protocol version
- */
-#define DTLSv1_PROTOCOL (4)
-
-/**
- * DTLS v1.2 protocol version
- */
-#define DTLSv1_2_PROTOCOL (5)
-
-/**
- * TLS v1.3 protocol version
- */
-#define TLSv1_3_PROTOCOL (6)
-
-/**
- * PEM Certificate encoded format
- */
-#define CERT_PEM_FORMAT (0)
-
-/**
- * DER (ASN1) Certificate encoded format
- */
-#define CERT_DER_FORMAT (1)
 
 // comment this define to remove secure network debug trace
-//#define LLNET_SSL_DEBUG
+//#define LLNET_SSL_DEBUG	/* @brief enable debug trace. */
 
 
 #ifdef LLNET_SSL_DEBUG

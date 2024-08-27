@@ -1,25 +1,23 @@
 /*
  * C
  *
- * Copyright 2014-2020 MicroEJ Corp. All rights reserved.
- * This library is provided in source code for use, modification and test, subject to license terms.
- * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
+ * Copyright 2014-2022 MicroEJ Corp. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
 /**
  * @file
- * @brief LLNET_SOCKETCHANNEL 2.1.0 implementation over BSD-like API.
+ * @brief LLNET_SOCKETCHANNEL 3.0.0 implementation over BSD-like API.
  * @author MicroEJ Developer Team
- * @version 1.1.1
- * @date 7 February 2020
+ * @version 2.0.0
+ * @date 17 June 2022
  */
 
-#include <LLNET_SOCKETCHANNEL_impl.h>
 
 #include <stdio.h>
 #include <string.h>
-
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include "LLNET_Common.h"
 #if LLNET_AF & LLNET_AF_IPV6
 #include <ifaddrs.h>
@@ -27,210 +25,24 @@
 #include <netdb.h>
 #include <net/if.h>
 #endif
-#include <stdbool.h>
-#include "LLNET_CONSTANTS.h"
+#include <sys/ioctl.h>
+#include <unistd.h>
+
+#include "LLNET_SOCKETCHANNEL_impl.h"
 #include "LLNET_NETWORKADDRESS_impl.h"
 #include "LLNET_ERRORS.h"
+#include "sni.h"
+#include "LLNET_configuration.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-// external function used to retrieve currentTime (same as MicroJvm)
-extern int64_t LLMJVM_IMPL_getCurrentTime__Z(uint8_t system);
-		
-static int32_t SocketChanel_Address(int32_t fd, int8_t* name, int32_t nameLength, uint8_t localAddress);
+static void LLNET_SOCKETCHANNEL_connect_callback(int32_t fd, int8_t* addr, int32_t length, int32_t port, int64_t absoluteTimeout);
+static int32_t LLNET_SOCKETCHANNEL_get_address(int32_t fd, int8_t* name, int32_t nameLength, uint8_t localAddress);
+static int32_t LLNET_SOCKETCHANNEL_get_port(int32_t fd, uint8_t localPort);
 
-static int32_t SocketChanel_Port(int32_t fd, uint8_t localPort);
-
-int32_t LLNET_SOCKETCHANNEL_IMPL_connect(int32_t fd, int8_t* addr, int32_t length, int32_t port, int32_t timeout, uint8_t retry)
-{
-	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X, port=%d, timeout=%d)\n", __func__, SNI_getCurrentJavaThreadID(),fd, port, timeout);
-
-    if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
-    }
-
-	int32_t res;
-
-	if(retry){
-		union llnet_sockaddr sockaddr = {0};
-		uint32_t addrlen = sizeof(sockaddr);
-
-		//check if the socket is connected
-		int32_t selectRes = non_blocking_select(fd, SELECT_WRITE);
-		int32_t peerRes = llnet_getpeername(fd, &sockaddr.addr, (socklen_t*)&addrlen);
-		int32_t socket_port = -1;
-#if LLNET_AF & LLNET_AF_IPV4
-		if (sockaddr.addr.sa_family == AF_INET) {
-			socket_port = llnet_ntohs(sockaddr.in.sin_port);
-		}
-#endif
-#if LLNET_AF & LLNET_AF_IPV6
-		if (sockaddr.addr.sa_family == AF_INET6) {
-			socket_port = llnet_ntohs(sockaddr.in6.sin6_port);
-		}
-#endif
-		if(socket_port == -1) {
-			return J_EINVAL;
-		}
-
-		if(selectRes > 0 && (peerRes == 0 && socket_port > 0)){
-			//the socket is connected to a remote host
-			return 1; //success
-		}
-		if(selectRes == 0 || (peerRes < 0 && llnet_errno(fd) == ENOTCONN)){
-			//the socket is not connected or
-			//a timeout expires during the first connect
-			return J_ENOTCONN;
-		}
-		//other error
-		return map_to_java_exception(llnet_errno(fd));
-	}
-	else { // retry == false
-
-		union llnet_sockaddr sockaddr = {0};
-		int sockaddr_sizeof = 0;
-
-#if LLNET_AF == LLNET_AF_IPV4
-		if(length == sizeof(in_addr_t)){
-			sockaddr.in.sin_family = AF_INET;
-			sockaddr.in.sin_port = llnet_htons(port);
-			sockaddr.in.sin_addr.s_addr = *((in_addr_t*)addr);
-			sockaddr_sizeof = sizeof(struct sockaddr_in);
-		}
-#endif
-
-#if LLNET_AF == LLNET_AF_DUAL
-		if(length == sizeof(in_addr_t) && SNI_getArrayLength(addr) >= sizeof(struct in6_addr)){
-			// Convert IPv4 into IPv6 directly in the addr array
-			map_ipv4_into_ipv6((in_addr_t*)addr, (struct in6_addr*)addr);
-
-			// Now length of the address in addr is sizeof(struct in6_addr)
-			length = sizeof(struct in6_addr);
-			// continue in the following if
-		}
-#endif
-
-#if LLNET_AF & LLNET_AF_IPV6
-		if(length == sizeof(struct in6_addr)){
-			char ipAddress[NI_MAXHOST];
-			sockaddr.in6.sin6_family = AF_INET6;
-			sockaddr.in6.sin6_port = llnet_htons(port);
-			// Convert the incoming IP address to ASCII, lookup the interface and set the scope ID
-			if(inet_ntop(AF_INET6, addr, ipAddress, NI_MAXHOST) != NULL) {
-				sockaddr.in6.sin6_scope_id=getScopeForIp(ipAddress);
-			} else {
-				LLNET_DEBUG_TRACE("%s[thread %d] inet_ntop failed, errno = %d\n", __func__, SNI_getCurrentJavaThreadID(), errno);
-				return J_EINVAL;
-			}
-			memcpy((void*)&sockaddr.in6.sin6_addr, addr, sizeof(struct in6_addr));
-			sockaddr_sizeof = sizeof(struct sockaddr_in6);
-		}
-#endif
-
-		if(sockaddr_sizeof == 0){
-			return J_EINVAL;
-		}
-
-		// Set nonblocking mode.
-		bool was_non_blocking = is_socket_non_blocking(fd);
-		if(was_non_blocking == false){
-			res = set_socket_non_blocking(fd, true);
-			if (res != 0) {
-				return map_to_java_exception(llnet_errno(fd));
-			}
-		}
-	
-		int32_t connectRes = llnet_connect(fd, &sockaddr.addr, sockaddr_sizeof);
-		int32_t connectErrno = llnet_errno(fd);
-
-		// Set blocking mode.
-		if(was_non_blocking == false){
-			// The socket was blocking initially.
-			res = set_socket_non_blocking(fd, false);
-			if (res != 0) {
-				return map_to_java_exception(llnet_errno(fd));
-			}
-		}
-
-		if (connectRes == -1) {
-			if(connectErrno == EINPROGRESS) {
-				//The connection can not be completed immediately.
-
-				if(was_non_blocking == true){
-					// the socket is in non-blocking mode and the connection did not immediately succeed
-					return 0;
-				}
-
-				// A blocking request on write operation is added in the dispatch event queue for completion.
-				int32_t asyncSelectRes = async_select(fd, SELECT_WRITE, timeout, NULL);
-				if(asyncSelectRes == 0){
-					// request added in the queue
-					LLNET_DEBUG_TRACE("Connect has blocked without result\n");
-					return J_NET_NATIVE_CODE_BLOCKED_WITHOUT_RESULT;
-				}
-				// requests queue limit reached
-				LLNET_DEBUG_TRACE("Blocking Request Queue Limit Reached\n");
-				return J_ASYNC_BLOCKING_REQUEST_QUEUE_LIMIT_REACHED;
-			}
-			else {
-				LLNET_DEBUG_TRACE("[ERROR] Connection failed (retry=%d, errno=%d)\n", retry, connectErrno);
-				return map_to_java_exception(connectErrno);
-			}
-		}
-		else {
-			return 1;// connected
-		}
-	}
-}
-
-int32_t LLNET_SOCKETCHANNEL_IMPL_getLocalPort(int32_t fd, uint8_t retry)
-{
-	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
-
-    if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
-    }
-
-	return SocketChanel_Port(fd, JTRUE);
-}
-
-int32_t LLNET_SOCKETCHANNEL_IMPL_getLocalAddress(int32_t fd, int8_t* name, int32_t length, uint8_t retry)
-{
-	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
-
-    if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
-    }
-
-	return SocketChanel_Address(fd, name, length, JTRUE);
-}
-
-int32_t LLNET_SOCKETCHANNEL_IMPL_getPeerPort(int32_t fd, uint8_t retry)
-{
-	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
-
-    if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
-    }
-
-	return SocketChanel_Port(fd, JFALSE);
-}
-
-int32_t LLNET_SOCKETCHANNEL_IMPL_getPeerAddress(int32_t fd, int8_t* name, int32_t length, uint8_t retry)
-{
-	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
-
-    if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
-    }
-
-	return SocketChanel_Address(fd, name, length, JFALSE);
-}
-
-
-static int32_t SocketChanel_Port(int32_t fd, uint8_t localPort){
+static int32_t LLNET_SOCKETCHANNEL_get_port(int32_t fd, uint8_t localPort){
 	union llnet_sockaddr sockaddr = {0};
 
 	uint32_t addrlen = sizeof(sockaddr);
@@ -252,13 +64,15 @@ static int32_t SocketChanel_Port(int32_t fd, uint8_t localPort){
 			return llnet_ntohs(sockaddr.in6.sin6_port);
 		}
 #endif
-		return J_EUNKNOWN;
+		SNI_throwNativeIOException(J_EAFNOSUPPORT, "unsupported address family");
+		return SNI_IGNORED_RETURNED_VALUE;
 	}
-
-	return map_to_java_exception(llnet_errno(fd));
+	int32_t fd_errno = llnet_errno(fd);
+	SNI_throwNativeIOException(LLNET_map_to_java_exception(fd_errno), LLNET_get_socket_error_msg(fd_errno));
+	return SNI_IGNORED_RETURNED_VALUE;
 }
 
-static int32_t SocketChanel_Address(int32_t fd, int8_t* name, int32_t nameLength, uint8_t localAddress){
+static int32_t LLNET_SOCKETCHANNEL_get_address(int32_t fd, int8_t* name, int32_t nameLength, uint8_t localAddress){
 
 	union llnet_sockaddr sockaddr = {0};
 	uint32_t addrlen = sizeof(sockaddr);
@@ -275,10 +89,12 @@ static int32_t SocketChanel_Address(int32_t fd, int8_t* name, int32_t nameLength
 		if(sockaddr.addr.sa_family == AF_INET) {
 			if(!localAddress && (sockaddr.in.sin_addr.s_addr == 0 || sockaddr.in.sin_port == llnet_htons(0))){
 				//not connected
-				return J_ENOTCONN;
+				SNI_throwNativeIOException(J_ENOTCONN, "not connected");
+				return SNI_IGNORED_RETURNED_VALUE;
 			}
-			if(nameLength < sizeof(in_addr_t)){
-				return J_EINVAL;
+			if((uint32_t)nameLength < sizeof(in_addr_t)){
+				SNI_throwNativeIOException(J_EINVAL, "wrong name length");
+				return SNI_IGNORED_RETURNED_VALUE;
 			}
 			*(in_addr_t*)name = sockaddr.in.sin_addr.s_addr;
 			return sizeof(in_addr_t);
@@ -288,31 +104,193 @@ static int32_t SocketChanel_Address(int32_t fd, int8_t* name, int32_t nameLength
 		if(sockaddr.addr.sa_family == AF_INET6) {
 			if(!localAddress && (sockaddr.in6.sin6_addr.s6_addr == 0 || sockaddr.in6.sin6_port == llnet_htons(0))){
 				//not connected
-				return J_ENOTCONN;
+				SNI_throwNativeIOException(J_ENOTCONN, "not connected");
+				return SNI_IGNORED_RETURNED_VALUE;
 			}
-			if(nameLength < sizeof(struct in6_addr)){
-				return J_EINVAL;
+			if((uint32_t)nameLength < sizeof(struct in6_addr)){
+				SNI_throwNativeIOException(J_EINVAL, "wrong name length");
+				return SNI_IGNORED_RETURNED_VALUE;
 			}
 			memcpy(name, (void *)&(sockaddr.in6.sin6_addr), sizeof(struct in6_addr));
 			return sizeof(struct in6_addr);
 		}
 #endif
-		return J_EUNKNOWN;
+		SNI_throwNativeIOException(J_EAFNOSUPPORT, "unsupported address family");
+		return SNI_IGNORED_RETURNED_VALUE;
 	}
-	return map_to_java_exception(llnet_errno(fd));
+	int32_t fd_errno = llnet_errno(fd);
+	SNI_throwNativeIOException(LLNET_map_to_java_exception(fd_errno), LLNET_get_socket_error_msg(llnet_errno(fd)));
+	return SNI_IGNORED_RETURNED_VALUE;
 }
 
-int32_t LLNET_SOCKETCHANNEL_IMPL_socket(uint8_t stream, uint8_t retry)
+static void LLNET_SOCKETCHANNEL_connect_callback(int32_t fd, int8_t* addr, int32_t length, int32_t port, int64_t absoluteTimeout)
+{
+	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X, port=%d, absoluteTimeout=%d)\n", __func__, SNI_getCurrentJavaThreadID(), fd, port, absoluteTimeout);
+	int32_t error_status = -1;
+	int32_t error_status_size = sizeof(error_status);
+	union llnet_sockaddr sockaddr = {0};
+	int32_t selectRes;
+	uint32_t addrlen = sizeof(sockaddr);
+	struct timeval zero_timeout = {0};
+	fd_set fds;
+	FD_ZERO(&fds);
+	FD_SET(fd, &fds);
+	//We are in the connect callback and this means that either the connect is completed successfully (fd ready for write operation) or the timeout has expired.
+	//To determine if the socket is connected:
+	// 1- read SO_ERROR option to check if the socket has a non zero error status
+	// 2- call llnet_getpeername() to check if the connected peer address can be retrieved
+	// 3- perform a non-blocking select to check if the socket is ready for write operation
+	if(0 == getsockopt(fd, SOL_SOCKET, SO_ERROR, &error_status, (socklen_t *)&error_status_size)
+		&& 0 == error_status
+		&& 0 == llnet_getpeername(fd, &sockaddr.addr, (socklen_t*) &addrlen)){
+
+		selectRes = select(fd+1, NULL, &fds, NULL, &zero_timeout);
+		if(0 < selectRes){
+			// connection completed
+			return;
+		}
+		if(0 == selectRes){
+			//the select timeout expires => means the fd is not yet ready and the connection is still in progress
+			//simulate an EAGAIN error to allow this callback to be called again until the connection succeeds or an error occurs.
+			error_status = EAGAIN;
+		}
+	}
+	//error
+	LLNET_DEBUG_TRACE("[%s] error code=%d\n", __func__, 0==error_status? llnet_errno(fd): error_status);
+	LLNET_handle_blocking_operation_error(fd, 0==error_status? llnet_errno(fd): error_status, SELECT_WRITE, absoluteTimeout, (SNI_callback)LLNET_SOCKETCHANNEL_connect_callback, NULL);
+
+}
+
+
+void LLNET_SOCKETCHANNEL_IMPL_connect(int32_t fd, int8_t* addr, int32_t length, int32_t port, int64_t absoluteTimeout)
+{
+
+	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X, port=%d, timeout=%d)\n", __func__, SNI_getCurrentJavaThreadID(),fd, port, absoluteTimeout);
+	int32_t connectRes;
+	union llnet_sockaddr sockaddr = {0};
+	int sockaddr_sizeof = 0;
+
+    if(llnet_is_ready() == false){
+    	SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+    	return;
+    }
+#if LLNET_AF == LLNET_AF_IPV4
+	if(length == sizeof(in_addr_t)){
+		sockaddr.in.sin_family = AF_INET;
+		sockaddr.in.sin_port = llnet_htons(port);
+		sockaddr.in.sin_addr.s_addr = *((in_addr_t*)addr);
+		sockaddr_sizeof = sizeof(struct sockaddr_in);
+	}
+#endif
+
+#if LLNET_AF == LLNET_AF_DUAL
+	if(length == sizeof(in_addr_t)){
+		// Convert IPv4 into IPv6 and put the result directly in the in6_addr struct
+		LLNET_map_ipv4_into_ipv6((in_addr_t*)addr, (struct in6_addr*)&sockaddr.in6.sin6_addr);
+		// Update length and addr
+		length = sizeof(struct in6_addr);
+		addr = (int8_t*)&sockaddr.in6.sin6_addr;
+		// Continue in the following if
+	}
+#endif
+
+#if LLNET_AF & LLNET_AF_IPV6
+	if(length == sizeof(struct in6_addr)){
+		char ipAddress[NI_MAXHOST];
+		sockaddr.in6.sin6_family = AF_INET6;
+		sockaddr.in6.sin6_port = llnet_htons(port);
+		// Convert the incoming IP address to ASCII, lookup the interface and set the scope ID
+		if(inet_ntop(AF_INET6, addr, ipAddress, NI_MAXHOST) != NULL) {
+			sockaddr.in6.sin6_scope_id=LLNET_getScopeForIp(ipAddress);
+		} else {
+			int32_t fd_errno = llnet_errno(fd);
+			LLNET_DEBUG_TRACE("%s[thread %d] inet_ntop failed, errno = %d\n", __func__, SNI_getCurrentJavaThreadID(), fd_errno);
+			SNI_throwNativeIOException(LLNET_map_to_java_exception(fd_errno), LLNET_get_socket_error_msg(fd_errno));
+			return;
+		}
+		// Skip copy if in6_addr struct already contains the IPv6 address
+		if((void*)addr != (void*)&sockaddr.in6.sin6_addr){
+			memcpy((void*)&sockaddr.in6.sin6_addr, addr, sizeof(struct in6_addr));
+		}
+		sockaddr_sizeof = sizeof(struct sockaddr_in6);
+	}
+#endif
+
+	if(sockaddr_sizeof == 0){
+		SNI_throwNativeIOException(J_EINVAL, "wrong address size");
+		return;
+	}
+
+	connectRes = llnet_connect(fd, &sockaddr.addr, sockaddr_sizeof);
+
+	if(connectRes < 0){
+		//connect error
+		LLNET_handle_blocking_operation_error(fd, llnet_errno(fd), SELECT_WRITE, absoluteTimeout, (SNI_callback)LLNET_SOCKETCHANNEL_connect_callback, NULL);
+	}
+	//else: successful connection
+}
+
+int32_t LLNET_SOCKETCHANNEL_IMPL_getLocalPort(int32_t fd)
+{
+	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
+
+    if(llnet_is_ready() == false){
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return SNI_IGNORED_RETURNED_VALUE;
+    }
+
+	return LLNET_SOCKETCHANNEL_get_port(fd, JTRUE);
+}
+
+int32_t LLNET_SOCKETCHANNEL_IMPL_getLocalAddress(int32_t fd, int8_t* name, int32_t length)
+{
+	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
+
+    if(llnet_is_ready() == false){
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return SNI_IGNORED_RETURNED_VALUE;
+    }
+
+	return LLNET_SOCKETCHANNEL_get_address(fd, name, length, JTRUE);
+}
+
+int32_t LLNET_SOCKETCHANNEL_IMPL_getPeerPort(int32_t fd)
+{
+	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
+
+    if(llnet_is_ready() == false){
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return SNI_IGNORED_RETURNED_VALUE;
+    }
+
+	return LLNET_SOCKETCHANNEL_get_port(fd, JFALSE);
+}
+
+int32_t LLNET_SOCKETCHANNEL_IMPL_getPeerAddress(int32_t fd, int8_t* name, int32_t length)
+{
+	LLNET_DEBUG_TRACE("%s[thread %d](fd=0x%X)\n", __func__, SNI_getCurrentJavaThreadID(), fd);
+
+    if(llnet_is_ready() == false){
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return SNI_IGNORED_RETURNED_VALUE;
+    }
+
+	return LLNET_SOCKETCHANNEL_get_address(fd, name, length, JFALSE);
+}
+
+int32_t LLNET_SOCKETCHANNEL_IMPL_socket(uint8_t stream)
 {
 	LLNET_DEBUG_TRACE("%s[thread %d](stream=%d)\n", __func__, SNI_getCurrentJavaThreadID(), stream);
 
     if(llnet_is_ready() == false){
-        return J_NETWORK_NOT_INITIALIZED;
+		SNI_throwNativeIOException(J_NETWORK_NOT_INITIALIZED, "network not initialized");
+		return SNI_IGNORED_RETURNED_VALUE;
     }
 
 	int32_t ret;
 	int32_t sock_protocol = 0; //default value
 	int domain;
+	int32_t fd_errno;
 
 // When IPv6 is available, always use IPv6 (even for IPv4 connections)
 #if LLNET_AF & LLNET_AF_IPV6
@@ -323,11 +301,22 @@ int32_t LLNET_SOCKETCHANNEL_IMPL_socket(uint8_t stream, uint8_t retry)
 
 	ret = llnet_socket(domain, stream ? SOCK_STREAM : SOCK_DGRAM, sock_protocol);
 	if (ret == -1) {
-		int32_t err = map_to_java_exception(llnet_errno(-1));
-		return err;
+		fd_errno = llnet_errno(-1);
+		LLNET_DEBUG_TRACE("%s: llnet_socket() errno=%d, err=%d\n", __func__, fd_errno, ret);
+		SNI_throwNativeIOException(LLNET_map_to_java_exception(fd_errno), LLNET_get_socket_error_msg(fd_errno));
+		return SNI_IGNORED_RETURNED_VALUE;
 	}
 
 	int32_t fd = ret;
+	ret = LLNET_set_non_blocking(fd);
+	//set the socket in non blocking mode
+	if(0 != ret){
+		fd_errno = llnet_errno(fd);
+		LLNET_DEBUG_TRACE("%s: set_non_blocking errno=%d, err=%d\n", __func__, fd_errno, ret);
+		SNI_throwNativeIOException(LLNET_map_to_java_exception(fd_errno), LLNET_get_socket_error_msg(fd_errno));
+		close(fd);
+		return SNI_IGNORED_RETURNED_VALUE;
+	}
 
 // If dual stack IPv4/IPv6
 #if LLNET_AF == LLNET_AF_DUAL
@@ -335,21 +324,23 @@ int32_t LLNET_SOCKETCHANNEL_IMPL_socket(uint8_t stream, uint8_t retry)
 	int ipv6_only = 0;
 	ret = llnet_setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&ipv6_only, sizeof(int));
 	if (ret == -1) {
-		int32_t err = map_to_java_exception(llnet_errno(fd));
+		fd_errno = llnet_errno(fd);
+		LLNET_DEBUG_TRACE("%s: llnet_setsockopt() errno=%d, err=%d\n", __func__, fd_errno, ret);
+		SNI_throwNativeIOException(LLNET_map_to_java_exception(fd_errno), LLNET_get_socket_error_msg(fd_errno));
 		close(fd);
-		return err;
+		return SNI_IGNORED_RETURNED_VALUE;
 	}
 #endif
 
 	return fd;
 }
 
-int32_t LLNET_SOCKETCHANNEL_IMPL_serverSocket(uint8_t retry){
-	return LLNET_SOCKETCHANNEL_IMPL_socket(JTRUE, retry);
+int32_t LLNET_SOCKETCHANNEL_IMPL_serverSocket(){
+	return LLNET_SOCKETCHANNEL_IMPL_socket(JTRUE);
 }
 
-int32_t LLNET_SOCKETCHANNEL_IMPL_multicastSocket(uint8_t retry){
-	return LLNET_SOCKETCHANNEL_IMPL_socket(JFALSE, retry);
+int32_t LLNET_SOCKETCHANNEL_IMPL_multicastSocket(){
+	return LLNET_SOCKETCHANNEL_IMPL_socket(JFALSE);
 }
 
 #ifdef __cplusplus

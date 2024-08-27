@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+ * Copyright 2020-2024 MicroEJ Corp. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  *
  */
@@ -10,11 +10,14 @@
  * @file
  * @brief FatFs helper for LLFS.
  * @author MicroEJ Developer Team
- * @version 2.1.0
+ * @version 2.1.0 modified
  */
 
 #include <stdint.h>
 #include <string.h>
+/* Addition to remove warning */
+#include <stdio.h>
+/* end of addition */
 #include "ff.h"
 #include "fs_helper.h"
 #include "microej_async_worker.h"
@@ -245,6 +248,10 @@ void LLFS_IMPL_exist_action(MICROEJ_ASYNC_WORKER_job_t* job) {
 
 	res = f_stat((TCHAR*)path, NULL);
 	if (res != FR_OK) {
+		if (res == FR_NOT_READY )
+		{
+			printf("No SD Card available. File System not initialised.\n");
+		}
 		param->result = LLFS_NOK;
 	} else {
 		param->result = LLFS_OK;

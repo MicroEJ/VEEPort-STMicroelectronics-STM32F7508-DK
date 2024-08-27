@@ -1,11 +1,11 @@
 <!--
 	IVY
 
-	Copyright 2020-2023 MicroEJ Corp. All rights reserved.
+	Copyright 2020-2024 MicroEJ Corp. All rights reserved.
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 -->
 <ivy-module version="2.0" xmlns:ea="http://www.easyant.org" xmlns:m="http://ant.apache.org/ivy/extra" xmlns:ej="https://developer.microej.com" ej:version="2.0.0"> 
-	<info organisation="com.microej.veeport.st.stm32f7508-dk" module="VEEPort" status="integration" revision="2.2.0">
+	<info organisation="com.microej.veeport.st.stm32f7508-dk" module="VEEPort" status="integration" revision="2.3.0">
 		<ea:build organisation="com.is2t.easyant.buildtypes" module="build-custom" revision="2.2.+"/>
 		<ea:plugin org="com.is2t.easyant.plugins" module="eclipse-antRunner" revision="1.+"/>
 		<ea:plugin org="com.is2t.easyant.plugins" module="mam" revision="1.+"/>
@@ -38,42 +38,52 @@
 		<dependency org="com.microej.architecture.CM7.${xpf.toolchain.name}" name="${xpf.name}" rev="8.0.0">
 			<artifact name="${xpf.name}" m:classifier="${com.microej.platformbuilder.architecture.usage}" ext="xpf"/>
 		</dependency>
+		
+		<!-- Packs -->
 		<dependency org="com.microej.architecture.CM7.${xpf.toolchain.name}" name="${xpf.name}-ui-pack" rev="13.7.2" transitive="false">
 			<artifact name="${xpf.name}-ui-pack" ext="xpfp"/>
 		</dependency>
-
+		<dependency org="com.microej.pack.net" name="net-pack" rev="11.1.0" transitive="false"/>
+		<dependency org="com.microej.pack.net" name="ssl-impl" rev="8.0.1" transitive="false"/>
+		<dependency org="com.microej.pack.ecom-network" name="ecom-network-pack" rev="1.0.0" />
+		<dependency org="com.microej.pack" name="hal" rev="2.0.1" transitive="false"/>
+		<dependency org="com.microej.pack" name="fs" rev="6.0.3" transitive="false"/>
+		<dependency org="com.microej.pack.device" name="device-pack" rev="1.1.1"/>
+		
+        <!-- NET-ADDONS -->
+		<dependency org="com.microej.pack" name="net-addons" rev="2.5.1" transitive="false"/>
+		
 		<!-- Tools -->
 		<dependency org="com.microej.tool" name="javafx" rev="1.2.0" />
 		<dependency org="com.microej.tool" name="imageio-webp" rev="1.0.2" />
 
-		<!-- Packs -->
-		<dependency org="com.microej.pack.device" name="device-pack" rev="1.1.1"/>
-		<dependency org="com.microej.pack" name="hal" rev="2.0.1" transitive="false"/>
-		<dependency org="com.microej.pack" name="net" rev="9.4.2" transitive="false"/>
-		<dependency org="com.microej.pack" name="fs" rev="6.0.3" transitive="false"/>
-
+		<!-- CI needed dependency -->
+		<dependency org="com.is2t.microej.deploy" name="jenkins" rev="1.0.2"/>		
 		<!-- CCO begin 
-		<dependency org="com.microej.clibrary.llimpl" name="mjvm-freertos" rev="1.1.0" transitive="false"/>
+		<dependency org="com.microej.clibrary.llimpl" name="mjvm-freertos" rev="1.4.0" transitive="false"/>
 		<dependency org="com.microej.clibrary.llimpl" name="bsp-generic" rev="1.0.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="display-dma2d" rev="4.1.0" transitive="false" />
+		<dependency org="com.microej.clibrary.llimpl" name="microui" rev="3.1.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="fs-generic" rev="2.1.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="fs-fatfs" rev="2.1.0" transitive="false" />
-		<dependency org="com.microej.clibrary.llimpl" name="microui" rev="3.1.0" transitive="false" />
 		<dependency org="com.microej.clibrary.llimpl" name="mjvm-freertos" rev="1.0.0" transitive="false" />
-		<dependency org="com.microej.clibrary.llimpl" name="net-bsd" rev="1.1.1" transitive="false" />
-		<dependency org="com.microej.clibrary.llimpl" name="net-dns-lwip" rev="0.1.0" transitive="false" />
-		<dependency org="com.microej.clibrary.llimpl" name="net-lwip" rev="0.2.1" transitive="false" />
-		<dependency org="com.microej.clibrary.llimpl" name="net-ssl-mbedtls" rev="1.0.1" transitive="false" />
+        <dependency org="com.microej.clibrary.llimpl" name="ecom-network-generic" rev="2.3.1"/>
+        <dependency org="com.microej.clibrary.llimpl" name="ecom-network-lwip" rev="1.1.1"/>
+		<dependency org="com.microej.clibrary.llimpl" name="net-bsd" rev="2.0.0" transitive="false" />
+		<dependency org="com.microej.clibrary.llimpl" name="net-dns-lwip" rev="1.0.0" transitive="false" />
+		<dependency org="com.microej.clibrary.llimpl" name="net-lwip" rev="1.0.0" transitive="false" />
+		<dependency org="com.microej.clibrary.llimpl" name="net-ssl-mbedtls" rev="3.0.0" transitive="false" />
+		<dependency org="com.microej.clibrary.llimpl" name="security-mbedtls" rev="1.5.0" transitive="false"/>
 		<dependency org="com.microej.clibrary.llimpl" name="trace-systemview" rev="2.1.0" transitive="false" />
-		<dependency org="com.microej.clibrary.platform" name="async_select" rev="1.0.1" transitive="false" />
-		<dependency org="com.microej.clibrary.platform" name="bsp-microej-async-worker" rev="0.2.0"  transitive="false" />
 		<dependency org="com.microej.clibrary.platform" name="bsp-microej-main" rev="1.0.0"  transitive="false" />
+		<dependency org="com.microej.clibrary.platform" name="async_select" rev="3.0.1" transitive="false" />
+		<dependency org="com.microej.clibrary.platform" name="bsp-microej-async-worker" rev="0.2.0"  transitive="false" />
+		<dependency org="com.microej.clibrary.platform" name="microej-pool" rev="0.1.0" transitive="false"/>
 		<dependency org="com.microej.clibrary.platform" name="osal-FreeRTOS" rev="0.2.0" transitive="false" />
 		<dependency org="com.microej.clibrary.platform" name="osal-headers" rev="0.2.0" transitive="false"/>
 		<dependency org="com.microej.clibrary.thirdparty" name="systemview" rev="1.3.0" transitive="false" />
 		<dependency org="com.microej.clibrary.thirdparty" name="systemview-freertos10" rev="1.1.0" transitive="false" />
 		<dependency org="com.microej.clibrary.thirdparty" name="libwebp" rev="1.0.2" />
-		<dependency org="com.microej.clibrary.platform" name="microej-pool" rev="0.1.0" transitive="false"/>
 		-->
 		<!-- CCO end -->
 	</dependencies>

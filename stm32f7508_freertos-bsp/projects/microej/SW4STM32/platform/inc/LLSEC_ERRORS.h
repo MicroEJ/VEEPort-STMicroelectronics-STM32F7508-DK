@@ -1,20 +1,20 @@
 /*
  * C
  *
- * Copyright 2015-2017 IS2T. All rights reserved.
- * For demonstration purpose only.
- * IS2T PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2015-2023 MicroEJ Corp. All rights reserved.
+ * This library is provided in source code for use, modification and test, subject to license terms.
+ * Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
  */
 
-#ifndef __LLSEC_ERRORS__
-#define __LLSEC_ERRORS__
+#ifndef LLSEC_ERRORS_H
+#define LLSEC_ERRORS_H
 		
 /**
  * @file
  * @brief MicroEJ Security low level API
  * @author MicroEJ Developer Team
- * @version 1.5.0
- * @date 20 December 2020
+ * @version 2.4.0
+ * @date 16 February 2024
  */
 
 #define J_SEC_NO_ERROR							 0 /* not an error */
@@ -26,6 +26,8 @@
 #define J_NO_TRUSTED_CERT						-8 /* No trusted certificate found*/
 #define J_NOT_CA_CERT							-9 /* basic constraints check failed: intermediate certificate is not a CA certificate */
 #define J_NAME_CHAINING_ERROR					-10 /* subject/issuer name chaining error*/
+#define J_X509_CERT_EXPIRED_ERROR				-11 /* X509 certificate checkValidity error: expired*/
+#define J_X509_CERT_NOT_YET_VALID_ERROR			-12 /* X509 certificate checkValidity error: not yet valid*/
 
 #define J_RSA_WRONG_TYPE_ERROR                 -21 /* RSA wrong block type for RSA function */
 #define J_RSA_BUFFER_ERROR                     -22 /* RSA buffer error output too small or input too large */
@@ -173,4 +175,4 @@
 #define J_RAN_BLOCK_ERROR        		      -201 /* reading random device would block */
 #define J_UNKNOWN_ERROR					   	  -202 /* unknown error */
 
-#endif //__LLSEC_ERRORS__
+#endif //LLSEC_ERRORS_H

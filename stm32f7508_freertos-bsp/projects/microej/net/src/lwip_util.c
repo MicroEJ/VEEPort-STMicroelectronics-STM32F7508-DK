@@ -73,7 +73,7 @@ uint8_t dns_servers_list_updated = 1;
 // RNG handle
 static RNG_HandleTypeDef RngHandle;
 
-static void ethernetif_static_ip_config(void);
+//static void ethernetif_static_ip_config(void);
 
 /**
   * @brief  Reset the network interface ip, netmask and gateway addresses to zero.
@@ -103,26 +103,16 @@ void netif_not_connected(struct netif *netif){
   */
 static void User_notification(struct netif *netif)
 {
-	int32_t dhcpConfEnabled = LLNET_CONF_is_ip_dhcp_enabled() == LLNET_CONF_TRUE;
 	if (netif_is_up(netif))
 	{
-		if(dhcpConfEnabled)
-		{
-			/* Update DHCP state machine */
-			DHCP_state = DHCP_START;
-		}else{
-			// launch static Network Interface configuration
-			ethernetif_static_ip_config();
-		}
+		/* Update DHCP state machine */
+		DHCP_state = DHCP_START;
 	}
 	else
 	{
 		netif_not_connected(netif);
-		if(dhcpConfEnabled)
-		{
 			/* Update DHCP state machine */
-			DHCP_state = DHCP_LINK_DOWN;
-		}
+		DHCP_state = DHCP_LINK_DOWN;
 	}
 
 }
@@ -178,22 +168,6 @@ static void DHCP_thread(void const * argument)
 		  dhcp_sleeping = 1;
 
 		  LLNET_DEBUG_TRACE("[INFO] DHCP address assigned: %s\n", inet_ntoa(IPaddress));
-
-					// set static DNS configuration if required by user
-					if(LLNET_CONF_is_dns_dhcp_enabled() != LLNET_CONF_TRUE)
-					{
-						ip_addr_t dnsaddr;
-						if(DNS_MAX_SERVERS > 0)
-						{
-							char * static_dns_ip_addr = LLNET_CONF_get_dns_ip_address();
-							if(static_dns_ip_addr != NULL)
-							{
-								dnsaddr.addr = inet_addr(static_dns_ip_addr);
-								dns_setserver(0, &dnsaddr);
-							}
-						}
-					}
-
 					// notify DNS servers IP address updated
 					dns_servers_list_updated = 1;
         }
@@ -285,39 +259,6 @@ static void Netif_Config(void)
 #endif
 }
 
-
-/*
- * Retrieve static IP configuration of the default network interface and set
- * IP parameters (Interface IP address, Netmask and Gateway IP address).
- */
-static void ethernetif_static_ip_config()
-{
-	ip_addr_t ipaddr;
-	ip_addr_t netmask;
-	ip_addr_t gw;
-	ip_addr_t dnsaddr;
-
-	// static IP configuration. Retrieve IP settings from user properties.
-	ipaddr.addr = inet_addr(LLNET_CONF_get_device_ip_address());
-	netmask.addr = inet_addr(LLNET_CONF_get_netmask());
-	gw.addr	= inet_addr(LLNET_CONF_get_gateway_ip_address());
-	netif_set_addr(&gnetif, &ipaddr , &netmask, &gw);
-	LLNET_DEBUG_TRACE("[INFO] Static IP address assigned: %s\n", inet_ntoa(ipaddr.addr));
-
-	// set static DNS Host IP address.
-	if(DNS_MAX_SERVERS > 0)
-	{
-		char * static_dns_ip_addr = (char*)LLNET_CONF_get_dns_ip_address();
-		if(static_dns_ip_addr != NULL)
-		{
-			dnsaddr.addr = inet_addr(static_dns_ip_addr);
-			dns_setserver(0, &dnsaddr);
-			// notify DNS servers IP address updated
-			dns_servers_list_updated = 1;
-		}
-	}
-}
-
 /**
   * @brief  This function notify user about link status changement.
   * @param  netif: the network interface
@@ -328,37 +269,26 @@ void ethernetif_notify_conn_changed(struct netif *netif)
 	ip_addr_t ipaddr;
 	ip_addr_t netmask;
 	ip_addr_t gw;
-	int32_t dhcpConfEnabled = LLNET_CONF_is_ip_dhcp_enabled() == LLNET_CONF_TRUE;
-
 	if(netif_is_link_up(netif))
 	{
 		LLNET_DEBUG_TRACE("[INFO] The network cable is now connected \n");
 
-		if(dhcpConfEnabled)
-		{
-			/* Update DHCP state machine */
-			DHCP_state = DHCP_START;
+		/* Update DHCP state machine */
+		DHCP_state = DHCP_START;
 
-			netif_set_addr(netif, &ipaddr , &netmask, &gw);
+		netif_set_addr(netif, &ipaddr , &netmask, &gw);
 
-			// resume DHCP thread
-			dhcp_sleeping = 0;
-			vTaskResume(dhcp_task_handle);
-		}else{
-			// launch static Network Interface configuration
-			ethernetif_static_ip_config();
-		}
-
+		// resume DHCP thread
+		dhcp_sleeping = 0;
+		vTaskResume(dhcp_task_handle);
 		/* When the netif is fully configured this function must be called.*/
 		netif_set_up(netif);
 	}
 	else
 	{
-		if(dhcpConfEnabled){
-			/* Update DHCP state machine */
-			DHCP_state = DHCP_LINK_DOWN;
-		}
 
+		/* Update DHCP state machine */
+		DHCP_state = DHCP_LINK_DOWN;
 		/*  When the netif link is down this function must be called.*/
 		netif_set_down(netif);
 
@@ -373,8 +303,6 @@ void ethernetif_notify_conn_changed(struct netif *netif)
  */
 int32_t llnet_lwip_init(void)
 {
-	int32_t dhcpConfEnabled =  LLNET_CONF_is_ip_dhcp_enabled() == LLNET_CONF_TRUE;
-
 	LLNET_NETWORK_HEAP_initialize();
 
 	/* Initialize the LwIP TCP/IP stack */
@@ -386,17 +314,13 @@ int32_t llnet_lwip_init(void)
 	/* Notify user about the network interface config */
 	User_notification(&gnetif);
 
-	if(dhcpConfEnabled)
-	{
 		/* Start DHCPClient */
-		dhcp_sleeping = 0;
+	dhcp_sleeping = 0;
 #if defined(__GNUC__)
-		xTaskCreate((TaskFunction_t)DHCP_thread, "DHCP", configMINIMAL_STACK_SIZE * 5, &gnetif, LWIP_DHCP_TASK_PRIORITY, &dhcp_task_handle);
+	xTaskCreate((TaskFunction_t)DHCP_thread, "DHCP", configMINIMAL_STACK_SIZE * 5, &gnetif, LWIP_DHCP_TASK_PRIORITY, &dhcp_task_handle);
 #else
-		xTaskCreate((TaskFunction_t)DHCP_thread, "DHCP", configMINIMAL_STACK_SIZE * 2, &gnetif, LWIP_DHCP_TASK_PRIORITY, &dhcp_task_handle);
+	xTaskCreate((TaskFunction_t)DHCP_thread, "DHCP", configMINIMAL_STACK_SIZE * 2, &gnetif, LWIP_DHCP_TASK_PRIORITY, &dhcp_task_handle);
 #endif
-	}
-
 	return 0;
 }
 

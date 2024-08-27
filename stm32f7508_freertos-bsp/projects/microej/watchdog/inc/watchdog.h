@@ -39,7 +39,7 @@ static inline uint32_t MEJ_WATCHDOG_PERIOD(void) {
 	return watchdog_period;
 }
 
-#define MEJ_WATCHDOG_ENABLED() MEJ_WATCHDOG(WATCHDOG_ENABLED)
+#define MEJ_WATCHDOG_ENABLED() MEJ_WATCHDOG(WATCHDOG_DISABLED)
 
 typedef enum {
 	WATCHDOG_OK,             /*!< Function executed successfully */
