@@ -7,6 +7,15 @@
 ===========
 
 ----------------------
+[2.3.1] - 2024-07-13
+----------------------
+
+Changed
+=======
+- Fix the NET pack version in the CHANGELOG.rst file
+- Fix the VEE port module.ivy file : ssl-impl dependency deleted
+
+----------------------
 [2.3.0] - 2024-07-11
 ----------------------
 
@@ -15,7 +24,7 @@ Changed
 
 - Use the chip UID to create a unique address mac
 - Add tests on board in the CI
-- Update NET pack to 11.10
+- Update NET pack to 11.1.0
 - Update Security test suite to 1.7.0
 - Update Net test suite to 4.1.1
 - Update SSL test suite to 4.0.1
